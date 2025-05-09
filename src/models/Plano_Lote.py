@@ -11,8 +11,8 @@ class Plano_Lote():
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
 
-    def consultaVinculoABC_Plano(self):
-        '''Metodo que consulta a estrutura ABC vinculado ao plano '''
+    def consultaVinculoLotes_Plano(self):
+        '''Metodo que consulta a Lotes vinculado ao plano '''
 
         sql = """
             select 
@@ -32,7 +32,7 @@ class Plano_Lote():
         return consulta
 
 
-    def vinculandoLotesAoPlano(self, arrayCodLoteCsw):
+    def vincularLotesAoPlano(self, arrayCodLoteCsw):
         '''Metodo que vincula lotes ao plano: Um plano pode ter varios Lotes Vinculados'''
 
         plano = Plano.Plano(self.codPlano)
@@ -90,6 +90,8 @@ class Plano_Lote():
         # Implantando no banco de dados do Pcp
         ConexaoPostgre.Funcao_InserirOFF(lotes, lotes['codLote'].size, 'lote_itens', 'append')
         Produtos.Produtos().recarregar_novosSkus_noBanco()
+
+
         self.carregar_roteirosEngsLote(arrayCodLoteCsw)
 
         return lotes

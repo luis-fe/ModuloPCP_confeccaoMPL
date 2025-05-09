@@ -2,7 +2,7 @@
     Cliente: Grupo MPL
     Framework: Flask - python
     Criador: Luís Fernando Gonçalves de Lima Machado
-    Versao Produção: 1.0 /Homologado 23-04-2025
+    Versao Produção: 1.0 /Homologado 09-05-2025
 
 ## 1.0 Objetivo do Projeto
     

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import pytz
 from src.conection import ConexaoPostgre
@@ -111,7 +111,7 @@ class Plano():
             if finalFatAtual == self.fimFat or self.fimFat == '-':
                 self.fimFat = finalFatAtual
 
-            update = """update "PCP".pcp."Plano"  set "descricaoPlano" = %s , "inicioVenda" = %s , "FimVenda" = %s , "inicoFat" = %s , "finalFat" = %s
+            update = """update pcp."Plano"  set "descricaoPlano" = %s , "inicioVenda" = %s , "FimVenda" = %s , "inicoFat" = %s , "finalFat" = %s
             where "codigo" = %s
             """
 
@@ -144,7 +144,7 @@ class Plano():
             lote,
             nomelote
         from
-            "PCP".pcp."LoteporPlano"
+            pcp."LoteporPlano"
         """
 
         sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
@@ -206,7 +206,7 @@ class Plano():
             lote,
             nomelote
         from
-            "PCP".pcp."LoteporPlano"
+            pcp."LoteporPlano"
         """
 
         sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
@@ -255,7 +255,7 @@ class Plano():
 
         vinculoABC = self.consultaVinculoABC_Plano()
 
-        vinculoLote = Plano_Lote.Plano_Lote().consultaVinculoABC_Plano()
+        vinculoLote = Plano_Lote.Plano_Lote().consultaVinculoLotes_Plano()
 
         if not vinculoABC.empty:
             return pd.DataFrame([{'status':False, 'mensagem':'Existe vinculo do plano a um ABC'}])
@@ -286,6 +286,100 @@ class Plano():
         consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
 
         return consulta
+
+
+
+    def pesquisarInicioFimVendas(self):
+        '''metodo que pesquisa o inicio e o fim das vendas baseado no codPlano'''
+
+        sql = """
+        select 
+            "inicioVenda","FimVenda"
+        from
+            pcp."Plano"
+        where
+            "codigo" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        if not consulta.empty:
+
+            inicioVenda = consulta['inicioVenda'][0]
+            FimVenda = consulta['FimVenda'][0]
+
+            return inicioVenda, FimVenda
+
+        else:
+            return '-', '-'
+
+    def pesquisarInicioFimFat(self):
+        '''metodo que pesquisa o inicio e o fim das vendas passeado no codPlano'''
+
+        sql = """
+        select 
+            "inicoFat","finalFat"
+        from
+            pcp."Plano"
+        where
+            "codigo" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn,params=(self.codPlano,))
+
+        if not consulta.empty:
+
+            inicoFat = consulta['inicoFat'][0]
+            finalFat = consulta['finalFat'][0]
+
+            return inicoFat, finalFat
+
+        else:
+            return '-', '-'
+
+    def obterNumeroSemanasVendas(self):
+            '''Metodo que obtem o numero de semanas de vendas do Plano
+            Calcula o número de semanas entre duas datas, considerando:
+            - A semana começa na segunda-feira.
+            - Se a data inicial não for uma segunda-feira, considera a primeira semana começando na data inicial.
+
+            Parâmetros:
+                ini (str): Data inicial no formato 'YYYY-MM-DD'.
+                fim (str): Data final no formato 'YYYY-MM-DD'.
+
+            Retorna:
+                int: Número de semanas entre as duas datas.
+            '''
+
+            self.iniVendas, self.fimVendas = self.pesquisarInicioFimVendas()
+
+            if self.iniVendas == '-':
+                return 0
+            else:
+
+                data_ini = datetime.strptime(self.iniVendas, '%Y-%m-%d')
+                data_fim = datetime.strptime(self.fimVendas, '%Y-%m-%d')
+
+                if data_ini > data_fim:
+                    raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+                # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+                if data_ini.weekday() != 0:  # 0 representa segunda-feira
+                    proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+                else:
+                    proxima_segunda = data_ini
+
+                # Calcular o número de semanas completas a partir da próxima segunda-feira
+                semanas_completas = (data_fim - proxima_segunda).days // 7
+
+                # Verificar se existe uma semana parcial no final
+                dias_restantes = (data_fim - proxima_segunda).days % 7
+                semana_inicial_parcial = 1 if data_ini.weekday() != 0 else 0
+                semana_final_parcial = 1 if dias_restantes > 0 else 0
+
+                return semanas_completas + semana_inicial_parcial + semana_final_parcial
 
 
 

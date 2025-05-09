@@ -6,16 +6,18 @@ from src.conection import ConexaoPostgre
 class Produtos():
     '''Classe utilizada para o gerenciamento dos produtos (sku)  que compoe o PCP Confeccao'''
 
-    def __init__(self, codSku = None):
+    def __init__(self, codEmpresa = '1', codSku = None, codNatureza = '5'):
 
+        self.codEmpresa = codEmpresa
         self.codSku = codSku
+        self.codNatureza = codNatureza
 
-    def obter_UltimoSkuCadastrosNoPCP(self):
+    def __obter_UltimoSkuCadastrosNoPCP(self):
         '''Metodo que obtem os skus cadastrados no banco postgres da aplicacao '''
 
 
         sql = """
-        select max(codigo::int) as maximo from "PCP".pcp.itens_csw
+        select max(codigo::int) as maximo from pcp.itens_csw
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -28,7 +30,7 @@ class Produtos():
     def recarregar_novosSkus_noBanco(self):
         '''Metodo utilizado para recarregar novos Sku's no banco de dados Postgres para utilizar na Plantaforma PCP '''
 
-        ultimoSku = self.obter_UltimoSkuCadastrosNoPCP()
+        ultimoSku = self.__obter_UltimoSkuCadastrosNoPCP()
 
         produtos_CSW = Produtos_CSW.Produtos_CSW('',ultimoSku)
 
@@ -38,51 +40,51 @@ class Produtos():
         # 2 - Atribuir categoria
         consulta_novosItens['categoria'] = '-'
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('CAMISA', row['nome'], 'CAMISA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('POLO', row['nome'], 'POLO', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BATA', row['nome'], 'CAMISA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('TRICOT', row['nome'], 'TRICOT', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('TSHIRT', row['nome'], 'CAMISETA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('REGATA', row['nome'], 'CAMISETA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BLUSAO', row['nome'], 'AGASALHOS', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BABY', row['nome'], 'CAMISETA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('JAQUETA', row['nome'], 'JAQUETA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('CARTEIRA', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BONE', row['nome'], 'BONE', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('CINTO', row['nome'], 'CINTO', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('PORTA CAR', row['nome'], 'CARTEIRA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('CUECA', row['nome'], 'CUECA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('MEIA', row['nome'], 'MEIA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('SUNGA', row['nome'], 'SUNGA', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('SHORT', row['nome'], 'SHORT', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BERMUDA', row['nome'], 'BERMUDA M', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BRINDES', row['nome'], 'DISPLAY', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BRINDES', row['nome'], 'DISPLAY', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BRINDES', row['nome'], 'CARTAZ', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BRINDES', row['nome'], 'CARTAZ', row['categoria']), axis=1)
         consulta_novosItens['categoria'] = consulta_novosItens.apply(
-            lambda row: self.definir_Categoria('BRINDES', row['nome'], 'ADESIVO', row['categoria']), axis=1)
+            lambda row: self.__definir_Categoria('BRINDES', row['nome'], 'ADESIVO', row['categoria']), axis=1)
 
 
         try:
@@ -94,7 +96,7 @@ class Produtos():
 
 
 
-    def definir_Categoria(self, contem, valorReferencia, valorNovo, categoria):
+    def __definir_Categoria(self, contem, valorReferencia, valorNovo, categoria):
         if contem in valorReferencia:
             return valorNovo
         else:
@@ -109,6 +111,42 @@ class Produtos():
         sqlPCP = pd.read_sql(sqlPCP, conn)
 
         return sqlPCP
+
+
+
+    def consultaItensReduzidos(self):
+        '''Metodo utilizado para consultar os itens reduzidos x informacoes: codPai , codCor , nome, categoria'''
+
+        sql = """
+        	select
+                codigo,
+                nome,
+                "codItemPai",
+                "codCor",
+                categoria,
+                "codSeqTamanho",
+                "codSortimento"
+            from
+                pcp.itens_csw ic
+            where
+                "codItemPai" not like '6%' 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+        #consulta['codigo'] = consulta['codigo'].astype(str).str.replace('.0','')
+        return consulta
+
+
+    def estoqueNat(self):
+        '''Metodo que consulta o estoque por natureza e empresa '''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None,self.codNatureza)
+        consulta = produto_Csw.estoqueNat()
+
+        return consulta
+
+
 
 
 

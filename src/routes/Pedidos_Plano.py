@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from src.models import Plano_Lote
+from src.models import Pedidos
 
-planoLote_routes = Blueprint('planoLote_routes', __name__)
+pedidosPlano_routes = Blueprint('pedidosPlano_routes', __name__)
 
 def token_required(f):
     @wraps(f)
@@ -14,17 +14,15 @@ def token_required(f):
 
     return decorated_function
 
-@planoLote_routes.route('/pcp/api/VincularLotesPlano', methods=['PUT'])
+@pedidosPlano_routes.route('/pcp/api/TipoNotasCsw', methods=['GET'])
 @token_required
-def put_VincularLotesPlano():
-
-    data = request.get_json()
-    codEmpresa = data.get('codEmpresa', '1')
-    codigoPlano = data.get('codigoPlano')
-    arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
+def get_TipoNotasCsw():
+    empresa = request.args.get('empresa','1')
 
 
-    dados = Plano_Lote.Plano_Lote(codEmpresa, codigoPlano).vincularLotesAoPlano(arrayCodLoteCsw)
+    dados = Pedidos.Pedidos(empresa).obtert_tipoNotas()
+
+    # Obtém os nomes das colunas
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
@@ -33,20 +31,22 @@ def put_VincularLotesPlano():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
+    del dados
     return jsonify(OP_data)
 
-@planoLote_routes.route('/pcp/api/DesvincularLotesPlano', methods=['DELETE'])
+
+@pedidosPlano_routes.route('/pcp/api/VincularNotasPlano', methods=['PUT'])
 @token_required
-def Delete_DesvincularLotesPlano():
+def put_VincularNotasPlano():
 
     data = request.get_json()
 
-    codEmpresa = data.get('codEmpresa', '1')
+    empresa = request.args.get('empresa','1')
     codigoPlano = data.get('codigoPlano')
-    arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
+    arrayTipoNotas = data.get('arrayTipoNotas', '-')
 
 
-    dados = Plano_Lote.Plano_Lote(codEmpresa, codigoPlano).desvincularLotesAoPlano(arrayCodLoteCsw)
+    dados = Pedidos.Pedidos(empresa, codigoPlano).vincularNotasAoPlano(arrayTipoNotas)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []

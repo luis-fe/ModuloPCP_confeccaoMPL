@@ -5,10 +5,12 @@ from src.conection import ConexaoERP
 class Produtos_CSW():
     '''Classe utilizada para fazer buscas relativo aos Produtos cadastrados no ERP CSW'''
 
-    def __init__(self, codProduto = None, ultimoItem = None):
+    def __init__(self, codEmpresa = '1' , codSku = None, ultimoItem = None, codNatureza = '5'):
 
-        self.codProduto = codProduto
+        self.codSku = codSku
         self.ultimoItem = ultimoItem
+        self.codNatureza = str(codNatureza)
+        self.codEmpresa = codEmpresa
 
     def get_itensFilhos_Novos_CSW(self):
         '''Metodo que busca no csw os novos itens filhos que ainda nao foram atualizados no banco Postgre desse projeto '''
@@ -44,3 +46,34 @@ class Produtos_CSW():
 
 
         return consulta
+
+
+
+    def estoqueNat(self):
+        '''metodo que consulta o estoque da natureza 05 '''
+
+        sql = f"""
+    SELECT
+        d.codItem as codReduzido,
+        d.estoqueAtual
+    FROM
+        est.DadosEstoque d
+    WHERE
+        d.codEmpresa = {self.codEmpresa}
+        and d.codNatureza = {self.codNatureza}
+        and d.estoqueAtual > 0
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
