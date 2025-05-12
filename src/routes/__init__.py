@@ -11,9 +11,13 @@ from src.routes.PlanoRoute import plano_routes
 from src.routes.Plano_Lote import planoLote_routes
 from src.routes.Pedidos_Plano import pedidosPlano_routes
 from src.routes.Meta_Plano import metaPlano_routes
+from src.routes.Tendencia_Plano import Tendencia_Plano_routes
+from src.routes.Parametrizacao_ABC import parametrizacaoABC_routes
 
 # Importacao das rotas para o blueprint:
 routes_blueprint.register_blueprint(plano_routes)
 routes_blueprint.register_blueprint(planoLote_routes)
 routes_blueprint.register_blueprint(pedidosPlano_routes)
 routes_blueprint.register_blueprint(metaPlano_routes)
+routes_blueprint.register_blueprint(Tendencia_Plano_routes)
+routes_blueprint.register_blueprint(parametrizacaoABC_routes)

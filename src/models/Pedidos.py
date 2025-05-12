@@ -77,7 +77,7 @@ class Pedidos():
             return pd.DataFrame([{'Status': True, 'Mensagem': 'TipoNotas adicionados ao Plano com sucesso !'}])
 
 
-    def __listagemPedidosSku(self):
+    def listagemPedidosSku(self):
 
         # 1 Carregar variáveis de ambiente do arquivo .env
         env_path = configApp.localProjeto
@@ -174,7 +174,7 @@ class Pedidos():
         '''metodo que carrega as vendas gerais por plano '''
 
         # 1 - Carregando a lista de produtos vendidos a nivel sku
-        df_loaded = self.__listagemPedidosSku()
+        df_loaded = self.listagemPedidosSku()
         plano = Plano.Plano(self.codPlano)
         produto = Produtos.Produtos(self.codEmpresa,None,'5')
 
@@ -377,7 +377,7 @@ class Pedidos():
     def vendasPorSku(self):
         '''Metodo que disponibiliza as vendas a nivel de sku do Plano'''
 
-        df_loaded = self.__listagemPedidosSku()
+        df_loaded = self.listagemPedidosSku()
         groupBy = df_loaded.groupby(["codProduto"]).agg({"marca":"first",
                                                          "nome":'first',
                                                          "categoria":'first',
@@ -429,7 +429,7 @@ class Pedidos():
         codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
         '''
 
-        df_loaded = self.__listagemPedidosSku()
+        df_loaded = self.listagemPedidosSku()
         df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
 
 
