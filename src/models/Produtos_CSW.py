@@ -77,3 +77,66 @@ class Produtos_CSW():
 
         return consulta
 
+
+    def get_tamanhos(self):
+        '''Metodo que retorna os tamanhos do tcp do csw '''
+
+        sql = """
+        	SELECT
+                t.sequencia as codSeqTamanho, t.descricao as tam
+            FROM
+                tcp.Tamanhos t
+            WHERE
+                t.codEmpresa = 1 
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        consulta['codSeqTamanho'] = consulta['codSeqTamanho'].astype(str)
+
+        #print(f'consulta\n{consulta}')
+        return consulta
+
+
+    def statusAFV(self):
+        '''Metodo que consulta o status AFV dos skus '''
+
+        sql = """
+        SELECT
+            b.Reduzido as codReduzido,
+            'Bloqueado' as statusAFV
+        FROM
+            Asgo_Afv.EngenhariasBloqueadas b
+        WHERE
+            b.Empresa = 1
+        union	
+        SELECT
+            b.Reduzido as codReduzido ,
+            'Acompanhamento' as statusAFV
+        FROM
+            Asgo_Afv.EngenhariasAcompanhamento b
+        WHERE
+            b.Empresa = 1
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta

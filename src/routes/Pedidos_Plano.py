@@ -58,4 +58,54 @@ def put_VincularNotasPlano():
     return jsonify(OP_data)
 
 
+@pedidosPlano_routes.route('/pcp/api/VendasPorPlano', methods=['POST'])
+@token_required
+def post_VendasPorPlano():
+    data = request.get_json()
+
+    codPlano = data.get('codPlano')
+    consideraPedidosBloqueado = data.get('consideraPedidosBloqueado','nao')
+
+
+    dados = Pedidos.Pedidos('1',codPlano,consideraPedidosBloqueado).vendasGeraisPorPlano()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+@pedidosPlano_routes.route('/pcp/api/VendasPlanoSKU', methods=['POST'])
+@token_required
+def post_VendasPlanoSKU():
+    data = request.get_json()
+
+    codPlano = data.get('codPlano')
+    consideraPedidosBloqueado = data.get('consideraPedidosBloqueado','nao')
+
+
+    dados = Pedidos.Pedidos('1',codPlano, consideraPedidosBloqueado).vendasPorSku()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
 

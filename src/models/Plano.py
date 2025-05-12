@@ -382,5 +382,125 @@ class Plano():
                 return semanas_completas + semana_inicial_parcial + semana_final_parcial
 
 
+    def obterSemanaAtualFat(self):
+        '''Calcula em qual semana está o dia atual dentro do intervalo de vendas.
+        Caso o dia atual esteja fora do intervalo (após a data final), retorna "finalizado".
+
+        Retorna:
+            int ou str: Número da semana atual ou "finalizado".
+        '''
+        self.iniFat, self.fimFat = self.pesquisarInicioFimFat()
+
+        if self.iniFat == '-':
+            return "finalizado"
+
+        data_ini = datetime.strptime(self.iniFat, '%Y-%m-%d')
+        data_fim = datetime.strptime(self.fimFat, '%Y-%m-%d')
+        hoje = datetime.today()
+
+        if data_ini > data_fim:
+            raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+        if hoje > data_fim:
+            return "finalizado"
+
+        # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+        if data_ini.weekday() != 0:  # 0 representa segunda-feira
+            proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+        else:
+            proxima_segunda = data_ini
+
+        # Calcular a diferença de semanas entre a data inicial ajustada e hoje
+        semanas_completas = (hoje - proxima_segunda).days // 7
+
+        # Verificar se hoje está na primeira semana parcial
+        semana_inicial_parcial = 1 if hoje < proxima_segunda and hoje >= data_ini else 0
+
+        # Retornar o número da semana atual
+        return semanas_completas + semana_inicial_parcial + 1
+
+
+
+    def obterSemanaAtual(self):
+        '''Calcula em qual semana está o dia atual dentro do intervalo de vendas.
+        Caso o dia atual esteja fora do intervalo (após a data final), retorna "finalizado".
+
+        Retorna:
+            int ou str: Número da semana atual ou "finalizado".
+        '''
+        self.iniVendas, self.fimVendas = self.pesquisarInicioFimVendas()
+
+        if self.iniVendas == '-':
+            return "finalizado"
+
+        data_ini = datetime.strptime(self.iniVendas, '%Y-%m-%d')
+        data_fim = datetime.strptime(self.fimVendas, '%Y-%m-%d')
+        hoje = datetime.today()
+
+        if data_ini > data_fim:
+            raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+        if hoje > data_fim:
+            return "finalizado"
+
+        # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+        if data_ini.weekday() != 0:  # 0 representa segunda-feira
+            proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+        else:
+            proxima_segunda = data_ini
+
+        # Calcular a diferença de semanas entre a data inicial ajustada e hoje
+        semanas_completas = (hoje - proxima_segunda).days // 7
+
+        # Verificar se hoje está na primeira semana parcial
+        semana_inicial_parcial = 1 if hoje < proxima_segunda and hoje >= data_ini else 0
+
+        # Retornar o número da semana atual
+        return semanas_completas + semana_inicial_parcial + 1
+
+
+    def obterNumeroSemanasFaturamento(self):
+            '''Metodo que obtem o numero de semanas de faturamento do Plano
+            Calcula o número de semanas entre duas datas, considerando:
+            - A semana começa na segunda-feira.
+            - Se a data inicial não for uma segunda-feira, considera a primeira semana começando na data inicial.
+
+            Parâmetros:
+                ini (str): Data inicial no formato 'YYYY-MM-DD'.
+                fim (str): Data final no formato 'YYYY-MM-DD'.
+
+            Retorna:
+                int: Número de semanas entre as duas datas.
+            '''
+
+            self.iniFat, self.fimFat = self.pesquisarInicioFimFat()
+
+            if self.iniFat == '-':
+                return 0
+            else:
+
+                data_ini = datetime.strptime(self.iniFat, '%Y-%m-%d')
+                data_fim = datetime.strptime(self.fimFat, '%Y-%m-%d')
+
+                if data_ini > data_fim:
+                    raise ValueError("A data inicial deve ser anterior ou igual à data final.")
+
+                # Ajustar para a próxima segunda-feira, se a data inicial não for segunda
+                if data_ini.weekday() != 0:  # 0 representa segunda-feira
+                    proxima_segunda = data_ini + timedelta(days=(7 - data_ini.weekday()))
+                else:
+                    proxima_segunda = data_ini
+
+                # Calcular o número de semanas completas a partir da próxima segunda-feira
+                semanas_completas = (data_fim - proxima_segunda).days // 7
+
+                # Verificar se existe uma semana parcial no final
+                dias_restantes = (data_fim - proxima_segunda).days % 7
+                semana_inicial_parcial = 1 if data_ini.weekday() != 0 else 0
+                semana_final_parcial = 1 if dias_restantes > 0 else 0
+
+                return semanas_completas + semana_inicial_parcial + semana_final_parcial
+
+
 
 

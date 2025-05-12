@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from src.conection import ConexaoPostgre
 from src.configApp import configApp
-from src.models import Pedidos_CSW, Plano, Produtos
+from src.models import Pedidos_CSW, Plano, Produtos, Meta_Plano
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 
@@ -172,11 +172,12 @@ class Pedidos():
     def vendasGeraisPorPlano(self):
         '''metodo que carrega as vendas gerais por plano '''
 
+        # 1 - Carregando a lista de produtos vendidos a nivel sku
         df_loaded = self.__listagemPedidosSku()
         plano = Plano.Plano(self.codPlano)
         produto = Produtos.Produtos(self.codEmpresa,None,'5')
 
-        # Encontrando o disponivel :
+        # 2 - Agrupando os dados a nivel codReduzido -Marca :
         disponivel = df_loaded.groupby(["codProduto"]).agg({
                                                         "marca":'first',
                                                          "qtdePedida": "sum",
@@ -184,23 +185,29 @@ class Pedidos():
         disponivel.rename(columns={"codProduto":"codReduzido"}, inplace=True)
 
 
-        # encontrando o estoque e os produtos em processo
+        # 3 - encontrando o estoque e os produtos em processo
         estoque = produto.estoqueNat()
         emProcesso = produto.emProducao()
 
+        # 4 - Concatenando dados de estoque e emProcesso com o o agrupamento "disponivel"
         disponivel = pd.merge(disponivel, estoque, on='codReduzido', how='left')
         disponivel['estoqueAtual'].fillna(0, inplace=True)
         disponivel = pd.merge(disponivel, emProcesso, on='codReduzido', how='left')
         disponivel['emProcesso'].fillna(0, inplace=True)
+
+        ## 4.1 - Calculando o disponivel e calculando o faltaProgramar em relacao aq que foi Vendido
         disponivel['disponivel'] = (disponivel['emProcesso'] + disponivel['estoqueAtual']) - (
                     disponivel['qtdePedida'] - disponivel['qtdeFaturada'])
         disponivel['faltaProgVendido'] = disponivel['disponivel'].where(disponivel['disponivel'] < 0, 0)
 
+        ### 4.2 - Agrupando por marca o faltaProgVendido
         disponivel = disponivel.groupby(["marca"]).agg({"faltaProgVendido": 'sum'}).reset_index()
 
+        # 5 - Agrupando os dados por Marca
         groupByMarca = df_loaded.groupby(["marca"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
         groupByMarca = pd.merge(groupByMarca, disponivel,on='marca', how='left')
 
+        # 6 - Agrupando os dados por Categoria
         groupByCategoria = df_loaded.groupby(["marca","categoria"]).agg({"qtdePedida":"sum","valorVendido":'sum',"qtdeFaturada":"sum"}).reset_index()
 
 
@@ -208,8 +215,8 @@ class Pedidos():
         groupByCategoria['valorVendido2'] = groupByCategoria['valorVendido']
         groupByCategoria['qtdeFaturada2'] = groupByCategoria['qtdeFaturada']
 
-        groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.formatar_padraoInteiro)
-        groupByCategoria['qtdeFaturada'] = groupByCategoria['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['qtdePedida'] = groupByCategoria['qtdePedida'].apply(self.__formatar_padraoInteiro)
+        groupByCategoria['qtdeFaturada'] = groupByCategoria['qtdeFaturada'].apply(self.__formatar_padraoInteiro)
         groupByCategoria['valorVendido'] = groupByCategoria['valorVendido'].apply(self.formatar_financeiro)
 
 
@@ -234,7 +241,7 @@ class Pedidos():
         groupByCategoria = pd.merge(groupByCategoria,sqlMetaCategoria,on=['categoria','marca'],how='left')
         groupByCategoria.fillna('-',inplace=True)
 
-        groupByCategoria['metaPc'] = groupByCategoria['metaPc'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['metaPc'] = groupByCategoria['metaPc'].apply(self.__formatar_padraoInteiro)
         groupByCategoria['metaFinanceira'] = groupByCategoria['metaFinanceira'].apply(self.formatar_financeiro)
 
 
@@ -271,15 +278,15 @@ class Pedidos():
                                                         ascending=False)  # escolher como deseja classificar
         groupByCategoria['8.5-precoMedioRealizado'] = (groupByCategoria['8.3-TotalvalorVendido'] / groupByCategoria['8.2-TotalqtdePedida']).round(2)
 
-        groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.formatar_padraoInteiro)
-        groupByCategoria['8.4-TotalFaturadoPcs'] = groupByCategoria['8.4-TotalFaturadoPcs'].apply(self.formatar_padraoInteiro)
+        groupByCategoria['8.2-TotalqtdePedida'] = groupByCategoria['8.2-TotalqtdePedida'].apply(self.__formatar_padraoInteiro)
+        groupByCategoria['8.4-TotalFaturadoPcs'] = groupByCategoria['8.4-TotalFaturadoPcs'].apply(self.__formatar_padraoInteiro)
 
         groupByCategoria['8.3-TotalvalorVendido'] = groupByCategoria['8.3-TotalvalorVendido'].apply(self.formatar_financeiro)
         groupByCategoria['8.5-precoMedioRealizado'] = groupByCategoria['8.5-precoMedioRealizado'].apply(self.formatar_financeiro)
 
 
 
-        metas = Meta.Meta(self.codPlano)
+        metas = Meta_Plano.Meta_Plano(self.codEmpresa, self.codPlano)
 
         metasDataFrame = metas.consultaMetaGeral()
         if metasDataFrame.empty:
@@ -310,10 +317,10 @@ class Pedidos():
 
         groupByMarca['precoMedioRealizado'] = groupByMarca['precoMedioRealizado'].apply(self.formatar_financeiro)
         groupByMarca['valorVendido'] = groupByMarca['valorVendido'].apply(self.formatar_financeiro)
-        groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.formatar_padraoInteiro)
-        groupByMarca['qtdeFaturada'] = groupByMarca['qtdeFaturada'].apply(self.formatar_padraoInteiro)
+        groupByMarca['qtdePedida'] = groupByMarca['qtdePedida'].apply(self.__formatar_padraoInteiro)
+        groupByMarca['qtdeFaturada'] = groupByMarca['qtdeFaturada'].apply(self.__formatar_padraoInteiro)
         groupByMarca['qtdeFaturada'].fillna('0',inplace=True)
-        groupByMarca['faltaProgVendido'] = groupByMarca['faltaProgVendido'].apply(self.formatar_padraoInteiro)
+        groupByMarca['faltaProgVendido'] = groupByMarca['faltaProgVendido'].apply(self.__formatar_padraoInteiro)
 
         totalPrecoMedio = totalVendasReais/totalVendasPeca
 
@@ -347,5 +354,72 @@ class Pedidos():
                 '8- DetalhamentoCategoria': groupByCategoria.to_dict(orient='records')
             }
         return pd.DataFrame([data])
+
+
+    def __formatar_padraoInteiro(self, valor):
+        "metodo que converte valor para formato inteiro int"
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+
+    def formatar_financeiro(self,valor):
+        "metodo que converte valor para formato financeiro int"
+
+        try:
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+
+    def vendasPorSku(self):
+        '''Metodo que disponibiliza as vendas a nivel de sku do Plano'''
+
+        df_loaded = self.__listagemPedidosSku()
+        groupBy = df_loaded.groupby(["codProduto"]).agg({"marca":"first",
+                                                         "nome":'first',
+                                                         "categoria":'first',
+                                                         "codCor":"first",
+                                                         "codItemPai":'first',
+                                                         "qtdePedida":"sum",
+                                                         "qtdeFaturada":'sum',
+                                                         "valorVendido":'sum',
+                                                         "codSeqTamanho":'first',
+                                                         "codPedido":'count'}).reset_index()
+        groupBy = groupBy.sort_values(by=['qtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
+        tam = Produtos.Produtos(self.codEmpresa).get_tamanhos()
+
+
+        groupBy['codSeqTamanho'] = groupBy['codSeqTamanho'].astype(str)
+        groupBy['codSeqTamanho'] = groupBy['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
+        groupBy = pd.merge(groupBy,tam,on='codSeqTamanho',how='left')
+
+
+        # Renomear colunas, se necessário
+        groupBy.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
+
+        afv = Produtos.Produtos(self.codEmpresa).statusAFV()
+        estoque = Produtos.Produtos(self.codEmpresa).estoqueNat()
+        emProcesso = Produtos.Produtos(self.codEmpresa).emProducao()
+
+        groupBy = pd.merge(groupBy, afv, on='codReduzido',how='left')
+        groupBy['statusAFV'].fillna('Normal',inplace=True)
+        groupBy = pd.merge(groupBy, estoque, on='codReduzido',how='left')
+        groupBy['estoqueAtual'].fillna(0,inplace=True)
+        groupBy = pd.merge(groupBy, emProcesso, on='codReduzido',how='left')
+        groupBy['emProcesso'].fillna(0,inplace=True)
+
+        groupBy['disponivel'] = (groupBy['emProcesso'] + groupBy['estoqueAtual'] ) - (groupBy['qtdePedida'] - groupBy['qtdeFaturada'] )
+
+        groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
+        groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.__formatar_padraoInteiro)
+        groupBy['qtdeFaturada'] = groupBy['qtdeFaturada'].apply(self.__formatar_padraoInteiro)
+        groupBy['disponivel'] = groupBy['disponivel'].apply(self.__formatar_padraoInteiro)
+        groupBy['emProcesso'] = groupBy['emProcesso'].apply(self.__formatar_padraoInteiro)
+        groupBy['estoqueAtual'] = groupBy['estoqueAtual'].apply(self.__formatar_padraoInteiro)
+
+        return groupBy
 
 

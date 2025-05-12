@@ -146,6 +146,51 @@ class Produtos():
 
         return consulta
 
+    def emProducao(self):
+        '''Metodo que consulta o estoque em processo a nivel sku '''
+
+
+        sql = """
+        select
+            ic.codigo as "codReduzido",
+            sum(total_pcs) as "emProcesso"
+        from
+            "PCP".pcp.itens_csw ic
+        inner join 
+            "PCP".pcp.ordemprod o 
+            on substring(o."codProduto",2,8) = "codItemPai"
+            and o."codSortimento" = ic."codSortimento"::varchar
+            and o."seqTamanho" = "codSeqTamanho"::varchar
+        group by 
+            ic.codigo 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
+
+    def get_tamanhos(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.get_tamanhos()
+
+        return consulta
+
+    def statusAFV(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.statusAFV()
+
+        return consulta
+
+
+
+
+
+
 
 
 
