@@ -148,8 +148,8 @@ class Meta_Plano():
         conn = ConexaoPostgre.conexaoEngine()
 
         consulta1 = pd.read_sql(sql1,conn,params=(self.codPlano, self.marca))
-        consulta1['metaPc'] = consulta1['metaPc'].apply(self.formatar_padraoInteiro)
-        consulta1['metaFinanceira'] = consulta1['metaFinanceira'].apply(self.formatar_financeiro)
+        consulta1['metaPc'] = consulta1['metaPc'].apply(self.__formatar_padraoInteiro)
+        consulta1['metaFinanceira'] = consulta1['metaFinanceira'].apply(self.__formatar_financeiro)
 
         consulta2 = pd.read_sql(sql2,conn)
 
@@ -268,6 +268,21 @@ class Meta_Plano():
 
             return valor_float
 
+    def __formatar_padraoInteiro(self, valor):
+        "metodo que converte valor para formato inteiro int"
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+
+    def __formatar_financeiro(self, valor):
+        "metodo que converte valor para formato financeiro int"
+
+        try:
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
 
 
 

@@ -11,11 +11,12 @@ from dotenv import load_dotenv, dotenv_values
 class Pedidos():
     '''Classe que interage junto aos pedidos '''
 
-    def __init__(self, codEmpresa = '1', codPlano = None, consideraPedidosBloqueados = 'sim'):
+    def __init__(self, codEmpresa = '1', codPlano = None, consideraPedidosBloqueados = 'sim', codReduzido = ''):
 
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
         self.consideraPedidosBloqueados = consideraPedidosBloqueados
+        self.codReduzido = codReduzido
 
     def obtert_tipoNotas(self):
         '''Metodo que obtem todos os tipos de Nota cadastrados'''
@@ -420,6 +421,30 @@ class Pedidos():
         groupBy['emProcesso'] = groupBy['emProcesso'].apply(self.__formatar_padraoInteiro)
         groupBy['estoqueAtual'] = groupBy['estoqueAtual'].apply(self.__formatar_padraoInteiro)
 
+        return groupBy
+
+
+    def detalhaPedidosSku(self):
+        '''Metodo que consulta os pedidos do sku:
+        codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
+        '''
+
+        df_loaded = self.__listagemPedidosSku()
+        df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
+
+
+        groupBy = df_loaded.groupby(["codPedido"]).agg({"marca":"first",
+                                                         "qtdePedida":"sum",
+                                                         "qtdeFaturada":'sum',
+                                                         "valorVendido":'sum',
+                                                        "codTipoNota":"first",
+                                                        "dataEmissao":"first",
+                                                        "dataPrevFat":"first"}).reset_index()
+        groupBy['dataEmissao'] = pd.to_datetime(groupBy['dataEmissao'], format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
+        groupBy['dataPrevFat'] = pd.to_datetime(groupBy['dataPrevFat'], format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
+
+        groupBy = groupBy.sort_values(by=['qtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
         return groupBy
 
 
