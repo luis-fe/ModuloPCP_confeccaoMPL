@@ -12,12 +12,13 @@ from src.models import Pedidos, Produtos, Meta_Plano, SimulacaoProg
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='' ):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' ):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
         self.consideraPedBloq = consideraPedBloq
         self.nomeSimulacao = nomeSimulacao
+        self.codSku = codSku
 
 
     def consultaPlanejamentoABC(self):
@@ -463,3 +464,37 @@ class Tendencia_Plano():
         tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.__formatar_financeiro)
 
         return tendencia
+
+
+    def detalhaCalculoPrev(self):
+        '''Metodo que detalha o calculo da previsao simulada'''
+        # 1 - transformacao do array abc em DataFrame
+        dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
+        dfSimulaCategoria = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoCategoria_s()
+        dfSimulaMarca = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoMarca_s()
+
+        # 2 - Caregar a tendencia congelada
+        caminhoAbsoluto = configApp.localProjeto
+        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
+        tendencia  = tendencia[tendencia['codReduzido']==self.codSku].reset_index()
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
+        abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
+        tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
+
+        tendencia = pd.merge(tendencia, abc, on="codItemPai", how='left')
+        tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
+        tendencia['nomeSimulacao'] = self.nomeSimulacao
+
+        tendencia['percentualABC'].fillna(100, inplace=True)
+
+        tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
+        tendencia['percentualCategoria'].fillna(100, inplace=True)
+
+        tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
+        tendencia['percentualMarca'].fillna(100, inplace=True)
+
+        return tendencia
+
+
