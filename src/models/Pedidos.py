@@ -80,9 +80,9 @@ class Pedidos():
     def listagemPedidosSku(self):
 
         # 1 Carregar variáveis de ambiente do arquivo .env
-        env_path = configApp.localProjeto
-        load_dotenv(env_path)
-        caminho_absoluto = os.getenv('CAMINHO_PARQUET_FAT')
+        #env_path = configApp.localArquivoParquet
+        #load_dotenv(env_path)
+        caminho_absoluto = configApp.localArquivoParquet
         parquet_file = fp.ParquetFile(f'{caminho_absoluto}/pedidos.parquet')
 
         # 2 Converter para DataFrame do Pandas
