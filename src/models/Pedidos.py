@@ -77,7 +77,7 @@ class Pedidos():
             return pd.DataFrame([{'Status': True, 'Mensagem': 'TipoNotas adicionados ao Plano com sucesso !'}])
 
 
-    def listagemPedidosSku(self):
+    def listagemPedidosSku(self, detalhaSku = ''):
 
         # 1 Carregar variáveis de ambiente do arquivo .env
         #env_path = configApp.localArquivoParquet
@@ -88,6 +88,8 @@ class Pedidos():
         # 2 Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
 
+        if detalhaSku !='':
+            df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
 
         # 3 Obtendo Informacoes do Plano Para filtragem
         plano = Plano.Plano(self.codPlano)
@@ -432,8 +434,7 @@ class Pedidos():
         codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
         '''
 
-        df_loaded = self.listagemPedidosSku()
-        df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
+        df_loaded = self.listagemPedidosSku(self.codReduzido)
 
 
         groupBy = df_loaded.groupby(["codPedido"]).agg({"marca":"first",
