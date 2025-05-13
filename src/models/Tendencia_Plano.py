@@ -476,6 +476,7 @@ class Tendencia_Plano():
         # 2 - Caregar a tendencia congelada
         caminhoAbsoluto = configApp.localProjeto
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        tendencia['codReduzido'] = tendencia['codReduzido'].astype(str)
 
         tendencia  = tendencia[tendencia['codReduzido']==self.codSku].reset_index()
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
