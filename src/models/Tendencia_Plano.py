@@ -58,8 +58,7 @@ class Tendencia_Plano():
             consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'SACOLA']
 
         else:
-            load_dotenv('db.env')
-            caminhoAbsoluto = os.getenv('CAMINHO')
+            caminhoAbsoluto = configApp.localProjeto
             consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
