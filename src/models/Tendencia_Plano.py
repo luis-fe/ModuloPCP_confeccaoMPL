@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 from src.models import Pedidos, Produtos, Meta_Plano
 
 

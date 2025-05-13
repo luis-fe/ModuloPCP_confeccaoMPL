@@ -1,6 +1,6 @@
 import gc
 import pandas as pd
-from src.conection import ConexaoERP
+from src.connection import ConexaoERP
 
 class Produtos_CSW():
     '''Classe utilizada para fazer buscas relativo aos Produtos cadastrados no ERP CSW'''

@@ -1,7 +1,7 @@
 import gc
 
 import pandas as pd
-from src.conection import ConexaoERP
+from src.connection import ConexaoERP
 
 
 class Pedidos_CSW():

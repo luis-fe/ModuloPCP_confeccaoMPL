@@ -1,7 +1,7 @@
 import pandas as pd
 
 from src.models import Plano
-from  src.conection import ConexaoPostgre
+from  src.connection import ConexaoPostgre
 
 
 class Meta_Plano():

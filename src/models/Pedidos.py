@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import pandas as pd
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 from src.configApp import configApp
 from src.models import Pedidos_CSW, Plano, Produtos, Meta_Plano
 import fastparquet as fp

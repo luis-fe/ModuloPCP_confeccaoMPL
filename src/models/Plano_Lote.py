@@ -1,7 +1,7 @@
 import pandas as pd
 from src.models import Plano, Lote_Csw, Produtos
 
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 
 
 class Plano_Lote():

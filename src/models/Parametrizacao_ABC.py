@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 
 
 class Parametrizacao_ABC():

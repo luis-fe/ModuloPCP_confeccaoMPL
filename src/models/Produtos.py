@@ -1,6 +1,6 @@
 import pandas as pd
 from src.models import Produtos_CSW
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 
 
 class Produtos():

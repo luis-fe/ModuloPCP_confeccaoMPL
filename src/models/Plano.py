@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pandas as pd
 import pytz
-from src.conection import ConexaoPostgre
+from src.connection import ConexaoPostgre
 from src.models import Plano_Lote
 
 class Plano():
