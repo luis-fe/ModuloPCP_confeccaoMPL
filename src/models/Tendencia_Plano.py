@@ -496,13 +496,18 @@ class Tendencia_Plano():
 
         tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
         tendencia['percentualMarca'].fillna(100, inplace=True)
+        tendencia["_%Considerado"] = tendencia[["percentualABC", "percentualCategoria", "percentualMarca"]].min(axis=1)
+        tendencia['NovaPrevicao'] = tendencia['previcaoVendas'] * (tendencia['_%Considerado'] / 100)
+        tendencia['NovaPrevicao'] = tendencia['NovaPrevicao'].round().astype(int)
 
         tendencia = tendencia.groupby(['codReduzido']).agg({
             "nomeSimulacao":"first",
             "previcaoVendasOriginal": "first",
             "percentualABC": "first",
             "percentualCategoria": "first",
-            "percentualMarca": "first"
+            "_%Considerado": "first",
+            "percentualMarca": "first",
+            "NovaPrevicao": "first"
         }).reset_index()
 
         return tendencia
