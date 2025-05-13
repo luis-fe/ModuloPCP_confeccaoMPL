@@ -1,4 +1,6 @@
 import pandas as pd
+import fastparquet as fp
+from src.configApp import configApp
 from src.models import Produtos_CSW
 from src.connection import ConexaoPostgre
 
@@ -185,6 +187,61 @@ class Produtos():
         consulta = produto_Csw.statusAFV()
 
         return consulta
+
+
+    def estMateriaPrima(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.estMateriaPrima()
+
+        return consulta
+
+
+    def req_Materiais_aberto(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.req_Materiais_aberto()
+
+        return consulta
+
+    def req_atendidoComprasParcial(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.req_atendidoComprasParcial()
+
+        return consulta
+
+    def pedidoComprasMP(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.pedidoComprasMP()
+
+        return consulta
+
+    def pesquisarNomeMaterial(self):
+        '''Metodo '''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.pesquisarNomeMaterial()
+
+        return consulta
+
+
+    def carregandoComponentes(self):
+        # 1:  Carregar as variaveis de ambiente e o nome do caminho
+        caminho_absoluto = configApp.localArquivoParquet
+        # 1.2 - Carregar o arquivo Parquet
+        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/dados/compVar.parquet')
+
+
+        # Converter para DataFrame do Pandas
+        df_loaded = parquet_file.to_pandas()
+
+        return df_loaded
 
 
 

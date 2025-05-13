@@ -140,3 +140,196 @@ class Produtos_CSW():
         gc.collect()
 
         return consulta
+
+
+    def estMateriaPrima(self):
+        '''Método que busca no CSW o estodque dos componentes de Materia Prima '''
+
+        sql = f"""
+                    SELECT
+                        d.codItem as CodComponente ,
+                        d.estoqueAtual
+                    FROM
+                        est.DadosEstoque d
+                    WHERE
+                        d.codEmpresa = {self.codEmpresa}
+                        and d.codNatureza in (1, 3, 2,10)
+                        and d.estoqueAtual > 0
+                """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
+    def req_Materiais_aberto(self):
+        '''Metodo que busca os componentes com requisicao em aberto no CSW'''
+
+
+        sql = """
+                 SELECT
+                 	r.numOPConfec as OP,
+        	        ri.codMaterial as CodComponente ,
+        	        ri.nomeMaterial,
+        	        ri.qtdeRequisitada as EmRequisicao
+                FROM
+        	        tcq.RequisicaoItem ri
+                join 
+                    tcq.Requisicao r on
+        	        r.codEmpresa = 1
+        	        and r.numero = ri.codRequisicao
+                where
+        	        ri.codEmpresa = 1
+        	        and r.sitBaixa <0
+                """
+
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
+    def req_atendidoComprasParcial(self):
+        '''Metodo que busca o que ja foi antendido parcial nas requisicoes de compras '''
+
+
+        sql = """
+                SELECT
+        		    i.codPedido as numero,
+        		    i.codPedidoItem as seqitem,
+        		    i.quantidade as qtAtendida
+        	    FROM
+        		    Est.NotaFiscalEntradaItens i
+        	    WHERE
+        		    i.codempresa = 1 
+        		    and i.codPedido >0 
+        		    and codPedido in (select codpedido FROM sup.PedidoCompraItem p WHERE
+        	        p.situacao in (0, 2))
+                """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+    def pedidoComprasMP(self):
+        '''Metodo que busca os pedidos de compras em aberto por componente '''
+
+        sql = f"""
+        		SELECT
+        			s.codigo as numero,
+        			'solicitacao' as tipo,
+        			i2.codItem as CodComponente,
+        			i.nome,
+        			s.quantidade  as qtdPedida,
+        			'-' as dataPrevisao,
+        				s.situacao as sitSugestao,
+        				itemSolicitacao as seqitem,
+        				'1' as fatCon
+        		FROM
+        			sup.SolicitacaoComprasItem s
+        		inner join Cgi.Item2 i2 on i2.Empresa = 1 and i2.codEditado = s.codItemEdt 
+        		inner join cgi.item i on i.codigo = i2.coditem
+        		WHERE
+        			s.codEmpresa = {self.codEmpresa}
+        			and s.situacao in (0, 2)
+        	union
+                SELECT
+        	        p.codPedido as numero,
+        	        'pedido' as tipo,
+        	        p.codProduto as CodComponente,
+        	        i.nome,
+        	        p.quantidade as qtdPedida,
+        	        p.dataPrevisao,
+        	        p.situacao,
+        	        p.itemPedido as  seqitem,
+        	        p.fatCon
+                from 
+        	        sup.PedidoCompraItem p
+        	    inner join cgi.item i on i.codigo = p.codProduto
+                WHERE
+        	        p.situacao in (0, 2)
+        	        and p.codEmpresa = {self.codEmpresa}
+                        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+    def pesquisarNomeMaterial(self, codigoMP = ''):
+        '''Metodo que pesquisa o nome via codigoMaterial'''
+
+
+        if codigoMP == '':
+            codigoMP = str(self.codSku)
+        else:
+            codigoMP = codigoMP
+
+
+        sql = """
+    SELECT
+        i.nome
+    FROM
+        cgi.Item2 i2
+    inner join cgi.Item i on
+        i.codigo = i2.codItem
+    WHERE
+        i2.Empresa = 1
+        and i2.codEditado ='""" + codigoMP+"""'"""
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        if consulta.empty:
+            return pd.DataFrame([{'status':False, 'nome':'produto nao existe'}])
+
+        else:
+            consulta['status'] = True
+            return consulta
+
