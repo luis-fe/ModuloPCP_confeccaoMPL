@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
-from src.models import Pedidos, Produtos, Meta_Plano, Lote_Csw, Plano, Tendencia_Plano, SubstitutosClass
+from src.models import Pedidos, Produtos, Meta_Plano, Lote_Csw, Plano, Tendencia_Plano, Substitutos_Materiais
 
 
 class Tendencia_Plano_Materiais():
@@ -51,7 +51,8 @@ class Tendencia_Plano_Materiais():
             sqlRequisicaoAberto = produtos.req_Materiais_aberto()
             # Congelando o dataFrame de Requisicoes em aberto
             caminho_absoluto = configApp.localArquivoParquet
-            sqlRequisicaoAberto.to_csv(f'{caminho_absoluto}/dados/requisicoesEmAberto.csv')
+            caminho_absoluto2 = configApp.localProjeto
+            sqlRequisicaoAberto.to_csv(f'{caminho_absoluto2}/dados/requisicoesEmAberto.csv')
 
             # Agrupando as requisicoes compromedito pelo CodComponente
             sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
@@ -64,15 +65,13 @@ class Tendencia_Plano_Materiais():
             sqlPedidos['qtAtendida'].fillna(0, inplace=True)
 
             # Realizando o tratamento do fator de conversao de compras dos componentes
-            sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.process_fator)
+            sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.__process_fator)
             sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
 
             sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
             # Congelando o dataFrame de Pedidos em aberto
-            load_dotenv('db.env')
-            caminhoAbsoluto = os.getenv('CAMINHO')
-            sqlPedidos.to_csv(f'{caminhoAbsoluto}/dados/pedidosEmAberto.csv')
+            sqlPedidos.to_csv(f'{caminho_absoluto2}/dados/pedidosEmAberto.csv')
 
             sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
                 {"SaldoPedCompras": "sum"}).reset_index()
@@ -88,10 +87,10 @@ class Tendencia_Plano_Materiais():
 
             # Verificar se é para congelar a simulacao
             if simula == 'nao':
-                Necessidade.to_csv(f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+                Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
             else:
                 Necessidade.to_csv(
-                    f'{caminhoAbsoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
+                    f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
             Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
@@ -118,11 +117,11 @@ class Tendencia_Plano_Materiais():
             Necessidade['saldo Novo'] = Necessidade['saldo Novo'] - Necessidade['SaldoPedCompras']
 
             # Consulta o substitutos:
-            obterSubstitutos = SubstitutosClass.Substituto().consultaSubstitutos()
+            obterSubstitutos = Substitutos_Materiais.Substituto().consultaSubstitutos()
             obterSubstitutos.rename(
                 columns={'codMateriaPrimaSubstituto': 'codEditado'},
                 inplace=True)
-            informacoes = self.informacoesComponente()
+            informacoes = produtos.informacoesComponente()
             Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente', how='left')
 
             NecessidadeSubstituto = Necessidade.groupby('codEditado').agg({'saldo Novo': 'sum'}).reset_index()
@@ -146,14 +145,14 @@ class Tendencia_Plano_Materiais():
             Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(
                 Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
 
-            Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.formatar_float)
-            Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.formatar_float)
-            Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.formatar_float)
+            Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.__formatar_float)
+            Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.__formatar_float)
+            Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.__formatar_float)
 
             Necessidade['loteMut'].fillna(1, inplace=True)
             Necessidade['LoteMin'].fillna(0, inplace=True)
 
-            Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.formatar_padraoInteiro)
+            Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.__formatar_padraoInteiro)
 
             Necessidade.fillna('-', inplace=True)
             Necessidade.rename(
@@ -201,14 +200,14 @@ class Tendencia_Plano_Materiais():
 
             Necessidade = Necessidade.drop(columns=['disponivelVendas'])
             Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade[
-                '12-Necessidade Ajustada Compra (Tendencia)'].apply(self.formatar_float)
+                '12-Necessidade Ajustada Compra (Tendencia)'].apply(self.__formatar_float)
             Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'] * -1
-            Necessidade['11-Lote Mutiplo'] = Necessidade['11-Lote Mutiplo'].apply(self.formatar_float)
+            Necessidade['11-Lote Mutiplo'] = Necessidade['11-Lote Mutiplo'].apply(self.__formatar_float)
             Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'].apply(
-                self.formatar_float)
-            Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.formatar_float)
+                self.__formatar_float)
+            Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.__formatar_float)
             Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade[
-                '06-Necessidade faltaProg(Tendencia)'].apply(self.formatar_float)
+                '06-Necessidade faltaProg(Tendencia)'].apply(self.__formatar_float)
             Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
 
             Necessidade = Necessidade.drop_duplicates()
@@ -218,11 +217,10 @@ class Tendencia_Plano_Materiais():
     def __estruturaPrevisao(self):
 
         # 1:  Carregar as variaveis de ambiente e o nome do caminho
-        load_dotenv('db.env')
-        caminhoAbsoluto = os.getenv('CAMINHO')
+        caminho_absoluto = configApp.localArquivoParquet
+
         # 1.2 - Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile(f'{caminhoAbsoluto}/dados/pedidos.parque'
-                                      f't')
+        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/dados/pedidos.parquet')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
@@ -275,3 +273,27 @@ class Tendencia_Plano_Materiais():
 
 
         return df_loaded
+
+    def __formatar_float(self, valor):
+        try:
+            return f'{valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
+
+
+    def __process_fator(self, value):
+        if ";*" in value or value.startswith("*;"):  # Caso "*;N", remover prefixo
+            num = int(value.replace("*;", "").replace(";*", ""))
+            return num / 1000
+        elif value.startswith("*"):  # Caso "*N", multiplicar o número por 1000
+            num = int(value.replace("*", ""))
+            return 1
+        else:  # Caso padrão, converter direto
+            return 1
+
+
+    def __formatar_padraoInteiro(self, valor):
+        try:
+            return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível

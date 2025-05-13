@@ -1,4 +1,6 @@
 import gc
+
+import numpy as np
 import pandas as pd
 from src.connection import ConexaoERP
 
@@ -332,4 +334,78 @@ class Produtos_CSW():
         else:
             consulta['status'] = True
             return consulta
+
+
+    def informacoesComponente(self):
+        '''Metodo de informacao dos componentes '''
+
+
+        sql = """
+        SELECT
+            q.codigo as CodComponente ,
+            f.nomeFornecedor as fornencedorPreferencial,
+            q.diasEntrega as LeadTime,
+            q.qtdMinCom as LoteMin,
+            q.qtdMultCom as loteMut,
+            q.fatorConversao
+            ,(SELECT i2.codeditado from cgi.Item2 i2 WHERE i2.Empresa = 2 and i2.codcor> 0 and i2.coditem = q.codigo) as codEditado
+        FROM
+            Cgi.FornecHomologados f
+        right join 
+            Cgi.DadosQualidadeFornecedor q on
+            q.codEmpresa = f.codEmpresa
+            and f.codItem = q.codigo
+            and f.codFornecedor = q.codFornecedor
+        WHERE
+            f.codEmpresa = 1
+            and f.fornecedorPreferencial = 1
+            and q.referenciaPrincipal = 1
+            and q.codigo > 18
+                """
+
+        sql2 = """
+        SELECT
+            f.CodItem as CodComponente ,
+            f2.nomeFornecedor as novoNome
+        FROM
+            cgi.FornPreferItemFilho f
+        inner join Cgi.FornecHomologados f2 on
+            f.codItem = f2.codItem
+            and f.codFornecedor = f2.codFornecedor
+        WHERE
+            f.Empresa = 1 
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo = pd.DataFrame(rows, columns=colunas)
+
+
+                cursor.execute(sql2)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo2 = pd.DataFrame(rows, columns=colunas)
+
+
+        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+        consumo2['CodComponente'] = consumo2['CodComponente'].astype(str)
+
+        consumo = pd.merge(consumo, consumo2 , on='CodComponente', how='left')
+        consumo['novoNome'].fillna('-',inplace=True)
+
+        consumo['fornencedorPreferencial'] = np.where(
+            consumo['novoNome'] == '-',
+            consumo['fornencedorPreferencial'],
+            consumo['novoNome']
+        )
+
+        consumo['fatorConversao'].fillna(1,inplace=True)
+        consumo['LeadTime'].fillna(1,inplace=True)
+        #consumo['CodComponente'] = consumo['CodComponente'].str.replace('.0','')
+        print(consumo['CodComponente'])
+
+        return consumo
 

@@ -13,6 +13,7 @@ from src.routes.Pedidos_Plano import pedidosPlano_routes
 from src.routes.Meta_Plano import metaPlano_routes
 from src.routes.Tendencia_Plano import Tendencia_Plano_routes
 from src.routes.Parametrizacao_ABC import parametrizacaoABC_routes
+from src.routes.Tendencia_Plano_Materiais import Tendencia_Plano_Materiais_routes
 
 # Importacao das rotas para o blueprint:
 routes_blueprint.register_blueprint(plano_routes)
@@ -21,3 +22,4 @@ routes_blueprint.register_blueprint(pedidosPlano_routes)
 routes_blueprint.register_blueprint(metaPlano_routes)
 routes_blueprint.register_blueprint(Tendencia_Plano_routes)
 routes_blueprint.register_blueprint(parametrizacaoABC_routes)
+routes_blueprint.register_blueprint(Tendencia_Plano_Materiais_routes)

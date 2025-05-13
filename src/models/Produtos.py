@@ -230,6 +230,14 @@ class Produtos():
 
         return consulta
 
+    def informacoesComponente(self):
+        '''Metodo '''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.informacoesComponente()
+
+        return consulta
+
 
     def carregandoComponentes(self):
         # 1:  Carregar as variaveis de ambiente e o nome do caminho
