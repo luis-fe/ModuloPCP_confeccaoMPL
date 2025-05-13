@@ -114,3 +114,60 @@ class Lote_Csw():
         return lotes
 
 
+    def get_materiaPrima_loteProd_CSW(self):
+        '''Metodo que busca os componentes variaveis e padroes das engenharias que pertencem a um determinado Lote Producao'''
+
+        inPesquisa = """(select l.codengenharia from tcl.LoteSeqTamanho l WHERE l.empresa = 1 and l.codlote = '""" + self.codLoteCsw + """)"""
+
+        sqlcsw = """
+                    SELECT 
+                        v.codProduto as codEngenharia, 
+                        cv.codSortimento, 
+                        cv.seqTamanho as codSeqTamanho,  
+                        v.CodComponente,
+                        (SELECT i.nome FROM cgi.Item i WHERE i.codigo = v.CodComponente) as descricaoComponente,
+                        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                        cv.quantidade  
+                    from 
+                        tcp.ComponentesVariaveis v 
+                    join 
+                        tcp.CompVarSorGraTam cv 
+                        on cv.codEmpresa = v.codEmpresa 
+                        and cv.codProduto = v.codProduto 
+                        and cv.sequencia = v.codSequencia 
+                    WHERE 
+                        v.codEmpresa = 1
+                        and v.codProduto in """ + inPesquisa + """
+                        and v.codClassifComponente <> 12
+                UNION 
+                    SELECT 
+                        v.codProduto as codEngenharia,  
+                        l.codSortimento ,
+                        l.codSeqTamanho as codSeqTamanho, 
+                        v.CodComponente,
+                        (SELECT i.nome FROM cgi.Item i WHERE  i.codigo = v.CodComponente) as descricaoComponente,
+                        (SELECT i.unidadeMedida FROM cgi.Item i WHERE i.codigo = v.CodComponente) as unid,
+                        v.quantidade  
+                    from 
+                        tcp.ComponentesPadroes  v 
+                    join 
+                        tcl.LoteSeqTamanho l 
+                        on l.Empresa = v.codEmpresa 
+                        and l.codEngenharia = v.codProduto 
+                        and l.codlote = '""" + self.codLoteCsw + """'"""
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sqlcsw)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                lotes = pd.DataFrame(rows, columns=colunas)
+        del rows
+        gc.collect()
+
+        return lotes
+
+
+
+

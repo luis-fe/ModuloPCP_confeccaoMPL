@@ -43,3 +43,5 @@
         app_run.py ("class main do projeto")
     
     2.1 - Alternativa via Docker: Dockerfile 
+
+## 3 Diagrama de Classes:![Diagrama de Classes.png](docsProject%2FDiagrama%20de%20Classes.png)
