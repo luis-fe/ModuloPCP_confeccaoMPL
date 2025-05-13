@@ -480,6 +480,7 @@ class Tendencia_Plano():
 
         tendencia  = tendencia[tendencia['codReduzido']==self.codSku].reset_index()
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
+        tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
@@ -495,6 +496,14 @@ class Tendencia_Plano():
 
         tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
         tendencia['percentualMarca'].fillna(100, inplace=True)
+
+        tendencia = tendencia.groupby(['codReduzido']).agg({
+            "nomeSimulacao":"first",
+            "previcaoVendasOriginal": "first",
+            "percentualABC": "first",
+            "percentualCategoria": "first",
+            "percentualMarca": "first"
+        }).reset_index()
 
         return tendencia
 
