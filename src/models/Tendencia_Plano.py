@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 
+from src.configApp import configApp
 from src.connection import ConexaoPostgre
 from src.models import Pedidos, Produtos, Meta_Plano
 
@@ -377,8 +378,8 @@ class Tendencia_Plano():
 
 
         # 14 - Salvando o dataFrame na memoria do servidor, para ser congelado para analises
-        load_dotenv('db.env')
-        caminhoAbsoluto = os.getenv('CAMINHO')
+
+        caminhoAbsoluto = configApp.localProjeto
         consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         # 15 - Tratando o valor financeiro
