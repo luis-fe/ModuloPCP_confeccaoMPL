@@ -212,7 +212,7 @@ class Tendencia_Plano():
         )
 
         # 4 - Obtendo a Meta por marca
-        meta = Meta_Plano.Meta_Plano(self.codPlano).consultaMetaGeral()
+        meta = Meta_Plano.Meta_Plano(self.codEmpresa, self.codPlano).consultaMetaGeral()
         meta['metaPecas'] = meta['metaPecas'].str.replace('.','').astype(int)
         consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
 
