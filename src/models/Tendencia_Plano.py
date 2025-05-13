@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 
 from src.conection import ConexaoPostgre
-from src.models import Pedidos
+from src.models import Pedidos, Produtos, Meta_Plano
 
 
 class Tendencia_Plano():
@@ -151,4 +151,254 @@ class Tendencia_Plano():
         return consultaVendasSku
 
 
+    def tendenciaVendas(self, aplicaTratamento = 'sim'):
+        '''Metodo que desdobra a tendencia DE VENDAS  por sku '''
 
+        # 1 - Carregando o acomponhamento de vendas:
+        #########  instancia-se o objeto "vendas" da classe Vendas
+        vendas = Pedidos.Pedidos(self.codEmpresa, self.codPlano, self.consideraPedBloq)
+
+            #### 1.2 listar as vendas por sku: retorna consultaVendasSku: tipo "dataFrame"
+        consultaVendasSku = vendas.listagemPedidosSku()
+
+            ##### 1.3 - desconsiderando as sacolas do tipo de nota de bonificacao
+        mask = (consultaVendasSku['categoria'] == 'SACOLA') & (consultaVendasSku['codTipoNota'] == '40')
+        consultaVendasSku = consultaVendasSku[~mask]
+
+        # 2 - Agrupando as vendas por codProduto (codigo reduzido "sku")
+        consultaVendasSku = consultaVendasSku.groupby(["codProduto"]).agg({"marca": "first",
+                                                         "nome": 'first',
+                                                         "categoria": 'first',
+                                                         "codCor": "first",
+                                                         "codItemPai": 'first',
+                                                         "qtdePedida": "sum",
+                                                         "qtdeFaturada": 'sum',
+                                                         "valorVendido": 'sum',
+                                                         "codSeqTamanho":'first',
+                                                        "codSortimento":"first",
+                                                         "codPedido": 'count'}).reset_index()
+            # 2.1 - ordenando as vendas por sku
+        consultaVendasSku = consultaVendasSku.sort_values(by=['qtdePedida'],
+                                      ascending=False)
+            # 2.2 - Filtrar os produtos diferente da categoria "Brindes"
+        consultaVendasSku = consultaVendasSku[consultaVendasSku['categoria'] != 'BRINDES']
+
+            #2.3 - pesquisando e alterando a sequencia de Tamanho pela descricao do tamanho
+        tam = Produtos.Produtos(self.codEmpresa).get_tamanhos()
+        consultaVendasSku['codSeqTamanho'] = consultaVendasSku['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
+        consultaVendasSku = pd.merge(consultaVendasSku,tam,on='codSeqTamanho',how='left')
+
+
+            # 2.4 Renomear as colunas necessárias
+        consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
+
+            # 2.5 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
+        afv = Produtos.Produtos(self.codEmpresa).statusAFV()
+        consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
+        consultaVendasSku = pd.merge(consultaVendasSku, afv, on='codReduzido',how='left')
+        consultaVendasSku['statusAFV'].fillna('Normal',inplace=True)
+
+        # 3 Filtrar categorias diferentes de 'sacola'
+        consultaVendasSku['qtdePedida'] = np.where(
+            (consultaVendasSku['codReduzido'] == '795532') | (consultaVendasSku['codReduzido'] == '795567'),
+            consultaVendasSku['qtdePedida'] / 50,
+            consultaVendasSku['qtdePedida']
+        )
+
+        consultaVendasSku['qtdeFaturada'] = np.where(
+            (consultaVendasSku['codReduzido'] == '795532') | (consultaVendasSku['codReduzido'] == '795567'),
+            consultaVendasSku['qtdeFaturada'] / 50,
+            consultaVendasSku['qtdeFaturada']
+        )
+
+        # 4 - Obtendo a Meta por marca
+        meta = Meta_Plano.Meta_Plano(self.codPlano).consultaMetaGeral()
+        meta['metaPecas'] = meta['metaPecas'].str.replace('.','').astype(int)
+        consultaVendasSku = pd.merge(consultaVendasSku,meta,on='marca',how='left')
+
+        # 5 - Calculando o total de vendas e o que falta vender por MARCA
+        consultaVendasSku['totalVendas'] = consultaVendasSku.groupby('marca')['qtdePedida'].transform('sum')
+
+
+        # 6 Filtrar status AFV diferente de Bloqueado
+        df_filtered1 = consultaVendasSku[consultaVendasSku['statusAFV']!='Bloqueado']
+
+            # 6.1 Somar o acumulado de vendas por marca, considerando somente o status Normal
+        vendas_acumuladasGeral = df_filtered1.groupby('marca')['qtdePedida'].sum()
+
+            # 6.2 - Obtendo a distribuicao somente para os itens diferente de BLOQUEADO
+        consultaVendasSku['vendasAcumuladasGeral'] = np.where(
+            consultaVendasSku['statusAFV'] != 'Bloqueado',
+            consultaVendasSku['marca'].map(vendas_acumuladasGeral),
+            0
+        )
+        consultaVendasSku['distGeral%'] = np.where(
+            consultaVendasSku['vendasAcumuladasGeral'] == 0,  # Condição
+            0,
+            consultaVendasSku['qtdePedida'] / consultaVendasSku['vendasAcumuladasGeral']  # Valor se falsa
+        )
+
+            # 6.3 Obtendo o falta a vender1 :
+        consultaVendasSku['faltaVender1'] = consultaVendasSku['metaPecas'] - consultaVendasSku['totalVendas']
+        consultaVendasSku['faltaVender1'] = consultaVendasSku['faltaVender1'].clip(lower=0)
+
+            # 6.3 Obtendo a primeira previsao de vendas:
+        consultaVendasSku['previcaoVendasGeral1'] = consultaVendasSku['distGeral%']* consultaVendasSku['faltaVender1']
+
+                     # 6.4.1 - Consultando o Estoque da Natureza 5 e fazendo um "merge"  com ds dados
+        estoque = Produtos.Produtos(self.codEmpresa).estoqueNat()
+        consultaVendasSku = pd.merge(consultaVendasSku, estoque, on='codReduzido', how='left')
+        consultaVendasSku['estoqueAtual'].fillna(0, inplace=True)
+
+                    # 6.4.2 - Consultando as Ops em processo  e fazendo um "merge"  com ds dados
+        emProcesso = Produtos.Produtos(self.codEmpresa).emProducao()
+        consultaVendasSku = pd.merge(consultaVendasSku, emProcesso, on='codReduzido', how='left')
+        consultaVendasSku['emProcesso'].fillna(0, inplace=True)
+
+                    # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
+        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['qtdePedida']- consultaVendasSku['qtdeFaturada'])
+
+        consultaVendasSku['disponivelAcomp'] = np.where(
+            (consultaVendasSku['statusAFV'] == 'Acompanhamento')&(consultaVendasSku['disponivelAplica'] > 0),
+        consultaVendasSku['disponivelAplica']
+            ,
+            0
+        )
+
+            # 6.5 Decidindo qual a previsao dos produtos de acompanhamento
+        consultaVendasSku['previcaoVendasGeral'] = np.where(
+            (consultaVendasSku['disponivelAcomp'] < consultaVendasSku['previcaoVendasGeral1']) &
+            (consultaVendasSku['statusAFV'] == 'Acompanhamento'),
+            consultaVendasSku['disponivelAcomp'],
+            consultaVendasSku['previcaoVendasGeral1']
+        )
+
+        # 7 - Redistribuindo para o Status AFV Normal o excedente da previsao
+        consultaVendasSku['Redistribuir1'] = consultaVendasSku.groupby('marca')['previcaoVendasGeral'].transform('sum')
+        consultaVendasSku['Redistribuir1_'] = consultaVendasSku['faltaVender1'] - consultaVendasSku['Redistribuir1']
+
+
+            # 7.1 Filtrar status AFV Normal apenas, para podermos fazer uma redistribuicao
+        df_filtered= consultaVendasSku[consultaVendasSku['statusAFV']=='Normal']
+
+            # 7.2 Somar o acumulado de previcaoVendasGeral por marca, considerando somente o status Normal
+        vendas_acumuladas = df_filtered.groupby('marca')['previcaoVendasGeral'].sum()
+
+
+
+            # 7.3 - Considerar as vendas acumuladas somente para o status AFV normal
+        consultaVendasSku['vendasAcumuladas'] = np.where(
+            consultaVendasSku['statusAFV'] == 'Normal',
+            consultaVendasSku['marca'].map(vendas_acumuladas),
+            0
+        )
+
+
+            # 7.4 - Calculando o % distribuido para os status AFV IGUAL a Normal
+        consultaVendasSku['dist%'] = np.where(
+            consultaVendasSku['vendasAcumuladas'] == 0,  # Condição
+            0,
+            consultaVendasSku['previcaoVendasGeral'] / consultaVendasSku['vendasAcumuladas']  # Valor se falsa
+        )
+
+        # 8 - Encontradno a previsao de vendas
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['dist%']* consultaVendasSku['Redistribuir1_']
+
+        consultaVendasSku['dist%'] = consultaVendasSku['dist%'] *100
+        consultaVendasSku['dist%'] = consultaVendasSku['dist%'].round(5)
+
+        consultaVendasSku['previcaoVendas'].fillna(0,inplace=True)
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'].round().astype(int)
+        consultaVendasSku['previcaoVendasGeral'] = consultaVendasSku['previcaoVendasGeral'].round().astype(int)
+
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['previcaoVendasGeral']
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['qtdePedida']
+
+        # 9.1 - Tratar os erros de NaN para retornar "0"
+        consultaVendasSku.fillna(0,inplace=True)
+
+
+        #if aplicaTratamento == 'sim':
+        consultaVendasSku['subtotal'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+        consultaVendasSku['redistribuir2'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotal']
+
+
+        # Filtrar as 200 primeiras linhas
+        consultaVendasSku_200 = consultaVendasSku.iloc[:400]
+
+        # Filtrar as linhas com status igual a 'NORMAL'
+        filtro_normal = consultaVendasSku_200['statusAFV'] == 'Normal'
+
+        # Calcular o subtotal apenas para as linhas filtradas
+        consultaVendasSku.loc[:399, 'subtotal2'] = (
+            consultaVendasSku_200.loc[filtro_normal]
+            .groupby('marca')['previcaoVendas']
+            .transform('sum')
+        )
+        consultaVendasSku['subtotal2'] = consultaVendasSku['previcaoVendas']/consultaVendasSku['subtotal2']
+
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'] * consultaVendasSku['redistribuir2']
+        consultaVendasSku['subtotal2'].fillna(0,inplace=True)
+
+        consultaVendasSku['subtotal2'] = consultaVendasSku['subtotal2'].round().astype(int)
+        consultaVendasSku['previcaoVendas'] = consultaVendasSku['previcaoVendas'] + consultaVendasSku['subtotal2']
+
+        consultaVendasSku['subtotalPrev'] = consultaVendasSku.groupby('marca')['previcaoVendas'].transform('sum')
+        consultaVendasSku['redistribuirPrev'] = consultaVendasSku['metaPecas'] - consultaVendasSku['subtotalPrev']
+
+
+
+
+        '''
+        consultaVendasSku['redistribuir'] = np.where(
+            consultaVendasSku['redistribuir'] < 0 ,
+            0,
+            consultaVendasSku['redistribuir']
+        )
+        '''
+        # 9.2 - Drop das colunas que nao desejo
+        consultaVendasSku.drop(['faltaVender1','totalVendas','vendasAcumuladas','metaPecas','metaFinanceira'], axis=1, inplace=True)
+
+
+
+
+
+        # 10 - Calculando o disponivel - baseado na quantidade pedida
+
+        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+
+        # 11 - Calculando a Previsao de sobra  - baseado na previsao de vendas
+        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
+
+        # 12 - Calculando o falta programar, baseado na previsao de vendas
+        consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
+
+
+        # 14 - Salvando o dataFrame na memoria do servidor, para ser congelado para analises
+        load_dotenv('db.env')
+        caminhoAbsoluto = os.getenv('CAMINHO')
+        consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+
+        # 15 - Tratando o valor financeiro
+        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.__formatar_financeiro)
+
+        # 16 - Acescentando tendencia abc
+        abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
+        consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
+        consultaVendasSku.fillna('-', inplace=True)
+
+
+
+
+        return consultaVendasSku
+
+    def __formatar_financeiro(self, valor):
+        "metodo que converte valor para formato financeiro int"
+
+        try:
+            return f'R$ {valor:,.2f}'.replace(",", "X").replace(".", ",").replace("X", ".")
+        except ValueError:
+            return valor  # Retorna o valor original caso não seja convertível
