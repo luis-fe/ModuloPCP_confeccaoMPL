@@ -139,7 +139,6 @@ class Tendencia_Plano():
 
         consultaVendasSku['ocorrencia'] = consultaVendasSku.groupby(['marca', 'categoria']).cumcount() + 1
         consultaVendasSku.loc[consultaVendasSku['ocorrencia'] == 1, 'classCategoria'] = 'A1'
-        print(consultaVendasSku)
 
         if utilizaCongelento == 'sim':
             consultaVendasSku = consultaVendasSku.loc[:,
@@ -148,6 +147,7 @@ class Tendencia_Plano():
         else:
             consultaVendasSku.drop(['ABCdist%', 'ABCdist%Categoria', "totalVendas", "totalVendasCategoria"], axis=1,
                                    inplace=True)
+        print(consultaVendasSku)
 
         return consultaVendasSku
 
