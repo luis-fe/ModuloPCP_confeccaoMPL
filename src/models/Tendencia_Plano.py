@@ -147,7 +147,6 @@ class Tendencia_Plano():
         else:
             consultaVendasSku.drop(['ABCdist%', 'ABCdist%Categoria', "totalVendas", "totalVendasCategoria"], axis=1,
                                    inplace=True)
-        print(consultaVendasSku)
 
         return consultaVendasSku
 

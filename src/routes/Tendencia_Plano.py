@@ -46,7 +46,6 @@ def post_ABCReferencia():
 
 
     dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaAbc()
-    #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -58,7 +57,7 @@ def post_ABCReferencia():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     del dados
-    return not jsonify(OP_data)
+    return jsonify(OP_data)
 
 
 @Tendencia_Plano_routes.route('/pcp/api/tendenciaSku', methods=['POST'])
