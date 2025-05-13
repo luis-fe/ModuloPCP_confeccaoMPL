@@ -5,6 +5,8 @@ import pandas as pd
 from src.connection import ConexaoPostgre
 from src.configApp import configApp
 from src.models import Pedidos_CSW, Plano, Produtos, Meta_Plano
+import pyarrow.parquet as pq
+
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
 
@@ -79,17 +81,23 @@ class Pedidos():
 
     def listagemPedidosSku(self, detalhaSku = ''):
 
-        # 1 Carregar variáveis de ambiente do arquivo .env
-        #env_path = configApp.localArquivoParquet
-        #load_dotenv(env_path)
-        caminho_absoluto = configApp.localArquivoParquet
-        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/pedidos.parquet')
 
-        # 2 Converter para DataFrame do Pandas
-        df_loaded = parquet_file.to_pandas()
+        caminho_arquivo = f"{configApp.localArquivoParquet}/pedidos.parquet"
 
-        if detalhaSku !='':
-            df_loaded = df_loaded[df_loaded['codProduto'] == self.codReduzido]
+        # Carrega apenas os registros com codProduto == self.codReduzido, se aplicável
+        if detalhaSku != '':
+            filtro = [('codProduto', '=', self.codReduzido)]
+        else:
+            filtro = None
+
+        # Apenas as colunas necessárias (exemplo: todas)
+        # Para mais performance, especifique colunas como: columns=['codProduto', 'outraColuna']
+        tabela = pq.read_table(caminho_arquivo, filters=filtro)
+
+        # Converte para Pandas
+        df_loaded = tabela.to_pandas()
+
+
 
         # 3 Obtendo Informacoes do Plano Para filtragem
         plano = Plano.Plano(self.codPlano)
