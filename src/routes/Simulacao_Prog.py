@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from src.models import Tendencia_Plano
+from src.models import SimulacaoProg
 
-Tendencia_Plano_routes = Blueprint('Tendencia_Plano_routes', __name__)
+Simulacao_prod_routes = Blueprint('Simulacao_prod_routes', __name__)
 
 def token_required(f):
     @wraps(f)
@@ -15,62 +15,11 @@ def token_required(f):
     return decorated_function
 
 
-@Tendencia_Plano_routes.route('/pcp/api/consultaPlanejamentoABC_plano', methods=['GET'])
+@Simulacao_prod_routes.route('/pcp/api/ConsultaSimulacoes', methods=['GET'])
 @token_required
-def get_consultaPlanejamentoABC_plano():
+def get_ConsultaSimulacoes():
 
-    codPlano = request.args.get('codPlano','-')
-    dados = Tendencia_Plano.Tendencia_Plano('1',codPlano).consultaPlanejamentoABC()
-    #controle.salvarStatus(rotina, ip, datainicio)
-
-    # Obtém os nomes das colunas
-    column_names = dados.columns
-    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
-    OP_data = []
-    for index, row in dados.iterrows():
-        op_dict = {}
-        for column_name in column_names:
-            op_dict[column_name] = row[column_name]
-        OP_data.append(op_dict)
-    del dados
-    return jsonify(OP_data)
-
-@Tendencia_Plano_routes.route('/pcp/api/ABCReferencia', methods=['POST'])
-@token_required
-def post_ABCReferencia():
-    data = request.get_json()
-
-    codPlano = data.get('codPlano')
-    empresa = data.get('empresa','1')
-    consideraPedBloq = data.get('consideraPedBloq','nao')
-
-
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaAbc()
-
-    # Obtém os nomes das colunas
-    column_names = dados.columns
-    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
-    OP_data = []
-    for index, row in dados.iterrows():
-        op_dict = {}
-        for column_name in column_names:
-            op_dict[column_name] = row[column_name]
-        OP_data.append(op_dict)
-    del dados
-    return jsonify(OP_data)
-
-
-@Tendencia_Plano_routes.route('/pcp/api/tendenciaSku', methods=['POST'])
-@token_required
-def post_tendenciaSku():
-    data = request.get_json()
-
-    codPlano = data.get('codPlano')
-    empresa = data.get('empresa','1')
-    consideraPedBloq = data.get('consideraPedBloq','nao')
-
-
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaVendas()
+    dados = SimulacaoProg.SimulacaoProg().get_Simulacoes()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -86,18 +35,64 @@ def post_tendenciaSku():
     return jsonify(OP_data)
 
 
-@Tendencia_Plano_routes.route('/pcp/api/simulacaoProgramacao', methods=['POST'])
+@Simulacao_prod_routes.route('/pcp/api/consultaDetalhadaSimulacao', methods=['GET'])
 @token_required
-def post_simulacaoProgramacao():
-    data = request.get_json()
+def get_consultaDetalhadaSimulacao():
 
-    codPlano = data.get('codPlano')
-    empresa = data.get('empresa','1')
-    consideraPedBloq = data.get('consideraPedBloq','nao')
+    nomeSimulacao = request.args.get('nomeSimulacao')
+
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).consultaDetalhadaSimulacao()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+@Simulacao_prod_routes.route('/pcp/api/atualizaInserirSimulacao', methods=['POST'])
+@token_required
+def post_atualizaInserirSimulacao():
+
+    data = request.get_json()
+    nomeSimulacao = data.get('nomeSimulacao')
+    arrayAbc = data.get('arrayAbc',[])
+    arrayCategoria = data.get('arrayCategoria',[])
+    arrayMarca = data.get('arrayMarca',[])
+
+    print(data)
+
+
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).inserirAtualizarSimulacao(arrayAbc, arrayMarca,arrayCategoria)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+@Simulacao_prod_routes.route('/pcp/api/deletarSimulacao', methods=['DELETE'])
+@token_required
+def delete_deletarSimulacao():
+
+    data = request.get_json()
     nomeSimulacao = data.get('nomeSimulacao')
 
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao).simulacaoPeloNome()
-    #controle.salvarStatus(rotina, ip, datainicio)
+
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao).excluirSimulacao()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
