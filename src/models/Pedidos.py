@@ -107,6 +107,7 @@ class Pedidos():
         #4 Filtrando de acordo com os intervalos encontrados de Vendas e Faturamento
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
+        print(self.iniVendas)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
         df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
