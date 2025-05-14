@@ -34,9 +34,9 @@ class Tendencia_Plano_Materiais():
 
             inPesquisa = self.__estruturaPrevisao()
             if simula == 'nao':
-                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codPlano, self.consideraPedBloq).tendenciaVendas('nao')
+                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).tendenciaVendas('nao')
             else:
-                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codPlano, self.consideraPedBloq).simulacaoProgramacao(arraySimulaAbc)
+                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).simulacaoProgramacao(arraySimulaAbc)
 
             consumo = produtos.carregandoComponentes()
             consumo = pd.merge(consumo, inPesquisa, on='codEngenharia')
