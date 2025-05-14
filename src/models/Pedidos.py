@@ -105,26 +105,13 @@ class Pedidos():
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
 
         #4 Filtrando de acordo com os intervalos encontrados de Vendas e Faturamento
-        try:
-            # Garantindo que os limites também são datetime
-            ini_vendas_dt = pd.to_datetime(self.iniVendas, errors='coerce')
-            fim_vendas_dt = pd.to_datetime(self.fimVendas, errors='coerce')
-            ini_fat_dt = pd.to_datetime(self.iniFat, errors='coerce')
-            fim_fat_dt = pd.to_datetime(self.fimFat, errors='coerce')
+        df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
+        df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
-            # Comparações seguras
-            df_loaded['filtro'] = df_loaded['dataEmissao'] >= ini_vendas_dt
-            df_loaded['filtro2'] = df_loaded['dataEmissao'] <= fim_vendas_dt
-            df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= ini_fat_dt
-            df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= fim_fat_dt
-
-        except TypeError as e:
-            print(f"Erro de tipo ao comparar datas: {e}")
-            # Se quiser, pode aplicar um fallback, como marcar todos os filtros como False:
-            df_loaded['filtro'] = False
-            df_loaded['filtro2'] = False
-            df_loaded['filtro3'] = False
-            df_loaded['filtro4'] = False
+        df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
+        df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
+        df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
+        df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.fimFat
 
 
         # 4.1 Tratando erros na filtragem e filtrando somente os pedidos com situacao diferente de "9"
