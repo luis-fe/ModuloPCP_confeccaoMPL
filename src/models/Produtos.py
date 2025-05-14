@@ -243,7 +243,7 @@ class Produtos():
         # 1:  Carregar as variaveis de ambiente e o nome do caminho
         caminho_absoluto = configApp.localArquivoParquet
         # 1.2 - Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/dados/compVar.parquet')
+        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/compVar.parquet')
 
 
         # Converter para DataFrame do Pandas
