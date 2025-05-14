@@ -120,7 +120,7 @@ def post_simulacaoDetalhadaPorSku():
     codPlano = data.get('codPlano')
     empresa = data.get('empresa','1')
     consideraPedBloq = data.get('consideraPedBloq','nao')
-    nomeSimulacao = data.get('nomeSimulacao')
+    nomeSimulacao = data.get('nomeSimulacao','')
     codSku = data.get('codSku')
 
     dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao, codSku).detalhaCalculoPrev()
