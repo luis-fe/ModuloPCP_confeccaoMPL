@@ -220,7 +220,7 @@ class Tendencia_Plano_Materiais():
         caminho_absoluto = configApp.localArquivoParquet
 
         # 1.2 - Carregar o arquivo Parquet
-        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/dados/pedidos.parquet')
+        parquet_file = fp.ParquetFile(f'{caminho_absoluto}/pedidos.parquet')
 
         # Converter para DataFrame do Pandas
         df_loaded = parquet_file.to_pandas()
