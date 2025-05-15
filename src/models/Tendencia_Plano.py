@@ -490,6 +490,7 @@ class Tendencia_Plano():
         else:
             caminhoAbsoluto = configApp.localProjeto
             tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
+            tendencia['codReduzido'] = tendencia['codReduzido'].astype(str)
             tendencia = tendencia[tendencia['codReduzido']==str(self.codSku)].reset_index()
             #tendencia['previcaoVendas'] = tendencia['previcaoVendasOriginal']
             tendencia['NovaPrevicao'] = tendencia["previcaoVendas"]
