@@ -116,6 +116,7 @@ def post_simulacaoProgramacao():
 @token_required
 def post_simulacaoDetalhadaPorSku():
     data = request.get_json()
+    print(data)
 
     codPlano = data.get('codPlano')
     empresa = data.get('empresa','1')
