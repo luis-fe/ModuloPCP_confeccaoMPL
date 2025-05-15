@@ -90,7 +90,7 @@ def post_tendenciaSku():
 @token_required
 def post_simulacaoProgramacao():
     data = request.get_json()
-
+    print(data)
     codPlano = data.get('codPlano')
     empresa = data.get('empresa','1')
     consideraPedBloq = data.get('consideraPedBloq','nao')

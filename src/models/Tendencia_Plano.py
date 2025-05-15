@@ -465,7 +465,7 @@ class Tendencia_Plano():
 
         # 16 SALVANDO A SIMULACAO PROPOSTA
 
-        tendencia = tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
+        tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
 
         return tendencia
 
