@@ -406,7 +406,7 @@ class Tendencia_Plano():
             return valor  # Retorna o valor original caso não seja convertível
 
 
-    def simulacaoPeloNome(self):
+    def simulacaoPeloNome(self, descontaQtdPedido = 'nao'):
 
         # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
@@ -418,7 +418,9 @@ class Tendencia_Plano():
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
         tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
 
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
+        if descontaQtdPedido == 'sim':
+
+            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
@@ -449,8 +451,9 @@ class Tendencia_Plano():
 
 
 
+        if descontaQtdPedido == 'sim':
 
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
+            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
 
 
 
@@ -464,13 +467,16 @@ class Tendencia_Plano():
         tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.__formatar_financeiro)
 
         # 16 SALVANDO A SIMULACAO PROPOSTA
+        if descontaQtdPedido == 'sim':
+            tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_sim.csv')
+        else:
+            tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv')
 
-        tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
 
         return tendencia
 
 
-    def detalhaCalculoPrev(self):
+    def detalhaCalculoPrev(self, descontaQtdPedido ='nao'):
         '''Metodo que detalha o calculo da previsao simulada'''
 
         if self.nomeSimulacao == '':
@@ -489,7 +495,12 @@ class Tendencia_Plano():
 
         else:
             caminhoAbsoluto = configApp.localProjeto
-            tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
+
+            if descontaQtdPedido =='sim':
+                tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_sim.csv')
+            else:
+                tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv')
+
             tendencia['codReduzido'] = tendencia['codReduzido'].astype(str)
             tendencia = tendencia[tendencia['codReduzido']==str(self.codSku)].reset_index()
             #tendencia['previcaoVendas'] = tendencia['previcaoVendasOriginal']
