@@ -418,7 +418,7 @@ class Tendencia_Plano():
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
 
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
-
+        tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
@@ -463,6 +463,10 @@ class Tendencia_Plano():
         # 15 - Tratando o valor financeiro
         tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.__formatar_financeiro)
 
+        # 16 SALVANDO A SIMULACAO PROPOSTA
+
+        tendencia = tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
+
         return tendencia
 
 
@@ -484,38 +488,12 @@ class Tendencia_Plano():
             return tendencia
 
         else:
-            # 1 - transformacao do array abc em DataFrame
-            dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
-            dfSimulaCategoria = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoCategoria_s()
-            dfSimulaMarca = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoMarca_s()
-
-            # 2 - Caregar a tendencia congelada
             caminhoAbsoluto = configApp.localProjeto
-            tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
-            tendencia['codReduzido'] = tendencia['codReduzido'].astype(str)
-
-            tendencia  = tendencia[tendencia['codReduzido']==self.codSku].reset_index()
-            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
-            tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
-            abc = self.tendenciaAbc('sim')
-            abc['codItemPai'] = abc['codItemPai'].astype(str)
-            tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
-
-            tendencia = pd.merge(tendencia, abc, on="codItemPai", how='left')
-            tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
-            tendencia['nomeSimulacao'] = self.nomeSimulacao
-
-            tendencia['percentualABC'].fillna(100, inplace=True)
-
-            tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
-            tendencia['percentualCategoria'].fillna(100, inplace=True)
-
-            tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
-            tendencia['percentualMarca'].fillna(100, inplace=True)
-            tendencia["_%Considerado"] = tendencia[["percentualABC", "percentualCategoria", "percentualMarca"]].min(axis=1)
-            tendencia['NovaPrevicao'] = tendencia['previcaoVendas'] * (tendencia['_%Considerado'] / 100)
-            tendencia['NovaPrevicao'] = tendencia['NovaPrevicao'].round().astype(int)
-
+            tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}.csv')
+            tendencia = tendencia[tendencia['codReduzido']==self.codSku].reset_index()
+            #tendencia['previcaoVendas'] = tendencia['previcaoVendasOriginal']
+            tendencia['NovaPrevicao'] = tendencia["previcaoVendas"]
+            tendencia['_%Considerado'] = tendencia["percentual"]
             tendencia = tendencia.groupby(['codReduzido']).agg({
                 "nomeSimulacao":"first",
                 "previcaoVendasOriginal": "first",
