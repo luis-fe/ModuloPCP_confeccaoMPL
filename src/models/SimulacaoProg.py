@@ -13,7 +13,7 @@ class SimulacaoProg():
         self.marca = marca
         self.codEmpresa = empresa
 
-    def inserirSimulacao(self):
+    def __inserirSimulacao(self):
         '''metodo que faz a insersao de uma nova simulacao'''
 
         verifica = self.consultaSimulacao()
@@ -327,13 +327,13 @@ class SimulacaoProg():
         consultaCategoriaSimulacao = pd.read_sql(consultaCategoriaSimulacao,conn , params=(self.nomeSimulacao,))
         consultaCategoria = pd.read_sql(consultaCategoria, conn)
         consultaCategoria = pd.merge(consultaCategoria,consultaCategoriaSimulacao,on='categoria', how='left' )
-        consultaCategoria['percentual'].fillna(100, inplace=True)
+        consultaCategoria['percentual'].fillna('-', inplace=True)
 
 
         consultaMarcaSimulacao = pd.read_sql(consultaMarcaSimulacao,conn , params=(self.nomeSimulacao,))
         consultaMarcas = pd.read_sql(consultaMarcas, conn)
         consultaMarcas = pd.merge(consultaMarcas,consultaMarcaSimulacao,on='marca', how='left' )
-        consultaMarcas['percentual'].fillna(100, inplace=True)
+        consultaMarcas['percentual'].fillna('-', inplace=True)
 
 
 
@@ -353,7 +353,7 @@ class SimulacaoProg():
     def inserirAtualizarSimulacao(self, arrayAbc , arrayMarca, arrayCategoria):
         '''Metedo utilizado para atualizar ou inserir a simulacao '''
 
-        self.inserirSimulacao()
+        self.__inserirSimulacao()
 
         if arrayAbc != []:
             # 1 - transformacao do array abc em DataFrame
