@@ -322,7 +322,7 @@ class SimulacaoProg():
         consultaAbcSimulacao = pd.read_sql(consultaAbcSimulacao,conn , params=(self.nomeSimulacao,))
 
         consultaSimulacao = pd.merge(consultaParamentrosAbc, consultaAbcSimulacao , on='class', how='left')
-        consultaAbcSimulacao['percentual'].fillna(0, inplace=True)
+        consultaSimulacao['percentual'].fillna(0, inplace=True)
 
         consultaCategoriaSimulacao = pd.read_sql(consultaCategoriaSimulacao,conn , params=(self.nomeSimulacao,))
         consultaCategoria = pd.read_sql(consultaCategoria, conn)
