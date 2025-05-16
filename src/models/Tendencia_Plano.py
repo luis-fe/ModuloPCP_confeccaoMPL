@@ -407,7 +407,7 @@ class Tendencia_Plano():
             return valor  # Retorna o valor original caso não seja convertível
 
 
-    def simulacaoPeloNome(self, descontaQtdPedido = 'sim'):
+    def simulacaoPeloNome(self, descontaQtdPedido = 'nao'):
 
         # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
@@ -420,8 +420,8 @@ class Tendencia_Plano():
         tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
 
         if descontaQtdPedido == 'sim':
-
             tendencia['previcaoVendas'] = tendencia['previcaoVendas'] -tendencia['qtdePedida']
+
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
