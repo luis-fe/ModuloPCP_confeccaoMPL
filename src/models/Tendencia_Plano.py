@@ -12,13 +12,14 @@ from src.models import Pedidos, Produtos, Meta_Plano, SimulacaoProg
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' ):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' , DesejaFiltrarSku_semPrev = 'nao' ):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
         self.consideraPedBloq = consideraPedBloq
         self.nomeSimulacao = nomeSimulacao
         self.codSku = codSku
+        self.DesejaFiltrarSku_semPrev = DesejaFiltrarSku_semPrev
 
 
     def consultaPlanejamentoABC(self):
@@ -406,7 +407,7 @@ class Tendencia_Plano():
             return valor  # Retorna o valor original caso não seja convertível
 
 
-    def simulacaoPeloNome(self, descontaQtdPedido = 'nao'):
+    def simulacaoPeloNome(self, descontaQtdPedido = 'sim'):
 
         # 1 - transformacao do array abc em DataFrame
         dfSimulaAbc = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoAbc_s()
@@ -429,31 +430,29 @@ class Tendencia_Plano():
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
         tendencia['nomeSimulacao'] = self.nomeSimulacao
 
-        tendencia['percentualABC'].fillna(100, inplace=True)
+        tendencia['percentualABC'].fillna(1001, inplace=True)
 
         tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
-        tendencia['percentualCategoria'].fillna(100, inplace=True)
+        tendencia['percentualCategoria'].fillna(1001, inplace=True)
 
 
         tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
-        tendencia['percentualMarca'].fillna(100, inplace=True)
+        tendencia['percentualMarca'].fillna(1001, inplace=True)
 
 
 
 
 
         tendencia["percentual"] = tendencia[["percentualABC", "percentualCategoria", "percentualMarca"]].min(axis=1)
-
+        tendencia["percentual"] = tendencia["percentual"].replace(1001, 0)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
+        if self.DesejaFiltrarSku_semPrev == 'sim':
+            tendencia = tendencia[tendencia['previcaoVendas']>0].reset_index()
 
 
 
-
-        if descontaQtdPedido == 'sim':
-
-            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
 
 
 
@@ -471,6 +470,11 @@ class Tendencia_Plano():
             tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_sim.csv')
         else:
             tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv')
+
+        if descontaQtdPedido == 'sim':
+
+            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
+
 
 
         return tendencia
