@@ -448,9 +448,6 @@ class Tendencia_Plano():
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
-        if self.DesejaFiltrarSku_semPrev == 'sim':
-            tendencia = tendencia[tendencia['percentual']>0].reset_index()
-
 
 
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
@@ -468,6 +465,8 @@ class Tendencia_Plano():
         else:
             tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv')
 
+        if self.DesejaFiltrarSku_semPrev == 'sim':
+            tendencia = tendencia[tendencia['percentual']>0].reset_index()
 
         return tendencia
 
