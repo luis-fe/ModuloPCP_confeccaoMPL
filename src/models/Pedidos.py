@@ -114,16 +114,20 @@ class Pedidos():
         df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.fimFat
 
 
-        # 4.1 Tratando erros na filtragem e filtrando somente os pedidos com situacao diferente de "9"
-        if 'level_0' in df_loaded.columns:
-            df_loaded = df_loaded.drop(columns=['level_0'])
-        if 'level_0' in df_loaded.columns:
-            df_loaded = df_loaded.drop(columns=['level_0'])
+
 
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
+
         df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
+
         df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index(drop=True)
 
         df_loaded = df_loaded[df_loaded['situacaoPedido'] != '9']
