@@ -12,7 +12,7 @@ from src.models import Pedidos, Produtos, Meta_Plano, SimulacaoProg
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' , DesejaFiltrarSku_semPrev = 'nao' ):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' , DesejaFiltrarSku_semPrev = 'sim' ):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
@@ -471,7 +471,7 @@ class Tendencia_Plano():
         else:
             tendencia.to_csv(f'{caminhoAbsoluto}/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv')
 
-        if descontaQtdPedido == 'sim':
+        if self.DesejaFiltrarSku_semPrev == 'sim':
 
             tendencia['previcaoVendas'] = tendencia['previcaoVendas'] + tendencia['qtdePedida']
 
