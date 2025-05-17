@@ -430,21 +430,21 @@ class Tendencia_Plano():
         tendencia = pd.merge(tendencia, dfSimulaAbc, on='class', how='left')
         tendencia['nomeSimulacao'] = self.nomeSimulacao
 
-        tendencia['percentualABC'].fillna(1001, inplace=True)
+        tendencia['percentualABC'].fillna(100, inplace=True)
 
         tendencia = pd.merge(tendencia, dfSimulaCategoria, on='categoria', how='left')
-        tendencia['percentualCategoria'].fillna(1001, inplace=True)
+        tendencia['percentualCategoria'].fillna(100, inplace=True)
 
 
         tendencia = pd.merge(tendencia, dfSimulaMarca, on='marca', how='left')
-        tendencia['percentualMarca'].fillna(1001, inplace=True)
+        tendencia['percentualMarca'].fillna(100, inplace=True)
 
 
 
 
 
         tendencia["percentual"] = tendencia[["percentualABC", "percentualCategoria", "percentualMarca"]].min(axis=1)
-        tendencia["percentual"] = tendencia["percentual"].replace(1001, 0)
+
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 

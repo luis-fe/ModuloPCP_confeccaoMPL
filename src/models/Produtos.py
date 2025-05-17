@@ -251,6 +251,19 @@ class Produtos():
 
         return df_loaded
 
+    def categoriasDisponiveis(self):
+        '''Metodo que consulta as marcas disponiveis '''
+
+        sql = """
+        select * from pcp."Categorias"
+        order by "nomeCategoria" asc
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
+
 
 
 
