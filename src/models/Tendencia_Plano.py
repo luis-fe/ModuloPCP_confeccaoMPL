@@ -198,8 +198,8 @@ class Tendencia_Plano():
             #2.5 Incluindo o saldo anterior
         saldoAnt = vendas.reservaFatAtual()
         consultaVendasSku = pd.merge(consultaVendasSku, saldoAnt,on='codReduzido', how='left')
+        consultaVendasSku['SaldoColAnt'].fillna(0)
         consultaVendasSku['SaldoColAnt'] = consultaVendasSku['SaldoColAnt'].where(consultaVendasSku['SaldoColAnt'] > 0, 0)
-
 
 
             # 2.5 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
@@ -266,7 +266,7 @@ class Tendencia_Plano():
         consultaVendasSku['emProcesso'].fillna(0, inplace=True)
 
                     # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
-        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['qtdePedida']- consultaVendasSku['qtdeFaturada'])
+        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['qtdePedida']- consultaVendasSku['qtdeFaturada'] - consultaVendasSku['SaldoColAnt'] )
 
         consultaVendasSku['disponivelAcomp'] = np.where(
             (consultaVendasSku['statusAFV'] == 'Acompanhamento')&(consultaVendasSku['disponivelAplica'] > 0),
@@ -376,11 +376,11 @@ class Tendencia_Plano():
         # 10 - Calculando o disponivel - baseado na quantidade pedida
 
         consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
-                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada']-consultaVendasSku['SaldoColAnt'])
 
         # 11 - Calculando a Previsao de sobra  - baseado na previsao de vendas
         consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
-                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
+                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada']-consultaVendasSku['SaldoColAnt'])
 
         # 12 - Calculando o falta programar, baseado na previsao de vendas
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
