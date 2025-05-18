@@ -400,9 +400,9 @@ class Pedidos():
         diaAtual = datetime.strptime(self.__obterDiaAtual(), '%Y-%m-%d')
         plano = Plano.Plano(self.codPlano)
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+        IniFat = datetime.strptime(self.iniFat, '%Y-%m-%d')
 
-
-        if diaAtual <= self.iniFat:
+        if diaAtual <= IniFat:
             df_loaded = self.__consultaArquivoFastVendasAnteriores()
 
             disponivel = df_loaded.groupby(["codProduto"]).agg({
