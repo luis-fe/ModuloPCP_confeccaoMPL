@@ -198,6 +198,9 @@ class Tendencia_Plano():
             #2.5 Incluindo o saldo anterior
         saldoAnt = vendas.reservaFatAtual()
         consultaVendasSku = pd.merge(consultaVendasSku, saldoAnt,on='codReduzido', how='left')
+        consultaVendasSku['SaldoColAnt'] = consultaVendasSku['SaldoColAnt'].where(consultaVendasSku['SaldoColAnt'] > 0, 0)
+
+
 
             # 2.5 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
         afv = Produtos.Produtos(self.codEmpresa).statusAFV()
