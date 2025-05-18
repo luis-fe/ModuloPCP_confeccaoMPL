@@ -509,7 +509,7 @@ class Pedidos():
         self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
 
-        self.iniFatAnterior = self.iniFat - pd.Timedelta(days=200)
+        self.iniFatAnterior = pd.to_datetime(self.iniFat)- pd.Timedelta(days=200)
         # 4 Filtrando de acordo com os intervalos encontrados de Vendas e Faturamento
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
