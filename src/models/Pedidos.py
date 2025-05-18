@@ -6,6 +6,9 @@ from src.connection import ConexaoPostgre
 from src.configApp import configApp
 from src.models import Pedidos_CSW, Plano, Produtos, Meta_Plano
 import pyarrow.parquet as pq
+import pytz
+from datetime import datetime
+
 
 import fastparquet as fp
 from dotenv import load_dotenv, dotenv_values
@@ -394,21 +397,27 @@ class Pedidos():
 
     def reservaFatAtual(self):
         '''Metodo que encontra a reserva atual por sku'''
+        diaAtual = datetime.strptime(self.__obterDiaAtual(), '%Y-%m-%d')
+        plano = Plano.Plano(self.codPlano)
+        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
 
-        df_loaded = self.__consultaArquivoFastVendasAnteriores()
 
-        disponivel = df_loaded.groupby(["codProduto"]).agg({
-                                                         "qtdePedida": "sum",
-                                                        "qtdeCancelada": "sum",
-                                                        "qtdeFaturada": 'sum'}).reset_index()
-        disponivel.rename(columns={"codProduto":"codReduzido",
-                                   "qtdePedida": "qtdePedidaSaldo",
-                                   "qtdeCancelada": "qtdeCanceladaSaldo",
-                                   "qtdeFaturada": "qtdeFaturadaSaldo"
-                                   }, inplace=True)
+        if diaAtual <= self.iniFat:
+            df_loaded = self.__consultaArquivoFastVendasAnteriores()
 
-        disponivel['SaldoColAnt'] = disponivel['qtdePedidaSaldo'] - disponivel['qtdeFaturadaSaldo'] - disponivel['qtdeCanceladaSaldo']
+            disponivel = df_loaded.groupby(["codProduto"]).agg({
+                                                             "qtdePedida": "sum",
+                                                            "qtdeCancelada": "sum",
+                                                            "qtdeFaturada": 'sum'}).reset_index()
+            disponivel.rename(columns={"codProduto":"codReduzido",
+                                       "qtdePedida": "qtdePedidaSaldo",
+                                       "qtdeCancelada": "qtdeCanceladaSaldo",
+                                       "qtdeFaturada": "qtdeFaturadaSaldo"
+                                       }, inplace=True)
 
+            disponivel['SaldoColAnt'] = disponivel['qtdePedidaSaldo'] - disponivel['qtdeFaturadaSaldo'] - disponivel['qtdeCanceladaSaldo']
+        else:
+            disponivel = pd.DataFrame([{'status':'vazio'}])
         return disponivel
 
 
@@ -574,5 +583,10 @@ class Pedidos():
 
         return df_loaded
 
+    def __obterDiaAtual(self):
 
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d')
+        return agora
 
