@@ -266,7 +266,7 @@ class Tendencia_Plano():
         consultaVendasSku['emProcesso'].fillna(0, inplace=True)
 
                     # 6.4.3 Obtendo o disponivel dos produtos em acompanhamento:
-        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso']- consultaVendasSku['SaldoColAnt'])-(consultaVendasSku['qtdePedida']- consultaVendasSku['qtdeFaturada']  )
+        consultaVendasSku['disponivelAplica'] = (consultaVendasSku['estoqueAtual']+ consultaVendasSku['emProcesso'])-(consultaVendasSku['SaldoColAnt']+consultaVendasSku['qtdePedida']- consultaVendasSku['qtdeFaturada']  )
 
         consultaVendasSku['disponivelAcomp'] = np.where(
             (consultaVendasSku['statusAFV'] == 'Acompanhamento')&(consultaVendasSku['disponivelAplica'] > 0),
@@ -375,12 +375,12 @@ class Tendencia_Plano():
 
         # 10 - Calculando o disponivel - baseado na quantidade pedida
 
-        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']-consultaVendasSku['SaldoColAnt']) - (
-                consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+        consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['SaldoColAnt']+ consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
 
         # 11 - Calculando a Previsao de sobra  - baseado na previsao de vendas
-        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']-consultaVendasSku['SaldoColAnt']) - (
-                consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
+        consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['SaldoColAnt'] + consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])
 
         # 12 - Calculando o falta programar, baseado na previsao de vendas
         consultaVendasSku['faltaProg (Tendencia)'] = consultaVendasSku['Prev Sobra'].where(consultaVendasSku['Prev Sobra'] < 0, 0)
