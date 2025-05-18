@@ -392,6 +392,27 @@ class Pedidos():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
+    def reservaFatAtual(self):
+        '''Metodo que encontra a reserva atual por sku'''
+
+        df_loaded = self.__consultaArquivoFastVendasAnteriores()
+
+        disponivel = df_loaded.groupby(["codProduto"]).agg({
+                                                         "qtdePedida": "sum",
+                                                        "qtdeCancelada": "sum",
+                                                        "qtdeFaturada": 'sum'}).reset_index()
+        disponivel.rename(columns={"codProduto":"codReduzido",
+                                   "qtdePedida": "qtdePedidaSaldo",
+                                   "qtdeCancelada": "qtdeCanceladaSaldo",
+                                   "qtdeFaturada": "qtdeFaturadaSaldo"
+                                   }, inplace=True)
+
+        disponivel['SaldoColAnt'] = disponivel['qtdePedidaSaldo'] - disponivel['qtdeFaturadaSaldo'] - disponivel['qtdeCanceladaSaldo']
+
+        return disponivel
+
+
+
 
     def vendasPorSku(self):
         '''Metodo que disponibiliza as vendas a nivel de sku do Plano'''
@@ -464,5 +485,94 @@ class Pedidos():
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         return groupBy
+    def __consultaArquivoFastVendasAnteriores(self, detalhaSku = ''):
+        '''Metodo utilizado para ler um arquivo do tipo parquet e converter em um DataFrame, retornando um DataFrame com as vendas
+         nos 300 dias anteriores ao periodo de faturamento do plano atual'''
+
+        caminho_arquivo = f"{configApp.localArquivoParquet}/pedidos.parquet"
+
+        # Carrega apenas os registros com codProduto == self.codReduzido, se aplicável
+        if detalhaSku != '':
+            filtro = [('codProduto', '=', self.codReduzido)]
+        else:
+            filtro = None
+
+        # Apenas as colunas necessárias (exemplo: todas)
+        # Para mais performance, especifique colunas como: columns=['codProduto', 'outraColuna']
+        tabela = pq.read_table(caminho_arquivo, filters=filtro)
+
+        # Converte para Pandas
+        df_loaded = tabela.to_pandas()
+
+        # 3 Obtendo Informacoes do Plano Para filtragem
+        plano = Plano.Plano(self.codPlano)
+        self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
+        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+
+        self.iniFatAnterior = self.iniFat - pd.Timedelta(days=200)
+        # 4 Filtrando de acordo com os intervalos encontrados de Vendas e Faturamento
+        df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
+
+
+
+        df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFatAnterior
+        df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.iniFat
+
+
+
+        df_loaded = df_loaded[df_loaded['filtro3'] == True].reset_index()
+        if 'level_0' in df_loaded.columns:
+            df_loaded = df_loaded.drop(columns=['level_0'])
+
+        df_loaded = df_loaded[df_loaded['filtro4'] == True].reset_index(drop=True)
+
+        df_loaded = df_loaded[df_loaded['situacaoPedido'] != '9']
+
+        # 5 expandindo mais informacoes no data Frame: Produtos.Produtos().consultaItensReduzidos()
+        produtos = Produtos.Produtos().consultaItensReduzidos()
+        produtos.rename(
+            columns={'codigo': 'codProduto'},
+            inplace=True)
+        df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
+        df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
+        df_loaded['codItemPai'].fillna('-', inplace=True)
+
+        # 6 - Tratamento de erro nas colunas do data frame
+        df_loaded['qtdeSugerida'] = pd.to_numeric(df_loaded['qtdeSugerida'], errors='coerce').fillna(0)
+        df_loaded['qtdePedida'] = pd.to_numeric(df_loaded['qtdePedida'], errors='coerce').fillna(0)
+        df_loaded['qtdeFaturada'] = pd.to_numeric(df_loaded['qtdeFaturada'], errors='coerce').fillna(0)
+        df_loaded['qtdeCancelada'] = pd.to_numeric(df_loaded['qtdeCancelada'], errors='coerce').fillna(0)
+        df_loaded['qtdePedida'] = df_loaded['qtdePedida'] - df_loaded['qtdeCancelada']
+        df_loaded['valorVendido'] = df_loaded['qtdePedida'] * df_loaded['PrecoLiquido']
+        # 6.1 Convertendo para float antes de arredondar
+        df_loaded['valorVendido'] = pd.to_numeric(df_loaded['valorVendido'], errors='coerce')
+        # 6.2 Aplicando o arredondamento
+        df_loaded['valorVendido'] = df_loaded['valorVendido'].round(2)
+
+        # 7 - Filtrando os Tipo de Notas desejados
+        tiponotas = self.pesquisarTipoNotasPlano()
+        df_loaded = pd.merge(df_loaded, tiponotas, on='codTipoNota')
+
+        if self.consideraPedidosBloqueados == 'nao':
+            pedidosBloqueados = self.pedidosBloqueados()
+            df_loaded = pd.merge(df_loaded, pedidosBloqueados, on='codPedido', how='left')
+            df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
+            df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
+
+        # 8 - Incluindo a informacao de Marca no data Frame
+        conditions = [
+            df_loaded['codItemPai'].str.startswith("102"),
+            df_loaded['codItemPai'].str.startswith("202"),
+            df_loaded['codItemPai'].str.startswith("104"),
+            df_loaded['codItemPai'].str.startswith("204")
+        ]
+        choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
+        df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
+        df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
+
+
+
+        return df_loaded
+
 
 

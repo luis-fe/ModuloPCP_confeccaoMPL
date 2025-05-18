@@ -195,6 +195,10 @@ class Tendencia_Plano():
             # 2.4 Renomear as colunas necessárias
         consultaVendasSku.rename(columns={"codProduto": "codReduzido", "codPedido": "Ocorrencia em Pedidos"}, inplace=True)
 
+            #2.5 Incluindo o saldo anterior
+        saldoAnt = vendas.reservaFatAtual()
+        consultaVendasSku = pd.merge(consultaVendasSku, saldoAnt,on='codReduzido', how='left')
+
             # 2.5 - Pesquisando e Acrescentando o status AFV "observancao: caso nao encontrado status de acomp ou bloqueio acrescenta como normal
         afv = Produtos.Produtos(self.codEmpresa).statusAFV()
         consultaVendasSku.rename(columns={"codProduto":"codReduzido","codPedido":"Ocorrencia em Pedidos"}, inplace=True)
