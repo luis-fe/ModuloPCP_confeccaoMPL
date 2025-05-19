@@ -458,7 +458,8 @@ class Tendencia_Plano():
 
 
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
-                tendencia['previcaoVendas'] - tendencia['qtdeFaturada'])
+                tendencia['previcaoVendas'] - tendencia['qtdeFaturada']+tendencia['SaldoColAnt'])
+
         tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
             tendencia['Prev Sobra'] < 0, 0)
 
