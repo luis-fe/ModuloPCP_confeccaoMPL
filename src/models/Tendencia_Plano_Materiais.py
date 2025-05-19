@@ -3,6 +3,7 @@ import fastparquet as fp
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
+from datetime import datetime
 
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
@@ -31,9 +32,10 @@ class Tendencia_Plano_Materiais():
 
 
         else:
-
+            agora = datetime.now()
+            agora = agora.strftime("%d/%m/%Y %H:%M:%S")
             inPesquisa = self.__estruturaPrevisao()
-            print('1 - Leitura da pesquisa dos skus a serem buscados ')
+            print(f'1 - Leitura da pesquisa dos skus a serem buscados {agora} ')
             if simula == 'nao':
                 sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).tendenciaVendas('nao')
             else:
@@ -41,6 +43,8 @@ class Tendencia_Plano_Materiais():
 
             consumo = produtos.carregandoComponentes()
             consumo = pd.merge(consumo, inPesquisa, on='codEngenharia')
+            print(f'2 -Carregando os componentes utilizando nas engenharias {agora} ')
+
 
 
             sqlEstoque = produtos.estMateriaPrima()
