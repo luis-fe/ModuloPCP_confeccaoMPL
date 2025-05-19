@@ -382,7 +382,13 @@ class Tendencia_Plano_Materiais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].apply(
             lambda x: str(int(float(x))) if pd.notnull(x) else x
         )
+
+        sqlEstoque.rename(
+            columns={'estoqueAtual': 'estoqueAtualMP'},
+            inplace=True)
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
+
+        Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP'].transform('sum')
 
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
         return Necessidade
