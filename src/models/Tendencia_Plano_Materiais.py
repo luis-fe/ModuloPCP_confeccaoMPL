@@ -68,6 +68,9 @@ class Tendencia_Plano_Materiais():
             sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
                 {"EmRequisicao": "sum"}).reset_index()
 
+            agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            print(f'4 -Sql requisicoes em aberto {agora} ')
+
             sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
             sqlPedidos = produtos.pedidoComprasMP()
             sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
