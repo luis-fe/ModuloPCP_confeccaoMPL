@@ -382,5 +382,5 @@ class Tendencia_Plano_Materiais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
-        Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2')
+        Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
         return Necessidade
