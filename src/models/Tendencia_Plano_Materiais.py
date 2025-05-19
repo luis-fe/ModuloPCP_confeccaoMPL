@@ -62,7 +62,6 @@ class Tendencia_Plano_Materiais():
             # Carregando as requisicoes em aberto
             sqlRequisicaoAberto = produtos.req_Materiais_aberto()
             # Congelando o dataFrame de Requisicoes em aberto
-            caminho_absoluto = configApp.localArquivoParquet
             caminho_absoluto2 = configApp.localProjeto
             sqlRequisicaoAberto.to_csv(f'{caminho_absoluto2}/dados/requisicoesEmAberto.csv')
 
@@ -325,9 +324,9 @@ class Tendencia_Plano_Materiais():
 
 
         if simulacao == 'nao':
-            Necessidade = pd.read_csv(f'{caminho_absoluto}/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
         else:
-            Necessidade = pd.read_csv(f'{caminho_absoluto}/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
