@@ -226,6 +226,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade[
                 '06-Necessidade faltaProg(Tendencia)'].apply(self.__formatar_float)
             Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
+            Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
 
             Necessidade = Necessidade.drop_duplicates()
 
@@ -357,4 +358,45 @@ class Tendencia_Plano_Materiais():
 
         Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
 
+        return Necessidade
+
+
+    def calculoIdealPcs_para_materiaPrima(self):
+        '''Metodo que calcula o numero de peças necessario para atender a materia prima baseado no falta programar'''
+        caminho_absoluto2 = configApp.localProjeto
+
+        Necessidade = pd.read_sql(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+
+        Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
+
+        Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
+
+        produtos = Produtos.Produtos(self.codEmpresa)
+
+        sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
+        sqlPedidos = produtos.pedidoComprasMP()
+        sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
+
+        sqlPedidos['qtAtendida'].fillna(0, inplace=True)
+
+        # Realizando o tratamento do fator de conversao de compras dos componentes
+        sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.__process_fator)
+        sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
+
+        sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
+
+        # Congelando o dataFrame de Pedidos em aberto
+        sqlPedidos.to_csv(f'{caminho_absoluto2}/dados/pedidosEmAberto.csv')
+
+        sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
+            {"SaldoPedCompras": "sum"}).reset_index()
+
+        sqlEstoque = produtos.estMateriaPrima()
+        # Agrupando as requisicoes compromedito pelo CodComponente
+        sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
+            {"estoqueAtual": "sum"}).reset_index()
+
+        Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
+
+        Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2')
         return Necessidade
