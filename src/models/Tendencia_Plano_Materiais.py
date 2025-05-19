@@ -365,7 +365,7 @@ class Tendencia_Plano_Materiais():
         '''Metodo que calcula o numero de peças necessario para atender a materia prima baseado no falta programar'''
         caminho_absoluto2 = configApp.localProjeto
 
-        Necessidade = pd.read_sql(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
 
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
