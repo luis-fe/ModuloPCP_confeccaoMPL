@@ -13,7 +13,7 @@ from src.models import Pedidos, Produtos, Meta_Plano, Lote_Csw, Plano, Tendencia
 class Tendencia_Plano_Materiais():
     """Classe que gerencia o processo de Calculo de Tendencia Analise de Materiais de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '', codLote='', codComponente='', nomeSimulacao = 'nao'):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = 'nao', codLote='', codComponente='', nomeSimulacao = 'nao'):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
@@ -332,7 +332,7 @@ class Tendencia_Plano_Materiais():
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
-        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade'] * -1
+        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * (Necessidade['quantidade'] * -1)
 
 
         Necessidade.rename(
