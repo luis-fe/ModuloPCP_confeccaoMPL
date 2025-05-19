@@ -402,6 +402,8 @@ class Pedidos():
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
         IniFat = datetime.strptime(self.iniFat, '%Y-%m-%d')
 
+        print(f'obtendo a reserva saldo dia atual {diaAtual} x inicio fat {IniFat}')
+
         if diaAtual <= IniFat:
             df_loaded = self.__consultaArquivoFastVendasAnteriores()
 

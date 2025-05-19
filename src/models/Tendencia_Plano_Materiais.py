@@ -98,6 +98,9 @@ class Tendencia_Plano_Materiais():
 
             Necessidade = pd.merge(sqlMetas, consumo, on=["codItemPai", "codSeqTamanho", "codSortimento"], how='left')
 
+            agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            print(f'6 -Merge das metas x consumo {agora} ')
+
             # Salvar o DataFrame na memoria:
 
             # Verificar se é para congelar a simulacao
