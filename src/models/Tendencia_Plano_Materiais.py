@@ -32,8 +32,8 @@ class Tendencia_Plano_Materiais():
 
 
         else:
-            agora = datetime.now()
-            agora = agora.strftime("%d/%m/%Y %H:%M:%S")
+            agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
             inPesquisa = self.__estruturaPrevisao()
             print(f'1 - Leitura da pesquisa dos skus a serem buscados {agora} ')
             if simula == 'nao':
@@ -43,6 +43,8 @@ class Tendencia_Plano_Materiais():
 
             consumo = produtos.carregandoComponentes()
             consumo = pd.merge(consumo, inPesquisa, on='codEngenharia')
+
+            agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             print(f'2 -Carregando os componentes utilizando nas engenharias {agora} ')
 
 
@@ -51,6 +53,9 @@ class Tendencia_Plano_Materiais():
             # Agrupando as requisicoes compromedito pelo CodComponente
             sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
                 {"estoqueAtual": "sum"}).reset_index()
+
+            agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            print(f'3 -Sql do estoque de Materia Prima  {agora} ')
 
             # Carregando as requisicoes em aberto
             sqlRequisicaoAberto = produtos.req_Materiais_aberto()
