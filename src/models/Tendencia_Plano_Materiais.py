@@ -371,25 +371,8 @@ class Tendencia_Plano_Materiais():
 
         Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
 
+
         produtos = Produtos.Produtos(self.codEmpresa)
-
-        sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
-        sqlPedidos = produtos.pedidoComprasMP()
-        sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
-
-        sqlPedidos['qtAtendida'].fillna(0, inplace=True)
-
-        # Realizando o tratamento do fator de conversao de compras dos componentes
-        sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.__process_fator)
-        sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
-
-        sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
-
-        # Congelando o dataFrame de Pedidos em aberto
-        sqlPedidos.to_csv(f'{caminho_absoluto2}/dados/pedidosEmAberto.csv')
-
-        sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
-            {"SaldoPedCompras": "sum"}).reset_index()
 
         sqlEstoque = produtos.estMateriaPrima()
         # Agrupando as requisicoes compromedito pelo CodComponente
@@ -397,6 +380,7 @@ class Tendencia_Plano_Materiais():
             {"estoqueAtual": "sum"}).reset_index()
 
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
+        Necessidade['estoqueAtual'].fillna(0, inplace=True)
 
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2')
         return Necessidade
