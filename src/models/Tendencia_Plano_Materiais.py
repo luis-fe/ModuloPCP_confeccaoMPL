@@ -322,9 +322,9 @@ class Tendencia_Plano_Materiais():
 
 
         if simulacao == 'nao':
-            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/NecessidadePrevisao{self.codPlano}.csv')
         else:
-            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
         Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
