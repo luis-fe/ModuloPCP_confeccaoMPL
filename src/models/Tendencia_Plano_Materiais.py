@@ -33,6 +33,7 @@ class Tendencia_Plano_Materiais():
         else:
 
             inPesquisa = self.__estruturaPrevisao()
+            print('1 - Leitura da pesquisa dos skus a serem buscados ')
             if simula == 'nao':
                 sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).tendenciaVendas('nao')
             else:
