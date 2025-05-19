@@ -321,7 +321,7 @@ class Tendencia_Plano_Materiais():
         '''metodo que detalha a necessidade de um componente '''
 
         # 1:  Carregar as variaveis de ambiente e o nome do caminho
-        caminho_absoluto = configApp.localArquivoParquet
+        caminho_absoluto = configApp.localProjeto
 
 
         if simulacao == 'nao':
