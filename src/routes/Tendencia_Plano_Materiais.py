@@ -43,9 +43,8 @@ def post_AnaliseMateriaisPelaTendencia():
 @Tendencia_Plano_Materiais_routes.route('/pcp/api/naturezaEstoqueComponentes', methods=['GET'])
 @token_required
 def ger_naturezaEstoqueComponentes():
-    data = request.get_json()
 
-    codEmpresa = data.get('codEmpresa','1')
+    codEmpresa = request.args.get('codEmpresa','1')
 
     dados = Produtos.Produtos(codEmpresa).estMateriaPrima_nomes()
     #controle.salvarStatus(rotina, ip, datainicio)
