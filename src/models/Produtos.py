@@ -197,6 +197,14 @@ class Produtos():
 
         return consulta
 
+    def estMateriaPrima_nomes(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.sqlEstoqueMP_nomes()
+
+        return consulta
+
 
     def req_Materiais_aberto(self):
         '''Metodo que obtem os tamanhos cadastrados'''

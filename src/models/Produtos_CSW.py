@@ -143,6 +143,32 @@ class Produtos_CSW():
 
         return consulta
 
+    def sqlEstoqueMP_nomes(self):
+        '''Método que busca o estoque de aviamentos detalhado na nat 1, 3 , 2 ,10 juntamente com o Nome'''
+
+        sql = """
+                       SELECT
+           	            d.codItem as CodComponente ,
+           	            (select n.codnatureza||'-'||n.descricao from est.Natureza n WHERE n.codempresa = 1 and d.codNatureza = n.codnatureza)as natureza,
+           	            i.nome,
+           	            d.estoqueAtual
+                       FROM
+           	            est.DadosEstoque d
+           	        join cgi.Item i on i.codigo = d.codItem 
+                       WHERE
+           	            d.codEmpresa = 1
+           	            and d.codNatureza in (1, 3, 2,10)
+           	            and d.estoqueAtual > 0
+           """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consumo = pd.DataFrame(rows, columns=colunas)
+
+        return consumo
 
     def estMateriaPrima(self):
         '''Método que busca no CSW o estodque dos componentes de Materia Prima '''

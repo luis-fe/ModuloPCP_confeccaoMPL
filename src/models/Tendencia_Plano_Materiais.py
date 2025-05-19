@@ -13,12 +13,14 @@ from src.models import Pedidos, Produtos, Meta_Plano, Lote_Csw, Plano, Tendencia
 class Tendencia_Plano_Materiais():
     """Classe que gerencia o processo de Calculo de Tendencia Analise de Materiais de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '', codLote=''):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '', codLote='', codComponente='', nomeSimulacao = 'nao'):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
         self.consideraPedBloq = consideraPedBloq
         self.codLote = codLote
+        self.nomeSimulacao = nomeSimulacao
+        self.codComponente = codComponente
 
 
 
@@ -310,3 +312,47 @@ class Tendencia_Plano_Materiais():
             return f'{valor:,.0f}'.replace(",", "X").replace("X", ".")
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
+
+
+    def detalhaNecessidade(self, simulacao):
+        '''metodo que detalha a necessidade de um componente '''
+
+        # 1:  Carregar as variaveis de ambiente e o nome do caminho
+        caminho_absoluto = configApp.localArquivoParquet
+
+
+        if simulacao == 'nao':
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        else:
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
+
+        Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
+        Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
+        Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
+        Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade'] * -1
+
+
+        Necessidade.rename(
+            columns={'codEngenharia': '01-codEngenharia',
+                     'codReduzido': '02-codReduzido',
+                     'nome': '03-nome',
+                     'tam': '04-tam',
+                     'codCor': '05-codCor',
+                     'qtdePedida': '06-qtdePedida',
+                     'Ocorrencia em Pedidos':'07-Ocorrencia em Pedidos',
+                     'statusAFV': '08-statusAFV',
+                     'previcaoVendas': '09-previcaoVendas',
+                     'faltaProg (Tendencia)': '10-faltaProg (Tendencia)',
+                     'CodComponente': '11-CodComponente',
+                     'unid': '12-unid',
+                     'quantidade':'13-consumoUnit',
+                     'Necessidade faltaProg (Tendencia)':'14-Necessidade faltaProg (Tendencia)'
+                     },
+            inplace=True)
+        Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index','descricaoComponente'
+            ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual','codItemPai','codPlano','codSeqTamanho','codSortimento',
+                                                'valorVendido','qtdeFaturada'])
+
+        Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
+
+        return Necessidade
