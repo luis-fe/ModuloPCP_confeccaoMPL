@@ -368,6 +368,7 @@ class Tendencia_Plano_Materiais():
         if simulacao == 'nao':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
         else:
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
 
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
