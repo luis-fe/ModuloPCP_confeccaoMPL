@@ -389,6 +389,10 @@ class Tendencia_Plano_Materiais():
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
         Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP'].transform('sum')
+        Necessidade['Diferenca'] = Necessidade['estoqueAtualMP'] - (-1*Necessidade['faltaProg (Tendencia)MP_total'])
+        Necessidade['distrEstoqueMP'] = Necessidade['faltaProg (Tendencia)MP']/Necessidade['faltaProg (Tendencia)MP_total']
+
+
 
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
         return Necessidade
