@@ -41,7 +41,7 @@ class Tendencia_Plano_Materiais():
             if simula == 'nao':
                 sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).tendenciaVendas('nao')
             else:
-                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).simulacaoProgramacao(arraySimulaAbc)
+                sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano, self.consideraPedBloq).simulacaoPeloNome()
 
             consumo = produtos.carregandoComponentes()
             consumo = pd.merge(consumo, inPesquisa, on='codEngenharia')
@@ -361,11 +361,13 @@ class Tendencia_Plano_Materiais():
         return Necessidade
 
 
-    def calculoIdealPcs_para_materiaPrima(self):
+    def calculoIdealPcs_para_materiaPrima(self, simulacao = 'nao'):
         '''Metodo que calcula o numero de peças necessario para atender a materia prima baseado no falta programar'''
         caminho_absoluto2 = configApp.localProjeto
 
-        Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        if simulacao == 'nao':
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+        else:
 
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
