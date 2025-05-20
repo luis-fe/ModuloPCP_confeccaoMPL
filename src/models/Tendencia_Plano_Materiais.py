@@ -416,6 +416,12 @@ class Tendencia_Plano_Materiais():
         Necessidade = Necessidade.groupby(["codReduzido"]).agg(
                 {
                     "marca":"first",
+                    "codEngenharia":"first",
+                    "nome":"first",
+                    "categoria":"first",
+                    "codCor":"first",
+                    "tam":"first",
+                    "faltaProg (Tendencia)":"first",
                     "Sugestao_PCs": "min"}).reset_index()
 
         return Necessidade
