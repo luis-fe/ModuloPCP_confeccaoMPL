@@ -388,7 +388,12 @@ class Tendencia_Plano_Materiais():
             inplace=True)
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
-        Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP'].transform('sum')
+        Necessidade['faltaProg (Tendencia)MP_total'] = (
+            Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP']
+            .transform('sum')
+            .round(3)  # duas casas decimais
+        )
+
         Necessidade['Diferenca'] = Necessidade['estoqueAtualMP'] - (-1*Necessidade['faltaProg (Tendencia)MP_total'])
         Necessidade['distrEstoqueMP'] = Necessidade['faltaProg (Tendencia)MP']/Necessidade['faltaProg (Tendencia)MP_total']
 
