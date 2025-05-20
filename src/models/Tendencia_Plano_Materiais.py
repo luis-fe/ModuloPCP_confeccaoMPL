@@ -405,10 +405,17 @@ class Tendencia_Plano_Materiais():
         Necessidade['Sugestao_PCs'] = np.where(
             Necessidade['Diferenca']<0,
             (Necessidade['EstoqueDistMP'] / Necessidade['quantidade']).round(0),
-            Necessidade['faltaProg (Tendencia)']
+            (Necessidade['faltaProg (Tendencia)'] * -1)
         )
 
 
 
+
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
+
+        Necessidade = Necessidade.groupby(["codReduzido"]).agg(
+                {
+                    "marca":"first",
+                    "Sugestao_PCs": "min"}).reset_index()
+
         return Necessidade
