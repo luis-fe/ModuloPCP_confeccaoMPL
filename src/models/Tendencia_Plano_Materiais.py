@@ -395,9 +395,10 @@ class Tendencia_Plano_Materiais():
         )
 
         Necessidade['Diferenca'] = Necessidade['estoqueAtualMP'] - (-1*Necessidade['faltaProg (Tendencia)MP_total'])
-        Necessidade['distrEstoqueMP'] = Necessidade['faltaProg (Tendencia)MP']/Necessidade['faltaProg (Tendencia)MP_total']
-
-
-
+        Necessidade['distrEstoqueMP'] = (
+                Necessidade['faltaProg (Tendencia)MP'] / Necessidade['faltaProg (Tendencia)MP_total']
+        ).round(4)
+        Necessidade['EstoqueDistMP'] =  (Necessidade['distrEstoqueMP'] *  Necessidade['estoqueAtualMP']).round(3)
+        Necessidade['Sugestao_PCs'] =  (Necessidade['EstoqueDistMP'] /Necessidade['quantidade']).round(0)
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
         return Necessidade
