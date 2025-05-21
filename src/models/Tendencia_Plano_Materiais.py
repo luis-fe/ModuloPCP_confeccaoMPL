@@ -445,7 +445,7 @@ class Tendencia_Plano_Materiais():
 
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
 
-        if arrayFiltroCategoria == '':
+        if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
             Necessidade = Necessidade
         else:
             # Transformar o arryau em dataFrame e fazer o merge
