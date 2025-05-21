@@ -390,7 +390,7 @@ class Tendencia_Plano_Materiais():
             columns={'estoqueAtual': 'estoqueAtualMP'},
             inplace=True)
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
-
+        Necessidade['estoqueAtualMP'].fillna(0,inplace=True)
         Necessidade['faltaProg (Tendencia)MP_total'] = (
             Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP']
             .transform('sum')
