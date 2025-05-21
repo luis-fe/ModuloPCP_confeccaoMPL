@@ -123,12 +123,12 @@ class Tendencia_Plano_Materiais():
                 lambda row: self.__categoria('TECIDO', row['descricaoComponente'], 'TECIDO PLANO', row['categoriaMP']),
                 axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ETIQUETA', row['nomecompontente'], 'ETIQUETAS', row['categoriaMP']), axis=1)
+                lambda row: self.__categoria('ETIQUETA', row['descricaoComponente'], 'ETIQUETAS', row['categoriaMP']), axis=1)
 
             Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('CADAR', row['nomecompontente'], 'CADARCO', row['categoriaMP']), axis=1)
+                lambda row: self.__categoria('CADAR', row['descricaoComponente'], 'CADARCO', row['categoriaMP']), axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ELAST', row['nomecompontente'], 'ELASTICOS', row['categoriaMP']), axis=1)
+                lambda row: self.__categoria('ELAST', row['descricaoComponente'], 'ELASTICOS', row['categoriaMP']), axis=1)
 
             # Salvar o DataFrame na memoria:
 
@@ -468,3 +468,9 @@ class Tendencia_Plano_Materiais():
             return valorNovo
         else:
             return categoria
+
+
+    def obter_categoriasMP(self):
+        '''Metodo utilizado para filtro de categoria de MP'''
+
+        consulta = pd.DataFrame([{'Categoria': ['']}])
