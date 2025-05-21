@@ -449,7 +449,8 @@ class Tendencia_Plano_Materiais():
             Necessidade = Necessidade
         else:
             # Transformar o arryau em dataFrame e fazer o merge
-            Necessidade = Necessidade
+            arrayFiltroCategoria =  pd.DataFrame(arrayFiltroCategoria, columns=['categoriaMP'])
+            Necessidade = pd.merge(Necessidade,arrayFiltroCategoria,on='categoriaMP')
         print(arrayFiltroCategoria)
 
 
