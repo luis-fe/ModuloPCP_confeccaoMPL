@@ -91,7 +91,7 @@ class Tendencia_Plano_Materiais():
                 {"SaldoPedCompras": "sum"}).reset_index()
 
             sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
-            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].str.replace('.0', '')
+            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(float).astype(int).astype(str)
 
             sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
 
