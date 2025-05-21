@@ -48,7 +48,7 @@ def post_CalculoPcs_baseaado_MP():
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codEmpresa = data.get('codEmpresa','1')
     arrayCategoriaMP = data.get('arrayCategoriaMP','')
-
+    print(data)
 
     dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).calculoIdealPcs_para_materiaPrima('naa',arrayCategoriaMP)
     #controle.salvarStatus(rotina, ip, datainicio)
