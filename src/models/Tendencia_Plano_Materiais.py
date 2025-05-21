@@ -100,6 +100,29 @@ class Tendencia_Plano_Materiais():
             agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             print(f'6 -Merge das metas x consumo {agora} ')
 
+            Necessidade['categoria'] = '-'
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('ZIPER', row['descricaoComponente'], 'ZIPER', row['categoria']), axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoria']),
+                axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('RIBANA', row['descricaoComponente'], 'RIBANA', row['categoria']), axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoria']),
+                axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('GOLA', row['descricaoComponente'], 'GOLAS', row['categoria']), axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('KIT GOLA', row['descricaoComponente'], 'KIT GOLA/PUNHO',
+                                             row['categoria']),
+                axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('MALHA', row['descricaoComponente'], 'MALHA', row['categoria']), axis=1)
+            Necessidade['categoria'] = Necessidade.apply(
+                lambda row: self.__categoria('TECIDO', row['descricaoComponente'], 'TECIDO PLANO', row['categoria']),
+                axis=1)
+
             # Salvar o DataFrame na memoria:
 
             # Verificar se é para congelar a simulacao
@@ -123,27 +146,7 @@ class Tendencia_Plano_Materiais():
             Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
             Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
-            Necessidade['categoria'] = '-'
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('ZIPER', row['descricaoComponente'], 'ZIPER', row['categoria']), axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoria']),
-                axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('RIBANA', row['descricaoComponente'], 'RIBANA', row['categoria']), axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoria']),
-                axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('GOLA', row['descricaoComponente'], 'GOLAS', row['categoria']), axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('KIT GOLA', row['descricaoComponente'], 'KIT GOLA/PUNHO', row['categoria']),
-                axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('MALHA', row['descricaoComponente'], 'MALHA', row['categoria']), axis=1)
-            Necessidade['categoria'] = Necessidade.apply(
-                lambda row: self.__categoria('TECIDO', row['descricaoComponente'], 'TECIDO PLANO', row['categoria']),
-                axis=1)
+
 
             Necessidade['SaldoPedCompras'].fillna(0, inplace=True)
             Necessidade['EmRequisicao'].fillna(0, inplace=True)
