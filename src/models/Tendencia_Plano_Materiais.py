@@ -393,7 +393,7 @@ class Tendencia_Plano_Materiais():
         return Necessidade
 
 
-    def calculoIdealPcs_para_materiaPrima(self, simulacao = 'nao'):
+    def calculoIdealPcs_para_materiaPrima(self, simulacao = 'nao', arrayFiltroCategoria = ''):
         '''Metodo que calcula o numero de peças necessario para atender a materia prima baseado no falta programar'''
         caminho_absoluto2 = configApp.localProjeto
 
@@ -443,10 +443,15 @@ class Tendencia_Plano_Materiais():
             (Necessidade['faltaProg (Tendencia)'] * -1)
         )
 
-
-
-
         Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
+
+        if arrayFiltroCategoria == '':
+            Necessidade = Necessidade
+        else:
+            # Transformar o arryau em dataFrame e fazer o merge
+            Necessidade = Necessidade
+        print(arrayFiltroCategoria)
+
 
         Necessidade = Necessidade.groupby(["codReduzido"]).agg(
                 {
