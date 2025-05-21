@@ -136,3 +136,30 @@ def get_categroriaMP():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+@Tendencia_Plano_Materiais_routes.route('/pcp/api/detalharSku_x_AnaliseEmpenho', methods=['POST'])
+@token_required
+def post_detalharSku_x_AnaliseEmpenhoe():
+    data = request.get_json()
+
+    codPlano = data.get('codPlano')
+    consideraPedBloq = data.get('consideraPedBloq','nao')
+    codReduzido = data.get('codReduzido')
+    nomeSimulacao = data.get("nomeSimulacao",'nao')
+
+
+    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais('1',codPlano, consideraPedBloq,'','',nomeSimulacao,
+                                                                str(codReduzido)).detalharSku_x_AnaliseEmpenho(nomeSimulacao)
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)

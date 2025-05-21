@@ -13,7 +13,7 @@ from src.models import Pedidos, Produtos, Meta_Plano, Lote_Csw, Plano, Tendencia
 class Tendencia_Plano_Materiais():
     """Classe que gerencia o processo de Calculo de Tendencia Analise de Materiais de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = 'nao', codLote='', codComponente='', nomeSimulacao = 'nao'):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = 'nao', codLote='', codComponente='', nomeSimulacao = 'nao', codReduzido =''):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
@@ -21,7 +21,7 @@ class Tendencia_Plano_Materiais():
         self.codLote = codLote
         self.nomeSimulacao = nomeSimulacao
         self.codComponente = codComponente
-
+        self.codReduzido = str(codReduzido)
 
 
     def estruturaItens(self, pesquisaPor = 'lote', arraySimulaAbc = 'nao', simula = 'nao'):
@@ -443,7 +443,11 @@ class Tendencia_Plano_Materiais():
             (Necessidade['faltaProg (Tendencia)'] * -1)
         )
 
-        Necessidade.to_csv(f'{caminho_absoluto2}/dados/MeuTeste2.csv')
+        if simulacao == 'nao':
+            Necessidade.to_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
+        else:
+            Necessidade.to_csv(
+                f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
 
         if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
             Necessidade = Necessidade
@@ -497,3 +501,29 @@ class Tendencia_Plano_Materiais():
         df = pd.DataFrame(dados)
 
         return df
+
+
+    def detalharSku_x_AnaliseEmpenho(self, simulacao = 'nao'):
+        '''Metodo que detalha a analise de emprenho filtrado x Sku selecionando  '''
+
+        caminho_absoluto2 = configApp.localProjeto
+
+        if simulacao == 'nao':
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
+        else:
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
+
+        Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
+        Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
+
+        Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
+                {
+                    "estoqueAtualMP":"first",
+                    "faltaProg (Tendencia)MP_total": "first",
+                    "descricaoComponente":"first",
+                    "EstoqueDistMP": "first",
+                    "faltaProg (Tendencia)":"first",
+                    "Sugestao_PCs": "first"}).reset_index()
+
+        return Necessidade
+
