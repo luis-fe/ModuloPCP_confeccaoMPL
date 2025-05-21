@@ -473,4 +473,21 @@ class Tendencia_Plano_Materiais():
     def obter_categoriasMP(self):
         '''Metodo utilizado para filtro de categoria de MP'''
 
-        consulta = pd.DataFrame([{'Categoria': ['']}])
+        dados = {
+            "categoriaMP": [
+                "-",
+                "CADARCO",
+                "ELASTICOS",
+                "ENTRETELA",
+                "ETIQUETAS",
+                "GOLAS",
+                "MALHA",
+                "RIBANA",
+                "TECIDO PLANO",
+                "ZIPER"
+            ]
+        }
+
+        df = pd.DataFrame(dados)
+
+        return df
