@@ -126,9 +126,15 @@ class Tendencia_Plano_Materiais():
                 lambda row: self.__categoria('ETIQUETA', row['descricaoComponente'], 'ETIQUETAS', row['categoriaMP']), axis=1)
 
             Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('CADAR', row['descricaoComponente'], 'CADARCO', row['categoriaMP']), axis=1)
+                lambda row: self.__categoria('CADAR', row['descricaoComponente'], 'CADARCO/CORDAO', row['categoriaMP']), axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
                 lambda row: self.__categoria('ELAST', row['descricaoComponente'], 'ELASTICOS', row['categoriaMP']), axis=1)
+            Necessidade['categoriaMP'] = Necessidade.apply(
+                lambda row: self.__categoria('SAQUI', row['descricaoComponente'], 'EMBALAGEM', row['categoriaMP']),
+                axis=1)
+            Necessidade['categoriaMP'] = Necessidade.apply(
+                lambda row: self.__categoria('CORDAO', row['descricaoComponente'], 'CADARCO/CORDAO', row['categoriaMP']),
+                axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
                 lambda row: self.__categoria('MOLET', row['descricaoComponente'], 'MOLETOM', row['categoriaMP']),axis=1)
 
