@@ -466,7 +466,7 @@ class Tendencia_Plano_Materiais():
         )
 
         Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade['faltaProg (Tendencia)MP_total']   * -1
-
+        Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)']   * -1
 
 
         if self.nomeSimulacao == 'nao':
