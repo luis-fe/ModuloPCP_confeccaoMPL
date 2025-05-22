@@ -130,8 +130,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['categoriaMP'] = Necessidade.apply(
                 lambda row: self.__categoria('ELAST', row['descricaoComponente'], 'ELASTICOS', row['categoriaMP']), axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('MOLET', row['descricaoComponente'], 'MOLETOM', row['categoriaMP']),
-                axis=1)
+                lambda row: self.__categoria('MOLET', row['descricaoComponente'], 'MOLETOM', row['categoriaMP']),axis=1)
 
             # Salvar o DataFrame na memoria:
 
