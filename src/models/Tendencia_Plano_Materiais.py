@@ -525,7 +525,7 @@ class Tendencia_Plano_Materiais():
         dados = {
             "categoriaMP": [
                 "-",
-                "CADARCO",
+                "CADARCO/CORDAO",
                 "ELASTICOS",
                 "ENTRETELA",
                 "ETIQUETAS",
