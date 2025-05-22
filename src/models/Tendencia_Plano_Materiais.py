@@ -546,7 +546,7 @@ class Tendencia_Plano_Materiais():
 
 
         if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
-            Necessidade = Necessidade
+            Necessidade['obs'] = 'Restringe'
         else:
             # Transformar o arryau em dataFrame e fazer o merge
             arrayFiltroCategoria =  pd.DataFrame(arrayFiltroCategoria, columns=['categoriaMP'])
