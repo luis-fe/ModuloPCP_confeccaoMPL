@@ -465,11 +465,7 @@ class Tendencia_Plano_Materiais():
 
         Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade['faltaProg (Tendencia)MP_total']   * -1
 
-        Necessidade['Sugestao_PCs'] = np.where(
-            Necessidade['Sugestao_PCs']>0,
-            Necessidade['Sugestao_PCs'],
-            0
-        )
+
 
         if self.nomeSimulacao == 'nao':
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
@@ -496,6 +492,12 @@ class Tendencia_Plano_Materiais():
                     "tam":"first",
                     "faltaProg (Tendencia)":"first",
                     "Sugestao_PCs": "min"}).reset_index()
+
+        Necessidade['Sugestao_PCs'] = np.where(
+            Necessidade['Sugestao_PCs']>0,
+            Necessidade['Sugestao_PCs'],
+            0
+        )
 
         return Necessidade
 
@@ -562,6 +564,12 @@ class Tendencia_Plano_Materiais():
                     "EstoqueDistMP": "first",
                     "faltaProg (Tendencia)":"first",
                     "Sugestao_PCs": "first"}).reset_index()
+
+        Necessidade['Sugestao_PCs'] = np.where(
+            Necessidade['Sugestao_PCs']>0,
+            Necessidade['Sugestao_PCs'],
+            0
+        )
 
         return Necessidade
 
