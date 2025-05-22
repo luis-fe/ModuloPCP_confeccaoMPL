@@ -440,7 +440,7 @@ class Tendencia_Plano_Materiais():
 
 
         Necessidade['EstoqueAtualMPLiquido'] = Necessidade['estoqueAtualMP'] - Necessidade['EmRequisicao']
-        Necessidade['EstoqueAtualMPLiquido'] = Necessidade['EstoqueAtualMPLiquido)'].round(2)
+        Necessidade['EstoqueAtualMPLiquido'] = Necessidade['EstoqueAtualMPLiquido'].round(2)
 
 
         Necessidade['faltaProg (Tendencia)MP_total'] = (
