@@ -429,7 +429,6 @@ class Tendencia_Plano_Materiais():
         sqlRequisicaoAberto = produtos.req_Materiais_aberto()
         # Congelando o dataFrame de Requisicoes em aberto
         caminho_absoluto2 = configApp.localProjeto
-        sqlRequisicaoAberto.to_csv(f'{caminho_absoluto2}/dados/requisicoesEmAberto.csv')
 
         # Agrupando as requisicoes compromedito pelo CodComponente
         sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
@@ -437,8 +436,12 @@ class Tendencia_Plano_Materiais():
 
         Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
         Necessidade['EmRequisicao'].fillna(0,inplace=True)
+        Necessidade['1EmRequisicao'] = Necessidade['EmRequisicao)'].round(2)
+
 
         Necessidade['EstoqueAtualMPLiquido'] = Necessidade['estoqueAtualMP'] - Necessidade['EmRequisicao']
+        Necessidade['EstoqueAtualMPLiquido'] = Necessidade['EstoqueAtualMPLiquido)'].round(2)
+
 
         Necessidade['faltaProg (Tendencia)MP_total'] = (
             Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP']
