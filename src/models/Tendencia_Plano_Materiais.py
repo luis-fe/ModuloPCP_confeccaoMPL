@@ -436,7 +436,7 @@ class Tendencia_Plano_Materiais():
 
         Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
         Necessidade['EmRequisicao'].fillna(0,inplace=True)
-        Necessidade['1EmRequisicao'] = Necessidade['EmRequisicao)'].round(2)
+        Necessidade['EmRequisicao'] = Necessidade['EmRequisicao)'].round(2)
 
 
         Necessidade['EstoqueAtualMPLiquido'] = Necessidade['estoqueAtualMP'] - Necessidade['EmRequisicao']
