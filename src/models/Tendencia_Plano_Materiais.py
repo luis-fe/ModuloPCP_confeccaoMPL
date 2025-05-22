@@ -552,7 +552,7 @@ class Tendencia_Plano_Materiais():
             arrayFiltroCategoria =  pd.DataFrame(arrayFiltroCategoria, columns=['categoriaMP'])
             arrayFiltroCategoria['obs'] = 'Restringe'
             Necessidade = pd.merge(Necessidade,arrayFiltroCategoria,on='categoriaMP', how='left')
-            arrayFiltroCategoria['obs'].fillna('nao restringe',inplace=True)
+            Necessidade['obs'].fillna('nao restringe',inplace=True)
 
         Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
         Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
