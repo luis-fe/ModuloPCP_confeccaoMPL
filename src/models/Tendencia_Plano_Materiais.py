@@ -466,7 +466,7 @@ class Tendencia_Plano_Materiais():
         Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade['faltaProg (Tendencia)MP_total']   * -1
 
         Necessidade['Sugestao_PCs'] = np.where(
-            Necessidade['Sugestao_PCs']>0,
+            Necessidade['Sugestao_PCs']<0,
             Necessidade['Sugestao_PCs'],
             0
         )
