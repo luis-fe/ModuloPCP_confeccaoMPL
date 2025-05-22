@@ -44,6 +44,7 @@ def post_AnaliseMateriaisPelaTendencia():
 def post_CalculoPcs_baseaado_MP():
     data = request.get_json()
 
+
     codPlano = data.get('codPlano')
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codEmpresa = data.get('codEmpresa','1')
@@ -142,14 +143,17 @@ def get_categroriaMP():
 def post_detalharSku_x_AnaliseEmpenhoe():
     data = request.get_json()
 
+    codEmpresa = data.get('codEmpresa','1')
     codPlano = data.get('codPlano')
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codReduzido = data.get('codReduzido')
     nomeSimulacao = data.get("nomeSimulacao",'nao')
+    arrayCategoriaMP = data.get('arrayCategoriaMP','')
 
 
-    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais('1',codPlano, consideraPedBloq,'','',nomeSimulacao,
-                                                                str(codReduzido)).detalharSku_x_AnaliseEmpenho(nomeSimulacao)
+
+    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa,codPlano, consideraPedBloq,'','',nomeSimulacao,
+                                                                str(codReduzido)).detalharSku_x_AnaliseEmpenho(nomeSimulacao, arrayCategoriaMP)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

@@ -409,6 +409,7 @@ class Tendencia_Plano_Materiais():
 
         produtos = Produtos.Produtos(self.codEmpresa)
 
+        # carregando os dados do Estoque de Matéria Prima
         sqlEstoque = produtos.estMateriaPrima()
         # Agrupando as requisicoes compromedito pelo CodComponente
         sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
@@ -423,17 +424,33 @@ class Tendencia_Plano_Materiais():
             inplace=True)
         Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
         Necessidade['estoqueAtualMP'].fillna(0,inplace=True)
+
+        # Carregando as requisicoes em aberto
+        sqlRequisicaoAberto = produtos.req_Materiais_aberto()
+        # Congelando o dataFrame de Requisicoes em aberto
+        caminho_absoluto2 = configApp.localProjeto
+        sqlRequisicaoAberto.to_csv(f'{caminho_absoluto2}/dados/requisicoesEmAberto.csv')
+
+        # Agrupando as requisicoes compromedito pelo CodComponente
+        sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
+            {"EmRequisicao": "sum"}).reset_index()
+
+        Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
+        Necessidade['EmRequisicao'].fillna(0,inplace=True)
+
+        Necessidade['EstoqueAtualMPLiquido'] = Necessidade['estoqueAtualMP'] - Necessidade['EmRequisicao']
+
         Necessidade['faltaProg (Tendencia)MP_total'] = (
             Necessidade.groupby('CodComponente')['faltaProg (Tendencia)MP']
             .transform('sum')
             .round(3)  # duas casas decimais
         )
 
-        Necessidade['Diferenca'] = Necessidade['estoqueAtualMP'] - (-1*Necessidade['faltaProg (Tendencia)MP_total'])
+        Necessidade['Diferenca'] = Necessidade['EstoqueAtualMPLiquido'] - (-1*Necessidade['faltaProg (Tendencia)MP_total'])
         Necessidade['distrEstoqueMP'] = (
                 Necessidade['faltaProg (Tendencia)MP'] / Necessidade['faltaProg (Tendencia)MP_total']
         ).round(4)
-        Necessidade['EstoqueDistMP'] =  (Necessidade['distrEstoqueMP'] *  Necessidade['estoqueAtualMP']).round(3)
+        Necessidade['EstoqueDistMP'] =  (Necessidade['distrEstoqueMP'] *  Necessidade['EstoqueAtualMPLiquido']).round(3)
 
         Necessidade['Sugestao_PCs'] =  (Necessidade['EstoqueDistMP'] /Necessidade['quantidade']).round(0)
 
@@ -503,7 +520,7 @@ class Tendencia_Plano_Materiais():
         return df
 
 
-    def detalharSku_x_AnaliseEmpenho(self, simulacao = 'nao'):
+    def detalharSku_x_AnaliseEmpenho(self, simulacao = 'nao',arrayFiltroCategoria = ''):
         '''Metodo que detalha a analise de emprenho filtrado x Sku selecionando  '''
 
         caminho_absoluto2 = configApp.localProjeto
@@ -513,12 +530,22 @@ class Tendencia_Plano_Materiais():
         else:
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
 
+
+        if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
+            Necessidade = Necessidade
+        else:
+            # Transformar o arryau em dataFrame e fazer o merge
+            arrayFiltroCategoria =  pd.DataFrame(arrayFiltroCategoria, columns=['categoriaMP'])
+            Necessidade = pd.merge(Necessidade,arrayFiltroCategoria,on='categoriaMP')
+
         Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
         Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
 
         Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
                 {
                     "estoqueAtualMP":"first",
+                    "EmRequisicao": "first",
+                    "EstoqueAtualMPLiquido": "first",
                     "faltaProg (Tendencia)MP_total": "first",
                     "descricaoComponente":"first",
                     "EstoqueDistMP": "first",
