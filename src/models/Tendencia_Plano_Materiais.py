@@ -129,6 +129,9 @@ class Tendencia_Plano_Materiais():
                 lambda row: self.__categoria('CADAR', row['descricaoComponente'], 'CADARCO', row['categoriaMP']), axis=1)
             Necessidade['categoriaMP'] = Necessidade.apply(
                 lambda row: self.__categoria('ELAST', row['descricaoComponente'], 'ELASTICOS', row['categoriaMP']), axis=1)
+            Necessidade['categoriaMP'] = Necessidade.apply(
+                lambda row: self.__categoria('MOLET', row['descricaoComponente'], 'MOLETOM', row['categoriaMP']),
+                axis=1)
 
             # Salvar o DataFrame na memoria:
 
@@ -523,6 +526,7 @@ class Tendencia_Plano_Materiais():
                 "ETIQUETAS",
                 "GOLAS",
                 "MALHA",
+                "MOLETOM"
                 "RIBANA",
                 "TECIDO PLANO",
                 "ZIPER"
