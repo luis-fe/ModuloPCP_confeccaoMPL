@@ -550,7 +550,9 @@ class Tendencia_Plano_Materiais():
         else:
             # Transformar o arryau em dataFrame e fazer o merge
             arrayFiltroCategoria =  pd.DataFrame(arrayFiltroCategoria, columns=['categoriaMP'])
-            Necessidade = pd.merge(Necessidade,arrayFiltroCategoria,on='categoriaMP')
+            arrayFiltroCategoria['obs'] = 'Restringe'
+            Necessidade = pd.merge(Necessidade,arrayFiltroCategoria,on='categoriaMP', how='left')
+            arrayFiltroCategoria['obs'].fillna('nao restringe',inplace=True)
 
         Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
         Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
@@ -564,6 +566,7 @@ class Tendencia_Plano_Materiais():
                     "descricaoComponente":"first",
                     "EstoqueDistMP": "first",
                     "faltaProg (Tendencia)":"first",
+                    "obs":"first",
                     "Sugestao_PCs": "first"}).reset_index()
 
         Necessidade['Sugestao_PCs'] = np.where(
