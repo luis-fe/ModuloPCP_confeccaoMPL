@@ -463,6 +463,14 @@ class Tendencia_Plano_Materiais():
             (Necessidade['faltaProg (Tendencia)'] * -1)
         )
 
+        Necessidade['faltaProg (Tendencia)MP_total'] = Necessidade['faltaProg (Tendencia)MP_total']   * -1
+
+        Necessidade['Sugestao_PCs'] = np.where(
+            Necessidade['Sugestao_PCs']>0,
+            Necessidade['Sugestao_PCs'],
+            0
+        )
+
         if self.nomeSimulacao == 'nao':
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
         else:
