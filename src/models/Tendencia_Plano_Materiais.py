@@ -493,6 +493,12 @@ class Tendencia_Plano_Materiais():
                     "faltaProg (Tendencia)":"first",
                     "Sugestao_PCs": "min"}).reset_index()
 
+        Necessidade['Sugestao_PCs'] = np.where(
+            Necessidade['Sugestao_PCs']>0,
+            Necessidade['Sugestao_PCs'],
+            0
+        )
+
 
         return Necessidade
 
