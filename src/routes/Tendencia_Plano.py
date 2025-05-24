@@ -89,6 +89,7 @@ def post_tendenciaSku():
 @Tendencia_Plano_routes.route('/pcp/api/simulacaoProgramacao', methods=['POST'])
 @token_required
 def post_simulacaoProgramacao():
+    '''Api que simulaca a "tendendcia de vendas baseado" no modelo montando pelo usuario '''
     data = request.get_json()
     print(data)
     codPlano = data.get('codPlano')
