@@ -101,42 +101,8 @@ class Tendencia_Plano_Materiais():
             print(f'6 -Merge das metas x consumo {agora} ')
 
             Necessidade['categoriaMP'] = '-'
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ZIPER', row['descricaoComponente'], 'ZIPER', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('RIBANA', row['descricaoComponente'], 'RIBANA', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ENTRETELA', row['descricaoComponente'], 'ENTRETELA', row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('GOLA', row['descricaoComponente'], 'GOLAS', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('KIT GOLA', row['descricaoComponente'], 'KIT GOLA/PUNHO',
-                                             row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('MALHA', row['descricaoComponente'], 'MALHA', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('TECIDO', row['descricaoComponente'], 'TECIDO PLANO', row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ETIQUETA', row['descricaoComponente'], 'ETIQUETAS', row['categoriaMP']), axis=1)
+            Necessidade['categoriaMP'] = Necessidade.apply(self.aplicar_categorias, axis=1)
 
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('CADAR', row['descricaoComponente'], 'CADARCO/CORDAO', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('ELAST', row['descricaoComponente'], 'ELASTICOS', row['categoriaMP']), axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('SAQUI', row['descricaoComponente'], 'EMBALAGEM', row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('CORDAO', row['descricaoComponente'], 'CADARCO/CORDAO', row['categoriaMP']),
-                axis=1)
-            Necessidade['categoriaMP'] = Necessidade.apply(
-                lambda row: self.__categoria('MOLET', row['descricaoComponente'], 'MOLETOM', row['categoriaMP']),axis=1)
 
             # Salvar o DataFrame na memoria:
 
@@ -586,4 +552,29 @@ class Tendencia_Plano_Materiais():
         )
 
         return Necessidade
+
+    def aplicar_categorias(self, row):
+        categorias = [
+            ('ZIPER', 'ZIPER'),
+            ('ENTRETELA', 'ENTRETELA'),
+            ('RIBANA', 'RIBANA'),
+            ('GOLA', 'GOLAS'),
+            ('KIT GOLA', 'KIT GOLA/PUNHO'),
+            ('MALHA', 'MALHA'),
+            ('TECIDO', 'TECIDO PLANO'),
+            ('ETIQUETA', 'ETIQUETAS'),
+            ('CADAR', 'CADARCO/CORDAO'),
+            ('ELAST', 'ELASTICOS'),
+            ('SAQUI', 'EMBALAGEM'),
+            ('CORDAO', 'CADARCO/CORDAO'),
+            ('MOLET', 'MOLETOM'),
+        ]
+
+        categoria_atual = row['categoriaMP']
+        descricao = row['descricaoComponente']
+
+        for termo, nova_categoria in categorias:
+            categoria_atual = self.__categoria(termo, descricao, nova_categoria, categoria_atual)
+
+        return categoria_atual
 
