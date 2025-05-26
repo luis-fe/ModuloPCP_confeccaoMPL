@@ -641,19 +641,16 @@ class Tendencia_Plano_Materiais():
                     curr.execute(uptade, (self.obterdiaAtual(), self.codPlano))
                     conn.commit()
 
-
-
-
     def obterdiaAtual(self):
         '''
-        Método para obter a data atual do dia
+        Método para obter a data e hora atual no fuso horário de São Paulo.
         :return:
-            'data de hoje no formato - %d/%m/%Y'
+            Data e hora no formato 'dd/mm/aaaa HH:MM'
         '''
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)
-        agora = agora.strftime('%Y-%M-%D %H:%M')
-        return agora
+        agora_formatado = agora.strftime('%d/%m/%Y %H:%M')
+        return agora_formatado
 
 
 
