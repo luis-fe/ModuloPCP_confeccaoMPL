@@ -35,6 +35,9 @@ def get_consultaPlanejamentoABC_plano():
     del dados
     return jsonify(OP_data)
 
+
+
+
 @Tendencia_Plano_routes.route('/pcp/api/ABCReferencia', methods=['POST'])
 @token_required
 def post_ABCReferencia():
