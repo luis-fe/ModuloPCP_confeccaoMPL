@@ -149,7 +149,7 @@ class SimulacaoProg():
         select 
             * 
         from 
-            "PCP".pcp."SimulacaoAbc" s 
+            pcp."SimulacaoAbc" s 
         Where 
             "nomeSimulacao" = %s 
             and class = %s
@@ -167,7 +167,7 @@ class SimulacaoProg():
         select 
             class, percentual as "percentualABC" 
         from 
-            "PCP".pcp."SimulacaoAbc" s 
+            pcp."SimulacaoAbc" s 
         Where 
             "nomeSimulacao" = %s 
         """
@@ -185,7 +185,7 @@ class SimulacaoProg():
         select 
             * 
         from 
-            "PCP".pcp."SimulacaoCategoria" s 
+            pcp."SimulacaoCategoria" s 
         Where 
             "nomeSimulacao" = %s 
             and categoria = %s
@@ -205,7 +205,7 @@ class SimulacaoProg():
 	        categoria ,
 	        percentual as "percentualCategoria"
         from
-	        "PCP".pcp."SimulacaoCategoria" s
+	        pcp."SimulacaoCategoria" s
 	    where
             "nomeSimulacao" = %s 
         """
@@ -222,7 +222,7 @@ class SimulacaoProg():
         select 
             * 
         from 
-            "PCP".pcp."SimulacaoMarca" s 
+            pcp."SimulacaoMarca" s 
         Where 
             "nomeSimulacao" = %s 
             and marca = %s
@@ -240,7 +240,7 @@ class SimulacaoProg():
         select 
             marca, percentual as "percentualMarca"  
         from 
-            "PCP".pcp."SimulacaoMarca" s 
+            pcp."SimulacaoMarca" s 
         Where 
             "nomeSimulacao" = %s 
         """
@@ -269,7 +269,7 @@ class SimulacaoProg():
         select
             distinct "nomeABC" as class
         from
-            "PCP".pcp."Plano_ABC" pa
+            pcp."Plano_ABC" pa
         order by
             "nomeABC" asc 
         """
@@ -279,7 +279,7 @@ class SimulacaoProg():
             "class",
             percentual
         from 
-            "PCP".pcp."SimulacaoAbc" s 
+            pcp."SimulacaoAbc" s 
         Where 
             "nomeSimulacao" = %s 
         """
@@ -289,13 +289,13 @@ class SimulacaoProg():
             "categoria",
             percentual
         from 
-            "PCP".pcp."SimulacaoCategoria" s 
+            pcp."SimulacaoCategoria" s 
         Where 
             "nomeSimulacao" = %s 
         """
 
         consultaCategoria= """
-        select "nomeCategoria" as categoria from "PCP".pcp."Categorias" c 
+        select "nomeCategoria" as categoria from pcp."Categorias" c 
         where c."nomeCategoria" <> '-'
         order by "nomeCategoria" asc 
         """
@@ -304,7 +304,7 @@ class SimulacaoProg():
         select
             marca
         from
-            "PCP".pcp."Marcas" m
+            pcp."Marcas" m
         """
 
         consultaMarcaSimulacao = """
@@ -312,7 +312,7 @@ class SimulacaoProg():
             "marca",
             percentual
         from 
-            "PCP".pcp."SimulacaoMarca"
+            pcp."SimulacaoMarca"
         Where 
             "nomeSimulacao" = %s 
         """

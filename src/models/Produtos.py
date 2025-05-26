@@ -157,9 +157,9 @@ class Produtos():
             ic.codigo as "codReduzido",
             sum(total_pcs) as "emProcesso"
         from
-            "PCP".pcp.itens_csw ic
+            pcp.itens_csw ic
         inner join 
-            "PCP".pcp.ordemprod o 
+            pcp.ordemprod o 
             on substring(o."codProduto",2,8) = "codItemPai"
             and o."codSortimento" = ic."codSortimento"::varchar
             and o."seqTamanho" = "codSeqTamanho"::varchar

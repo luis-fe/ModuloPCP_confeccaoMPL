@@ -177,7 +177,7 @@ class Pedidos():
             df_loaded['codItemPai'].str.startswith("104"),
             df_loaded['codItemPai'].str.startswith("204")
         ]
-        choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
+        choices = ["MPOLLO", "MPOLLO", "PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
         return df_loaded
@@ -314,7 +314,7 @@ class Pedidos():
         metasDataFrame = metas.consultaMetaGeral()
         if metasDataFrame.empty:
             metasDataFrame = pd.DataFrame({
-                'marca':['M.POLLO','PACO']
+                'marca':['MPOLLO','PACO']
                 ,'metaPecas':['0','0']
                 , 'metaFinanceira': ['0', '0']
 
@@ -577,7 +577,7 @@ class Pedidos():
             df_loaded['codItemPai'].str.startswith("104"),
             df_loaded['codItemPai'].str.startswith("204")
         ]
-        choices = ["M.POLLO", "M.POLLO", "PACO", "PACO"]
+        choices = ["MPOLLO", "MPOLLO", "PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
 
