@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
+import pytz
 
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
@@ -235,6 +236,8 @@ class Tendencia_Plano_Materiais():
             Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
 
             Necessidade = Necessidade.drop_duplicates()
+
+            self.atualizando_InserindoCalAnalise()
 
             return Necessidade
 
@@ -577,4 +580,91 @@ class Tendencia_Plano_Materiais():
             categoria_atual = self.__categoria(termo, descricao, nova_categoria, categoria_atual)
 
         return categoria_atual
+
+
+    def obtendoUltimaAnalise_porPlano(self):
+        '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
+
+        sql = """
+        select 
+            "DataHora", "codPlano" 
+        from 
+            pcp."controleAnaliseMateriais"
+        where 
+            "codPlano"  = %s
+        order by 
+            "DataHora" desc
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        sql = pd.read_sql(sql, conn, params=(self.codPlano,))
+
+        if sql.empty:
+
+            return pd.DataFrame([{'Mensagem':f'Cálculo da Necessidade nunca foi calculado para o plano {self.codPlano}','status':False}])
+
+        else:
+
+            return pd.DataFrame([{'Mensagem':f'Ultimo Cálculo feito {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
+
+    def atualizando_InserindoCalAnalise(self):
+        '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
+
+
+        insert = """
+            insert into pcp."controleAnaliseMateriais" ("DataHora", "codPlano" ) values ( %s , %s )
+        """
+
+        uptade = """
+            update 
+                pcp."controleAnaliseMateriais"
+            set "DataHora" = %s
+            where 
+                "codPlano" = %s
+        """
+
+        consulta = self.obtendoUltimaAnalise_porPlano()
+
+        if consulta['status'][0] == False:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
+        else:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(uptade, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
+
+
+
+    def obterdiaAtual(self):
+        '''
+        Método para obter a data atual do dia
+        :return:
+            'data de hoje no formato - %d/%m/%Y'
+        '''
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%M-%D %H:%M')
+        return agora
+
+
+
+
+
+
+
+
+
+
+
+
+
 
