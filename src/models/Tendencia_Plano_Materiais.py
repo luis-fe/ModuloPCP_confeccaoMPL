@@ -654,7 +654,7 @@ class Tendencia_Plano_Materiais():
         agora_formatado = agora.strftime('%d/%m/%Y %H:%M')
         return agora_formatado
 
-    def estrutura_ItensCongelada(self, simula = 'nao', existeSimulacao = 'nao'):
+    def estrutura_ItensCongelada(self, simula = 'nao'):
         '''Metodo que extrai a analise de necessidades com congelamento '''
 
         # 1 - Abrindo o congelamento
@@ -666,12 +666,10 @@ class Tendencia_Plano_Materiais():
         else:
             produtos = Produtos.Produtos(self.codEmpresa)
 
-        if existeSimulacao == 'nao':
-
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
 
             sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,
-                                                       self.consideraPedBloq, self.nomeSimulacao).simulacaoPeloNome()
+                                                       self.consideraPedBloq).simulacaoPeloNome()
             sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
             sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(float).astype(int).astype(str)
 
@@ -726,10 +724,6 @@ class Tendencia_Plano_Materiais():
             #Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadeTeste{self.codPlano}_{self.nomeSimulacao}.csv')
-
-        else:
-            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
-
 
         return Necessidade
 
