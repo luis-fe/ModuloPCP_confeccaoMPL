@@ -608,7 +608,7 @@ class Tendencia_Plano_Materiais():
 
         else:
 
-            return pd.DataFrame([{'Mensagem':f'Ultimo Cálculo feito {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
+            return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
 
     def atualizando_InserindoCalAnalise(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
