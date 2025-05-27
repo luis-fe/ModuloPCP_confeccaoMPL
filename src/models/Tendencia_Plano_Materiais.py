@@ -698,7 +698,7 @@ class Tendencia_Plano_Materiais():
 
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"disponivelVendas2_2": "sum",
-                 "faltaProg (Tendencia)": "sum",
+                 "faltaProg (Tendencia)2_2": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
@@ -720,11 +720,134 @@ class Tendencia_Plano_Materiais():
             sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
                 {"SaldoPedCompras": "sum"}).reset_index()
 
-            Necessidade = pd.merge(Necessidade, sqlPedidos, on='CodComponente', how='left')
-            #Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
-            #Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
 
-            Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadeTeste{self.codPlano}_{self.nomeSimulacao}.csv')
+            # Carregando as requisicoes em aberto
+            sqlRequisicaoAberto = produtos.req_Materiais_aberto()
+            # Congelando o dataFrame de Requisicoes em aberto
+            caminho_absoluto2 = configApp.localProjeto
+            sqlRequisicaoAberto.to_csv(f'{caminho_absoluto2}/dados/requisicoesEmAberto.csv')
+
+            # Agrupando as requisicoes compromedito pelo CodComponente
+            sqlRequisicaoAberto = sqlRequisicaoAberto.groupby(["CodComponente"]).agg(
+                {"EmRequisicao": "sum"}).reset_index()
+
+            sqlEstoque = produtos.estMateriaPrima()
+            # Agrupando as requisicoes compromedito pelo CodComponente
+            sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
+                {"estoqueAtual": "sum"}).reset_index()
+
+            Necessidade = pd.merge(Necessidade, sqlPedidos, on='CodComponente', how='left')
+            Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
+            Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
+
+            Necessidade['SaldoPedCompras'].fillna(0, inplace=True)
+            Necessidade['EmRequisicao'].fillna(0, inplace=True)
+            Necessidade['estoqueAtual'].fillna(0, inplace=True)
+
+            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)2_2']) + Necessidade[
+                'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
+
+            Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(
+                Necessidade['Necessidade faltaProg (Tendencia)'] > 0, 0)
+            Necessidade['saldo Novo'] = Necessidade['saldo Novo'] - Necessidade['SaldoPedCompras']
+
+            # Consulta o substitutos:
+            obterSubstitutos = Substitutos_Materiais.Substituto().consultaSubstitutos()
+            obterSubstitutos.rename(
+                columns={'codMateriaPrimaSubstituto': 'codEditado'},
+                inplace=True)
+            informacoes = produtos.informacoesComponente()
+            Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente', how='left')
+
+            NecessidadeSubstituto = Necessidade.groupby('codEditado').agg({'saldo Novo': 'sum'}).reset_index()
+
+            obterSubstitutos = pd.merge(obterSubstitutos, NecessidadeSubstituto, on='codEditado', how='left')
+            obterSubstitutos.fillna(0, inplace=True)
+            obterSubstitutos.rename(
+                columns={'saldo Novo': 'Saldo Substituto', 'codEditado': 'codMateriaPrimaSubstituto',
+                         'codMateriaPrima': 'codEditado'},
+                inplace=True)
+
+            Necessidade = pd.merge(Necessidade, obterSubstitutos, on='codEditado', how='left')
+            Necessidade['Saldo Substituto'].fillna(0, inplace=True)
+            obterSubstitutos.fillna('-', inplace=True)
+
+            Necessidade['Saldo Substituto'] = Necessidade['Saldo Substituto'].where(Necessidade['Saldo Substituto'] > 0,
+                                                                                    0)
+
+            Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'] + \
+                                                               Necessidade['Saldo Substituto']
+            Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(
+                Necessidade['Necessidade faltaProg (Tendencia)'] < 0, 0)
+
+            Necessidade['estoqueAtual'] = Necessidade['estoqueAtual'].apply(self.__formatar_float)
+            Necessidade['EmRequisicao'] = Necessidade['EmRequisicao'].apply(self.__formatar_float)
+            Necessidade['SaldoPedCompras'] = Necessidade['SaldoPedCompras'].apply(self.__formatar_float)
+
+            Necessidade['loteMut'].fillna(1, inplace=True)
+            Necessidade['LoteMin'].fillna(0, inplace=True)
+
+            Necessidade['LeadTime'] = Necessidade['LeadTime'].apply(self.__formatar_padraoInteiro)
+
+            Necessidade.fillna('-', inplace=True)
+            Necessidade.rename(
+                columns={'CodComponente': '01-codReduzido',
+                         'codEditado': '02-codCompleto',
+                         'descricaoComponente': '03-descricaoComponente',
+                         'fornencedorPreferencial': '04-fornencedorPreferencial',
+                         'unid': '05-unidade',
+                         'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
+                         'EmRequisicao': '07-EmRequisicao',
+                         'estoqueAtual': '08-estoqueAtual',
+                         'SaldoPedCompras': '09-SaldoPedCompras',
+                         'Necessidade faltaProg (Tendencia)': '10-Necessidade Compra (Tendencia)',
+                         'LeadTime': '13-LeadTime',
+                         'LoteMin': '14-Lote Mínimo',
+                         'codMateriaPrimaSubstituto': '15-CodSubstituto',
+                         'nomeCodSubstituto': '16-NomeSubstituto',
+                         'Saldo Substituto': '17-SaldoSubs',
+                         'loteMut': '11-Lote Mutiplo'
+                         },
+                inplace=True)
+
+            Necessidade = Necessidade.drop(columns=['nomeCodMateriaPrima', 'novoNome', 'saldo Novo'])
+
+            # Encontrando o saldo restante
+
+            # Função para ajustar a necessidade
+            def ajustar_necessidade(necessidade, lote_multiplo, lotemin):
+                necessidade = necessidade * -1
+                if necessidade > 0 and necessidade < lotemin:
+
+                    return lotemin
+                else:
+                    if lote_multiplo != 0:
+
+                        return np.ceil(necessidade / lote_multiplo) * lote_multiplo
+                    else:
+                        return necessidade
+
+            # Aplicando o ajuste
+            Necessidade["12-Necessidade Ajustada Compra (Tendencia)"] = Necessidade.apply(
+                lambda row: ajustar_necessidade(row["10-Necessidade Compra (Tendencia)"], row["11-Lote Mutiplo"],
+                                                row["14-Lote Mínimo"]), axis=1
+            )
+
+            Necessidade = Necessidade.drop(columns=['disponivelVendas'])
+            Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade[
+                '12-Necessidade Ajustada Compra (Tendencia)'].apply(self.__formatar_float)
+            Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'] * -1
+            Necessidade['11-Lote Mutiplo'] = Necessidade['11-Lote Mutiplo'].apply(self.__formatar_float)
+            Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'].apply(
+                self.__formatar_float)
+            Necessidade['14-Lote Mínimo'] = Necessidade['14-Lote Mínimo'].apply(self.__formatar_float)
+            Necessidade['06-Necessidade faltaProg(Tendencia)'] = Necessidade[
+                '06-Necessidade faltaProg(Tendencia)'].apply(self.__formatar_float)
+            Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
+            Necessidade = Necessidade[Necessidade['02-codCompleto'] != '-']
+
+            Necessidade = Necessidade.drop_duplicates()
+
 
         return Necessidade
 
