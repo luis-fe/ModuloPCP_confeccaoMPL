@@ -23,6 +23,7 @@ def post_AnaliseMateriaisPelaTendencia():
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codEmpresa = data.get('codEmpresa','1')
     congelar =  data.get('congelar',False)
+    print(data)
 
     if congelar == False:
         dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).estruturaItens('nao','nao','nao')
