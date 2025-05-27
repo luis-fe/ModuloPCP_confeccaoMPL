@@ -22,9 +22,13 @@ def post_AnaliseMateriaisPelaTendencia():
     codPlano = data.get('codPlano')
     consideraPedBloq = data.get('consideraPedBloq','nao')
     codEmpresa = data.get('codEmpresa','1')
+    congelar =  data.get('congelar',False)
 
+    if congelar == False:
+        dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).estruturaItens('nao','nao','nao')
+    else:
+        dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).estrutura_ItensCongelada()
 
-    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).estruturaItens('nao')
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

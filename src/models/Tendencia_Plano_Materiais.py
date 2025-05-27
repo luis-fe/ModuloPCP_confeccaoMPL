@@ -239,6 +239,8 @@ class Tendencia_Plano_Materiais():
 
             self.atualizando_InserindoCalAnalise()
 
+            Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisaoCongelada{self.codPlano}.csv')
+
             return Necessidade
 
     def __estruturaPrevisao(self):
@@ -651,6 +653,21 @@ class Tendencia_Plano_Materiais():
         agora = datetime.now(fuso_horario)
         agora_formatado = agora.strftime('%d/%m/%Y %H:%M')
         return agora_formatado
+
+    def estrutura_ItensCongelada(self):
+        '''Metodo que extrai a analise de necessidades com congelamento '''
+
+        # 1 - Abrindo o congelamento
+
+        caminho_absoluto2 = configApp.localProjeto
+
+        Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisaoCongelada{self.codPlano}.csv')
+
+
+
+        return Necessidade
+
+
 
 
 
