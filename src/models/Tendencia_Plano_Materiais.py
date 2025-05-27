@@ -672,7 +672,6 @@ class Tendencia_Plano_Materiais():
                                                        self.consideraPedBloq).simulacaoPeloNome()
 
             Necessidade['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
-            Necessidade['CodComponente'] = sqlMetas['CodComponente'].astype(float).astype(int).astype(str)
 
             sqlMetas['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
 
@@ -695,6 +694,7 @@ class Tendencia_Plano_Materiais():
 
             Necessidade['disponivelVendas2_2'] = Necessidade['disponivel'] * Necessidade['quantidade']
 
+            Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
 
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"disponivelVendas2_2": "sum",
