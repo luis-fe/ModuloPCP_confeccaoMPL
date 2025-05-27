@@ -654,15 +654,81 @@ class Tendencia_Plano_Materiais():
         agora_formatado = agora.strftime('%d/%m/%Y %H:%M')
         return agora_formatado
 
-    def estrutura_ItensCongelada(self):
+    def estrutura_ItensCongelada(self, simula = 'nao', existeSimulacao = 'nao'):
         '''Metodo que extrai a analise de necessidades com congelamento '''
 
         # 1 - Abrindo o congelamento
 
         caminho_absoluto2 = configApp.localProjeto
 
-        Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisaoCongelada{self.codPlano}.csv')
+        if simula == 'nao':
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisaoCongelada{self.codPlano}.csv')
+        else:
+            produtos = Produtos.Produtos(self.codEmpresa)
 
+        if existeSimulacao == 'nao':
+
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+
+            sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,
+                                                       self.consideraPedBloq, self.nomeSimulacao).simulacaoPeloNome()
+            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
+            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(float).astype(int).astype(str)
+
+            sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
+
+
+            sqlMetas = sqlMetas.groupby(['codReduzido']).agg({
+            "previcaoVendas":"first",
+            "faltaProg (Tendencia)":"first"
+            }).reset_index()
+
+            sqlMetas.rename(
+                columns={
+                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)2',
+                                 'previcaoVendas': 'previcaoVendas2',
+                    'nomeSimulacao':'first'
+                },
+                inplace=True)
+
+            Necessidade = pd.merge(Necessidade, sqlMetas, on='codReduzido')
+            Necessidade['faltaProg (Tendencia)2_2'] = Necessidade['faltaProg (Tendencia)2'] * Necessidade['quantidade']
+
+            Necessidade['disponivelVendas2_2'] = Necessidade['disponivel'] * Necessidade['quantidade']
+
+            Necessidade = Necessidade.groupby(["CodComponente"]).agg(
+                {"disponivelVendas": "sum",
+                 "faltaProg (Tendencia)": "sum",
+                 "descricaoComponente": 'first',
+                 "unid": 'first'
+                 }).reset_index()
+
+            sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
+            sqlPedidos = produtos.pedidoComprasMP()
+            sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
+
+            sqlPedidos['qtAtendida'].fillna(0, inplace=True)
+
+            # Realizando o tratamento do fator de conversao de compras dos componentes
+            sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.__process_fator)
+            sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
+
+            sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
+
+            # Congelando o dataFrame de Pedidos em aberto
+            sqlPedidos.to_csv(f'{caminho_absoluto2}/dados/pedidosEmAberto.csv')
+
+            sqlPedidos = sqlPedidos.groupby(["CodComponente"]).agg(
+                {"SaldoPedCompras": "sum"}).reset_index()
+
+            Necessidade = pd.merge(Necessidade, sqlPedidos, on='CodComponente', how='left')
+            #Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
+            #Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
+
+            Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadeTeste{self.codPlano}_{self.nomeSimulacao}.csv')
+
+        else:
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
 
 
         return Necessidade
