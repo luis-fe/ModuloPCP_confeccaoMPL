@@ -701,7 +701,6 @@ class Tendencia_Plano_Materiais():
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
-
             sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
             sqlPedidos = produtos.pedidoComprasMP()
             sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
