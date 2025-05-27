@@ -693,11 +693,10 @@ class Tendencia_Plano_Materiais():
             Necessidade['faltaProg (Tendencia)2_2'] = Necessidade['faltaProg (Tendencia)2'] * Necessidade['quantidade']
 
             Necessidade['disponivelVendas2_2'] = Necessidade['disponivel'] * Necessidade['quantidade']
-            Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadeTeste{self.codPlano}_{self.nomeSimulacao}.csv')
 
 
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
-                {"disponivelVendas": "sum",
+                {"disponivelVendas2_2": "sum",
                  "faltaProg (Tendencia)": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
