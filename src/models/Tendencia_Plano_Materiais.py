@@ -796,7 +796,7 @@ class Tendencia_Plano_Materiais():
                          'descricaoComponente': '03-descricaoComponente',
                          'fornencedorPreferencial': '04-fornencedorPreferencial',
                          'unid': '05-unidade',
-                         'faltaProg (Tendencia)': '06-Necessidade faltaProg(Tendencia)',
+                         'faltaProg (Tendencia)2_2': '06-Necessidade faltaProg(Tendencia)',
                          'EmRequisicao': '07-EmRequisicao',
                          'estoqueAtual': '08-estoqueAtual',
                          'SaldoPedCompras': '09-SaldoPedCompras',
