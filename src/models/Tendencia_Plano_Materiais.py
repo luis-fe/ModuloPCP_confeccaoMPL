@@ -672,18 +672,19 @@ class Tendencia_Plano_Materiais():
                                                        self.consideraPedBloq).simulacaoPeloNome()
             Necessidade['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
 
+            sqlMetas['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
 
 
             sqlMetas = sqlMetas.groupby(['codReduzido']).agg({
             "previcaoVendas":"first",
-            "faltaProg (Tendencia)":"first"
+            "faltaProg (Tendencia)":"first",
+                'nomeSimulacao': 'first'
             }).reset_index()
 
             sqlMetas.rename(
                 columns={
                     'faltaProg (Tendencia)': 'faltaProg (Tendencia)2',
-                                 'previcaoVendas': 'previcaoVendas2',
-                    'nomeSimulacao':'first'
+                                 'previcaoVendas': 'previcaoVendas2'
                 },
                 inplace=True)
 
