@@ -670,10 +670,8 @@ class Tendencia_Plano_Materiais():
 
             sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,
                                                        self.consideraPedBloq).simulacaoPeloNome()
-            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(str)
-            sqlMetas['codSortimento'] = sqlMetas['codSortimento'].astype(float).astype(int).astype(str)
+            Necessidade['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
 
-            sqlMetas['codSeqTamanho'] = sqlMetas['codSeqTamanho'].astype(str)
 
 
             sqlMetas = sqlMetas.groupby(['codReduzido']).agg({
