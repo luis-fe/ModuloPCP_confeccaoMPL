@@ -656,32 +656,27 @@ class Tendencia_Plano_Materiais():
 
     def estrutura_ItensCongelada(self, simula = 'nao'):
         '''Metodo que extrai a analise de necessidades com congelamento '''
-
-        # 1 - Abrindo o congelamento
-
         caminho_absoluto2 = configApp.localProjeto
+        produtos = Produtos.Produtos(self.codEmpresa)
 
         if simula == 'nao':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisaoCongelada{self.codPlano}.csv')
         else:
-            produtos = Produtos.Produtos(self.codEmpresa)
+            # 1 CASO NAO TENHA SIMULACAO CALCULADA
 
+            #1.1 Carrega a necessidade em csv congelado para ganhar performace
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
 
+            #1.2 Calcula uma nova Simulacao e agrupa por codReduzido
             sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,
-                                                       self.consideraPedBloq).simulacaoPeloNome()
-
-            Necessidade['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
-
-            sqlMetas['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
-
-
+                                                       self.consideraPedBloq, self.nomeSimulacao).simulacaoPeloNome()
             sqlMetas = sqlMetas.groupby(['codReduzido']).agg({
             "previcaoVendas":"first",
             "faltaProg (Tendencia)":"first",
                 'nomeSimulacao': 'first'
             }).reset_index()
 
+            #1.3 Renomeia as colunas das metas
             sqlMetas.rename(
                 columns={
                     'faltaProg (Tendencia)': 'faltaProg (Tendencia)2',
@@ -689,29 +684,33 @@ class Tendencia_Plano_Materiais():
                 },
                 inplace=True)
 
+            #1.4 Realiza um merge para obter um dataframe unico
+            Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(float).astype(int).astype(str)
+            sqlMetas['codReduzido'] = sqlMetas['codReduzido'].astype(float).astype(int).astype(str)
             Necessidade = pd.merge(Necessidade, sqlMetas, on='codReduzido')
+
+
+            # 1.5 Calcula o falta programar converido em materia prima
             Necessidade['faltaProg (Tendencia)2_2'] = Necessidade['faltaProg (Tendencia)2'] * Necessidade['quantidade']
-
+            # 1.6 Calcula odisponivelVendas converido em materia prima
             Necessidade['disponivelVendas2_2'] = Necessidade['disponivel'] * Necessidade['quantidade']
-
             Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
-
+            # 1.7 Resume a necessidade agrupando por codigo componentente
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"disponivelVendas2_2": "sum",
                  "faltaProg (Tendencia)2_2": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
+            #1.8 Obtem os pedidos em aberto no compras e desconta os entregue parcial
             sqlAtendidoParcial = produtos.req_atendidoComprasParcial()
             sqlPedidos = produtos.pedidoComprasMP()
             sqlPedidos = pd.merge(sqlPedidos, sqlAtendidoParcial, on=['numero', 'seqitem'], how='left')
-
             sqlPedidos['qtAtendida'].fillna(0, inplace=True)
 
-            # Realizando o tratamento do fator de conversao de compras dos componentes
+            #1.9 Realizando o tratamento do fator de conversao de compras dos componentes
             sqlPedidos['fatCon2'] = sqlPedidos['fatCon'].apply(self.__process_fator)
             sqlPedidos['qtdPedida'] = sqlPedidos['fatCon2'] * sqlPedidos['qtdPedida']
-
             sqlPedidos['SaldoPedCompras'] = sqlPedidos['qtdPedida'] - sqlPedidos['qtAtendida']
 
             # Congelando o dataFrame de Pedidos em aberto
@@ -736,14 +735,15 @@ class Tendencia_Plano_Materiais():
             sqlEstoque = sqlEstoque.groupby(["CodComponente"]).agg(
                 {"estoqueAtual": "sum"}).reset_index()
 
+            # Mergem entre pedidos x requisicoes
             Necessidade = pd.merge(Necessidade, sqlPedidos, on='CodComponente', how='left')
             Necessidade = pd.merge(Necessidade, sqlRequisicaoAberto, on='CodComponente', how='left')
             Necessidade = pd.merge(Necessidade, sqlEstoque, on='CodComponente', how='left')
-
             Necessidade['SaldoPedCompras'].fillna(0, inplace=True)
             Necessidade['EmRequisicao'].fillna(0, inplace=True)
             Necessidade['estoqueAtual'].fillna(0, inplace=True)
 
+            # calculando a necessidade do falta programar abatendo estoque + saldo compras + requisicoes
             Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)2_2']) + Necessidade[
                 'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
 
