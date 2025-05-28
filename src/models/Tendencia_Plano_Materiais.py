@@ -700,7 +700,7 @@ class Tendencia_Plano_Materiais():
             # 1.7 Resume a necessidade agrupando por codigo componentente
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"disponivelVendasMP": "sum",
-                 "faltaProg (Tendencia)_Simulacao": "sum",
+                 "faltaProg (Tendencia)Simulacao": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
