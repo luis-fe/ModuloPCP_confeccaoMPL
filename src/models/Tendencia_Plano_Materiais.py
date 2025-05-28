@@ -679,7 +679,7 @@ class Tendencia_Plano_Materiais():
             #1.3 Renomeia as colunas das metas
             sqlMetas.rename(
                 columns={
-                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)_Simulacao',
+                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)Simulacao',
                                  'previcaoVendas': 'previcaoVendas_Simulacao'
                 },
                 inplace=True)
