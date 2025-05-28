@@ -700,7 +700,7 @@ class Tendencia_Plano_Materiais():
             # 1.7 Resume a necessidade agrupando por codigo componentente
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"disponivelVendasMP": "sum",
-                 "faltaProg (Tendencia)Simulacao": "sum",
+                 "faltaProg (Tendencia)Simulacao_MP": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
@@ -746,7 +746,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['estoqueAtual'].fillna(0, inplace=True)
 
             # calculando a necessidade do falta programar abatendo estoque + saldo compras + requisicoes
-            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)_Simulacao']) + Necessidade[
+            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)Simulacao']) + Necessidade[
                 'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
 
             Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(
@@ -798,7 +798,7 @@ class Tendencia_Plano_Materiais():
                          'descricaoComponente': '03-descricaoComponente',
                          'fornencedorPreferencial': '04-fornencedorPreferencial',
                          'unid': '05-unidade',
-                         'faltaProg (Tendencia)2_2': '06-Necessidade faltaProg(Tendencia)',
+                         'faltaProg (Tendencia)Simulacao_MP': '06-Necessidade faltaProg(Tendencia)',
                          'EmRequisicao': '07-EmRequisicao',
                          'estoqueAtual': '08-estoqueAtual',
                          'SaldoPedCompras': '09-SaldoPedCompras',
