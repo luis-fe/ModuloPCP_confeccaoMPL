@@ -53,7 +53,7 @@
 
         -> Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
 
-        /dados/tenendicaPlano-{self.codPlano}.csv : nesse ".csv" é congelado, 
+        /dados/tendenciaPlano-{self.codPlano}.csv : nesse ".csv" é congelado, 
                                                     trata-se do cálculo da Tendencia do Plano a nível sku.  
                                                     O gatilho de disparo desse arquivo ocorre na API:
                                                     POST "{URL-BASE}/pcp/api/tendenciaSku"
@@ -64,4 +64,21 @@
                                                     nesse ".csv" é congelado a simulação baseado nos parametros 
                                                     de simulação x tendencia. O gatilho de disparo do arquivo ocorre na API:
                                                     POST "{URL-BASE}/pcp/api/simulacaoProgramacao"
-                                                    - Utilizacao: esse arquivo é utilizado para "Detalhar" itens nessa simulação
+                                                    - Utilizacao: esse arquivo é utilizado para "Detalhar" itens nessa simulação.
+
+        /dados/requisicoesEmAberto.csv: nesse ".csv" é congelado o retorno das requisicoes em aberto a nivel de sku, utilizado para 
+                                        melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao 
+                                        cálculo da Necessidade de Materia Prima:
+                                        POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"
+
+        /dados/pedidosEmAberto.csv: nesse ".csv é congelado o retorno dos pedidos em aberto a nivel de sku,  utilizado para 
+                                        melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao 
+                                        cálculo da Necessidade de Materia Prima:
+                                        POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia" 
+
+        /dados/EstruturacaoPrevisao{self.codPlano}.csv: nesse ".csv' é congelado a estrutura  de materia prima x  previsao, buscando a 
+                                                                     a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
+                                                                     Necessidade e é reutilzado nas Apis que atualizao Cálculo das Necessidades:
+                                                                        PÓST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente
+                                                                        POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True - api que mantém
+                                                                        a analise de materiais congelada para ganho de performance.

@@ -109,7 +109,7 @@ class Tendencia_Plano_Materiais():
 
             # Verificar se é para congelar a simulacao
             if simula == 'nao':
-                Necessidade.to_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+                Necessidade.to_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
             else:
                 Necessidade.to_csv(
                     f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
@@ -336,7 +336,7 @@ class Tendencia_Plano_Materiais():
 
 
         if simulacao == 'nao':
-            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
         else:
             Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
@@ -377,9 +377,9 @@ class Tendencia_Plano_Materiais():
         caminho_absoluto2 = configApp.localProjeto
 
         if simulacao == 'nao':
-            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
         else:
-            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
 
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
@@ -665,7 +665,7 @@ class Tendencia_Plano_Materiais():
             # 1 CASO NAO TENHA SIMULACAO CALCULADA
 
             #1.1 Carrega a necessidade em csv congelado para ganhar performace
-            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/NecessidadePrevisao{self.codPlano}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
 
             #1.2 Calcula uma nova Simulacao e agrupa por codReduzido
             sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,

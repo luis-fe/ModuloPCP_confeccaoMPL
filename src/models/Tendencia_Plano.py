@@ -62,7 +62,7 @@ class Tendencia_Plano():
 
         else:
             caminhoAbsoluto = configApp.localProjeto
-            consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+            consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
 
         consultaVendasSku = consultaVendasSku.groupby(["codItemPai"]).agg({"marca": "first",
                                                                            "nome": 'first',
@@ -389,7 +389,7 @@ class Tendencia_Plano():
         # 14 - Salvando o dataFrame na memoria do servidor, para ser congelado para analises
 
         caminhoAbsoluto = configApp.localProjeto
-        consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
 
         # 15 - Tratando o valor financeiro
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.__formatar_financeiro)
@@ -423,7 +423,7 @@ class Tendencia_Plano():
 
         # 2 - Caregar a tendencia congelada
         caminhoAbsoluto = configApp.localProjeto
-        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tenendicaPlano-{self.codPlano}.csv')
+        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
         tendencia['previcaoVendasOriginal'] = tendencia['previcaoVendas']
 
         if descontaQtdPedido == 'sim':
