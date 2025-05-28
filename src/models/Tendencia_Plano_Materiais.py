@@ -835,7 +835,7 @@ class Tendencia_Plano_Materiais():
                                                 row["14-Lote Mínimo"]), axis=1
             )
 
-            Necessidade = Necessidade.drop(columns=['disponivelVendas2_2'])
+            Necessidade = Necessidade.drop(columns=['disponivelVendasMP'])
             Necessidade['12-Necessidade Ajustada Compra (Tendencia)'] = Necessidade[
                 '12-Necessidade Ajustada Compra (Tendencia)'].apply(self.__formatar_float)
             Necessidade['10-Necessidade Compra (Tendencia)'] = Necessidade['10-Necessidade Compra (Tendencia)'] * -1
