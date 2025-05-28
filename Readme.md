@@ -79,7 +79,7 @@
         /dados/EstruturacaoPrevisao{self.codPlano}.csv: nesse ".csv' é congelado a estrutura  de materia prima x  previsao, buscando a 
                                                                      a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
                                                                      Necessidade e é reutilzado nas Apis que atualizao Cálculo das Necessidades:
-                                                                        PÓST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente
+                                                                        POST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente
                                                                         POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True - api que mantém
                                                                         a analise de materiais congelada para ganho de performance.
                                                                         POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaSimulacao - api utilizada para simular uma analise
@@ -89,7 +89,7 @@
                                                                                       a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
                                                                                       Necessidade baseada em Simulação e é reutilzado nas Apis que atualizao o Cálculo das 
                                                                                       Necessidades Simulada:
-                                                                                      PÓST {URL-BASE}/pcp/api/DetalhaNecessidade BODY nomeSimulacao: xxx 
+                                                                                      POST {URL-BASE}/pcp/api/DetalhaNecessidade BODY nomeSimulacao: xxx 
                                                                                       - detalhar a necessidade de um Codcomponente baseado em Simulacao
 
 
