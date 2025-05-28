@@ -746,7 +746,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['estoqueAtual'].fillna(0, inplace=True)
 
             # calculando a necessidade do falta programar abatendo estoque + saldo compras + requisicoes
-            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)Simulacao']) + Necessidade[
+            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)Simulacao_MP']) + Necessidade[
                 'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
 
             Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(
