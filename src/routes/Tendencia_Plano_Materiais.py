@@ -55,7 +55,7 @@ def post_AnaliseMateriaisPelaSimulacao():
     nomeSimulacao = data.get('nomeSimulacao')
 
 
-    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq,'',nomeSimulacao).estrutura_ItensCongelada('sim')
+    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq,'','',nomeSimulacao).estrutura_ItensCongelada('sim')
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
