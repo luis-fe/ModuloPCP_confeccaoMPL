@@ -85,4 +85,13 @@
                                                                         POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaSimulacao - api utilizada para simular uma analise
                                                                         de necessidade baseado na SIMULACAO.
 
-        /dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv: nesse "csv" é congelado a estrutura de previsao x Tendencia x Simulação
+        /dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv: nesse "csv" é congelado a estrutura de previsao x Tendencia x Simulação, buscando a 
+                                                                                      a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
+                                                                                      Necessidade baseada em Simulação e é reutilzado nas Apis que atualizao o Cálculo das 
+                                                                                      Necessidades Simulada:
+                                                                                      PÓST {URL-BASE}/pcp/api/DetalhaNecessidade BODY nomeSimulacao: xxx 
+                                                                                      - detalhar a necessidade de um Codcomponente baseado em Simulacao
+
+
+        
+

@@ -340,8 +340,9 @@ class Tendencia_Plano_Materiais():
         else:
             Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/NecessidadePrevisao{self.codPlano}_{self.nomeSimulacao}.csv')
 
-        Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(str)
-        Necessidade['CodComponente'] = Necessidade['CodComponente'].str.replace('.0','')
+
+        Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
+
         Necessidade = Necessidade[Necessidade['CodComponente']==self.codComponente].reset_index()
         Necessidade['Necessidade faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)'] * (Necessidade['quantidade'] * -1)
 
