@@ -679,8 +679,8 @@ class Tendencia_Plano_Materiais():
             #1.3 Renomeia as colunas das metas
             sqlMetas.rename(
                 columns={
-                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)2',
-                                 'previcaoVendas': 'previcaoVendas2'
+                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)_Simulacao',
+                                 'previcaoVendas': 'previcaoVendas_Simulacao'
                 },
                 inplace=True)
 
@@ -691,14 +691,16 @@ class Tendencia_Plano_Materiais():
 
 
             # 1.5 Calcula o falta programar converido em materia prima
-            Necessidade['faltaProg (Tendencia)2_2'] = Necessidade['faltaProg (Tendencia)2'] * Necessidade['quantidade']
+            Necessidade['faltaProg (Tendencia)Simulacao_MP'] = Necessidade['faltaProg (Tendencia)Simulacao'] * Necessidade['quantidade']
             # 1.6 Calcula odisponivelVendas converido em materia prima
-            Necessidade['disponivelVendas2_2'] = Necessidade['disponivel'] * Necessidade['quantidade']
+            Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
             Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
+
+            Necessidade.to_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
             # 1.7 Resume a necessidade agrupando por codigo componentente
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
-                {"disponivelVendas2_2": "sum",
-                 "faltaProg (Tendencia)2_2": "sum",
+                {"disponivelVendasMP": "sum",
+                 "faltaProg (Tendencia)_Simulacao": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
                  }).reset_index()
@@ -744,7 +746,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['estoqueAtual'].fillna(0, inplace=True)
 
             # calculando a necessidade do falta programar abatendo estoque + saldo compras + requisicoes
-            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)2_2']) + Necessidade[
+            Necessidade['Necessidade faltaProg (Tendencia)'] = (Necessidade['faltaProg (Tendencia)_Simulacao']) + Necessidade[
                 'estoqueAtual'] + Necessidade['SaldoPedCompras'] - Necessidade['EmRequisicao']
 
             Necessidade['saldo Novo'] = Necessidade['Necessidade faltaProg (Tendencia)'].where(

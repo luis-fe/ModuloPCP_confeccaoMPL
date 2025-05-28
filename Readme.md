@@ -82,3 +82,7 @@
                                                                         PÓST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente
                                                                         POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True - api que mantém
                                                                         a analise de materiais congelada para ganho de performance.
+                                                                        POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaSimulacao - api utilizada para simular uma analise
+                                                                        de necessidade baseado na SIMULACAO.
+
+        /dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv: nesse "csv" é congelado a estrutura de previsao x Tendencia x Simulação
