@@ -272,6 +272,18 @@ class Produtos():
 
         return consulta
 
+    def estoqueComprometido(self):
+
+        # 1:  Carregar as variaveis de ambiente e o nome do caminho
+        caminho_absoluto = configApp.localProjeto
+
+        consumo = pd.read_csv(f'{caminho_absoluto}/dados/requisicoesEmAberto.csv')
+
+        consumo.drop(['Unnamed: 0'], axis=1, inplace=True)
+        consumo['CodComponente'] = consumo['CodComponente'].astype(str)
+
+        return consumo
+
 
 
 
