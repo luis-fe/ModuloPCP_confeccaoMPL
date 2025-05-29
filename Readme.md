@@ -51,29 +51,19 @@
         Essa estrátegia ajuda na performance do projeto e na otimizacao dos recurso. Abaixo é descrito 
     como isso ocorre no projeto:
 
-        -> Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
+##### Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
+   Arquivo| Descricao                                                                                                                                                                                                                         | Api de disparo
+----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----------
+/dados/tendenciaPlano-{self.codPlano}.csv| Nesse ".csv" é congelado para o cálculo da Tendencia do Plano a nível sku, esse arquivo é utilizado para carregar -Simulações que utilizam esse plano.                                                                            |POST "{URL-BASE}/pcp/api/tendenciaSku"
+/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv| Nesse ".csv" é congelado a simulação baseado nos parametros de simulação x tendencia.Utilizacao: esse arquivo é utilizado para "Detalhar" itens nessa simulação.                                                                  |POST "{URL-BASE}/pcp/api/simulacaoProgramacao"                                                                                                                 
+/dados/requisicoesEmAberto.csv| Nesse ".csv" é congelado o retorno das requisicoes em aberto a nivel de sku, utilizado para  melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao cálculo da Necessidade de Materia Prima. |POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"
+/dados/pedidosEmAberto.csv| É congelado o retorno dos pedidos em aberto a nivel de sku,  utilizado para melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao cálculo da Necessidade de Materia Prima.                  |POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia" 
+/dados/EstruturacaoPrevisao{self.codPlano}.csv| É congelado a estrutura  de materia prima x  previsao, buscando a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da Necessidade e é reutilzado nas Apis que atualizao Cálculo das Necessidades.               |POST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente  POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True       
+/dados/EstruturacaoPrevisao-{self.codPlano}_Simulacao{self.nomeSimulacao}.csv||
+       
 
-        /dados/tendenciaPlano-{self.codPlano}.csv : nesse ".csv" é congelado o cálculo da Tendencia do Plano a nível sku.  
-                                                    O gatilho de disparo desse arquivo ocorre na API:
-                                                    POST "{URL-BASE}/pcp/api/tendenciaSku"
-                                                    - Utilizacao: esse arquivo é utilizado para carregar Simulações
-                                                    que utilizam esse plano.
-
-        /dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv: 
-                                                    nesse ".csv" é congelado a simulação baseado nos parametros 
-                                                    de simulação x tendencia. O gatilho de disparo do arquivo ocorre na API:
-                                                    POST "{URL-BASE}/pcp/api/simulacaoProgramacao"
-                                                    - Utilizacao: esse arquivo é utilizado para "Detalhar" itens nessa simulação.
-
-        /dados/requisicoesEmAberto.csv: nesse ".csv" é congelado o retorno das requisicoes em aberto a nivel de sku, utilizado para 
-                                        melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao 
-                                        cálculo da Necessidade de Materia Prima:
-                                        POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"
-
-        /dados/pedidosEmAberto.csv: nesse ".csv é congelado o retorno dos pedidos em aberto a nivel de sku,  utilizado para 
-                                        melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao 
-                                        cálculo da Necessidade de Materia Prima:
-                                        POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia" 
+       
+        
 
         /dados/EstruturacaoPrevisao{self.codPlano}.csv: nesse ".csv' é congelado a estrutura  de materia prima x  previsao, buscando a 
                                                                      a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
@@ -93,8 +83,6 @@
 
 
         
-   Arquivo  | Descricao | Api de disparo
----------- | ---------- | ----------
-/dados/tendenciaPlano-{self.codPlano}.csv| Nesse ".csv" é congelado o cálculo da Tendencia do Plano a nível sku.| POST "{URL-BASE}/pcp/api/tendencia
+
 
             
