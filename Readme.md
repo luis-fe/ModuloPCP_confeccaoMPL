@@ -52,37 +52,14 @@
     como isso ocorre no projeto:
 
 ##### Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
-   Arquivo| Descricao                                                                                                                                                                                                                         | Api de disparo
-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ----------
-/dados/tendenciaPlano-{self.codPlano}.csv| Nesse ".csv" é congelado para o cálculo da Tendencia do Plano a nível sku, esse arquivo é utilizado para carregar -Simulações que utilizam esse plano.                                                                            |POST "{URL-BASE}/pcp/api/tendenciaSku"
-/dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano-{self.codPlano}_descontaQtdPedido_nao.csv| Nesse ".csv" é congelado a simulação baseado nos parametros de simulação x tendencia.Utilizacao: esse arquivo é utilizado para "Detalhar" itens nessa simulação.                                                                  |POST "{URL-BASE}/pcp/api/simulacaoProgramacao"                                                                                                                 
-/dados/requisicoesEmAberto.csv| Nesse ".csv" é congelado o retorno das requisicoes em aberto a nivel de sku, utilizado para  melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao cálculo da Necessidade de Materia Prima. |POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"
-/dados/pedidosEmAberto.csv| É congelado o retorno dos pedidos em aberto a nivel de sku,  utilizado para melhorar a performance da requisicao. O gatilho de disparo ocorre nas Api's relacionadas ao cálculo da Necessidade de Materia Prima.                  |POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia" 
-/dados/EstruturacaoPrevisao{self.codPlano}.csv| É congelado a estrutura  de materia prima x  previsao, buscando a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da Necessidade e é reutilzado nas Apis que atualizao Cálculo das Necessidades.               |POST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente  POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True       
-/dados/EstruturacaoPrevisao-{self.codPlano}_Simulacao{self.nomeSimulacao}.csv||
-       
-
-       
-        
-
-        /dados/EstruturacaoPrevisao{self.codPlano}.csv: nesse ".csv' é congelado a estrutura  de materia prima x  previsao, buscando a 
-                                                                     a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
-                                                                     Necessidade e é reutilzado nas Apis que atualizao Cálculo das Necessidades:
-                                                                        POST {URL-BASE}/pcp/api/DetalhaNecessidade - detalhar a necessidade de um Codcomponente
-                                                                        POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia BODY congelar:True - api que mantém
-                                                                        a analise de materiais congelada para ganho de performance.
-                                                                        POST {URL-BASE}/pcp/api/AnaliseMateriaisPelaSimulacao - api utilizada para simular uma analise
-                                                                        de necessidade baseado na SIMULACAO.
-
-        /dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv: nesse "csv" é congelado a estrutura de previsao x Tendencia x Simulação, buscando a 
-                                                                                      a melhoria na performance. Esse congelamento ocorre ANTES do cálculo da 
-                                                                                      Necessidade baseada em Simulação e é reutilzado nas Apis que atualizao o Cálculo das 
-                                                                                      Necessidades Simulada:
-                                                                                      POST {URL-BASE}/pcp/api/DetalhaNecessidade BODY nomeSimulacao: xxx 
-                                                                                      - detalhar a necessidade de um Codcomponente baseado em Simulacao
-
-
-        
+| Arquivo                                                                                        | Descrição                                                                                                                                                                                                                      | API de Disparo                                                                                                     |
+|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| /dados/tendenciaPlano{self.codPlano}.csv                                                       | Congelado para o cálculo da Tendência do Plano a nível SKU. Utilizado para carregar simulações que utilizam esse plano.                                                                                                         | POST "{URL-BASE}/pcp/api/tendenciaSku"                                                                             |
+| /dados/Simuacao_{self.nomeSimulacao}_tenendicaPlano{self.codPlano}_descontaQtdPedido_nao.csv   | Congelada a simulação baseada nos parâmetros de simulação x tendência. Utilizado para "Detalhar" itens nessa simulação.                                                                                                        | POST "{URL-BASE}/pcp/api/simulacaoProgramacao"                                                                     |
+| /dados/requisicoesEmAberto.csv                                                                 | Congelado o retorno das requisições em aberto a nível de SKU. Utilizado para melhorar a performance. Gatilho nas APIs relacionadas ao cálculo da necessidade de matéria-prima.                                                 | POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"                                                            |
+| /dados/pedidosEmAberto.csv                                                                     | Congelado o retorno dos pedidos em aberto a nível de SKU. Utilizado para melhorar a performance. Gatilho nas APIs relacionadas ao cálculo da necessidade de matéria-prima.                                                     | POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia"                                                            |
+| /dados/EstruturacaoPrevisao{self.codPlano}.csv                                                 | Congelada a estrutura de matéria-prima x previsão antes do cálculo da necessidade. Reutilizado para performance nas APIs de cálculo de necessidade.                                                                             | POST "{URL-BASE}/pcp/api/DetalhaNecessidade"<br>POST "{URL-BASE}/pcp/api/AnaliseMateriaisPelaTendencia" (BODY: congelar:True) |
+| /dados/EstruturacaoPrevisao-{self.codPlano}_Simulacao{self.nomeSimulacao}.csv                  | Congelada a estrutura previsão x tendência x simulação antes do cálculo da necessidade simulada. Reutilizado nas APIs que atualizam o cálculo das necessidades simuladas.                                                      | POST "{URL-BASE}/pcp/api/DetalhaNecessidade" (BODY: nomeSimulacao: xxx)                                            |
 
 
             
