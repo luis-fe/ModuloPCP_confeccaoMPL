@@ -53,8 +53,7 @@
 
         -> Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
 
-        /dados/tendenciaPlano-{self.codPlano}.csv : nesse ".csv" é congelado, 
-                                                    trata-se do cálculo da Tendencia do Plano a nível sku.  
+        /dados/tendenciaPlano-{self.codPlano}.csv : nesse ".csv" é congelado o cálculo da Tendencia do Plano a nível sku.  
                                                     O gatilho de disparo desse arquivo ocorre na API:
                                                     POST "{URL-BASE}/pcp/api/tendenciaSku"
                                                     - Utilizacao: esse arquivo é utilizado para carregar Simulações
@@ -94,4 +93,8 @@
 
 
         
+   Arquivo  | Descricao | Api de disparo
+---------- | ---------- | ----------
+/dados/tendenciaPlano-{self.codPlano}.csv| Nesse ".csv" é congelado o cálculo da Tendencia do Plano a nível sku.| POST "{URL-BASE}/pcp/api/tendencia
 
+            
