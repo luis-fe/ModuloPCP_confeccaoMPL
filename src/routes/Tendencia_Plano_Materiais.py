@@ -110,7 +110,7 @@ def post_CalculoPcs_baseaado_MP():
 
     print(data)
 
-    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq).calculoIdealPcs_para_materiaPrima(nomeSimulacao,arrayCategoriaMP)
+    dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa, codPlano, consideraPedBloq,'','',nomeSimulacao).calculoIdealPcs_para_materiaPrima(nomeSimulacao,arrayCategoriaMP)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
