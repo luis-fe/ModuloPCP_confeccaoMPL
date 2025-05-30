@@ -419,7 +419,7 @@ class Tendencia_Plano():
         '''
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)
-        agora = agora.strftime('%Y-%M-%D')
+        agora = agora.strftime('%Y_%M_%D')
         return agora
 
     def __formatar_financeiro(self, valor):
