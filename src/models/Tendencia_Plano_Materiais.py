@@ -593,9 +593,10 @@ class Tendencia_Plano_Materiais():
         select 
             "DataHora", "codPlano" 
         from 
-            pcp."controleAnaliseMateriais"
+            pcp."controleServicos"
         where 
             "codPlano"  = %s
+            and "Servico" = 'AnaliseMateriais'
         order by 
             "DataHora" desc
         """
