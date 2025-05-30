@@ -1,13 +1,13 @@
-import os
 
 import numpy as np
-import pandas as pd
 from dotenv import load_dotenv
 
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
 from src.models import Pedidos, Produtos, Meta_Plano, SimulacaoProg
-
+from datetime import datetime, timedelta
+import pandas as pd
+import pytz
 
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
@@ -400,10 +400,27 @@ class Tendencia_Plano():
         consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
         consultaVendasSku.fillna('-', inplace=True)
 
+        #backup da tendencia
+
+        caminhoAbsoluto = configApp.localProjeto
+        consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/backup/{self.obterdiaAtual()}_tendenciaPlano-{self.codPlano}.csv')
+
 
 
 
         return consultaVendasSku
+
+
+    def obterdiaAtual(self):
+        '''
+        Método para obter a data atual do dia
+        :return:
+            'data de hoje no formato - %d/%m/%Y'
+        '''
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%M-%D')
+        return agora
 
     def __formatar_financeiro(self, valor):
         "metodo que converte valor para formato financeiro int"
