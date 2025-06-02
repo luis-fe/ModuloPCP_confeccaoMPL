@@ -618,7 +618,7 @@ class Tendencia_Plano_Materiais():
 
 
         insert = """
-            insert into pcp."controleAnaliseMateriais" ("DataHora", "codPlano" ) values ( %s , %s )
+            insert into pcp."controleAnaliseMateriais" ("DataHora", "codPlano", "Servico" ) values ( %s , %s , 'AnaliseMateriais' )
         """
 
         uptade = """

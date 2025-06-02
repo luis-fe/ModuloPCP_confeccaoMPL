@@ -566,4 +566,38 @@ class Tendencia_Plano():
 
                 return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
 
+    def atualizando_InserindoCalAnalise(self):
+        '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
+
+
+        insert = """
+            insert into pcp."controleAnaliseMateriais" ("DataHora", "codPlano", "Servico" ) values ( %s , %s, 'Tendencia' )
+        """
+
+        uptade = """
+            update 
+                pcp."controleServicos"
+            set 
+                "DataHora" = %s, "Servico" = 'Tendencia'
+            where 
+                "codPlano" = %s
+        """
+
+        consulta = self.obtendoUltimaTendencia()
+
+        if consulta['status'][0] == False:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
+        else:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(uptade, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
 
