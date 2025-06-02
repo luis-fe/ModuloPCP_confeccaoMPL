@@ -539,3 +539,31 @@ class Tendencia_Plano():
             return tendencia
 
 
+    def obtendoUltimaTendencia(self):
+            '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
+
+            sql = """
+            select 
+                "DataHora", "codPlano" 
+            from 
+                pcp."controleServicos"
+            where 
+                "codPlano"  = %s
+                and "Servico" = 'Tendencia'
+            order by 
+                "DataHora" desc
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+
+            sql = pd.read_sql(sql, conn, params=(self.codPlano,))
+
+            if sql.empty:
+
+                return pd.DataFrame([{'Mensagem':f'Cálculo da Necessidade nunca foi calculado para o plano {self.codPlano}','status':False}])
+
+            else:
+
+                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
+
+
