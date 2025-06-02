@@ -596,7 +596,7 @@ class Tendencia_Plano_Materiais():
             pcp."controleServicos"
         where 
             "codPlano"  = %s
-            and "Servico" = 'controleServicos'
+            and "Servico" = 'AnaliseMateriais'
         order by 
             "DataHora" desc
         """
@@ -625,7 +625,7 @@ class Tendencia_Plano_Materiais():
             update 
                 pcp."controleServicos"
             set 
-                "DataHora" = %s, "Servico" = 'Tendencia'
+                "DataHora" = %s, "Servico" = 'AnaliseMateriais'
             where 
                 "codPlano" = %s
         """
