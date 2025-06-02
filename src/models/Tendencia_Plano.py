@@ -405,8 +405,7 @@ class Tendencia_Plano():
         caminhoAbsoluto = configApp.localProjeto
         consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/backup/{self.obterdiaAtual()}_tendenciaPlano-{self.codPlano}.csv')
 
-
-
+        self.atualizando_InserindoTendencia()
 
         return consultaVendasSku
 
@@ -566,7 +565,7 @@ class Tendencia_Plano():
 
                 return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
 
-    def atualizando_InserindoCalAnalise(self):
+    def atualizando_InserindoTendencia(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
 
 
