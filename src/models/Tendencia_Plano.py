@@ -579,7 +579,8 @@ class Tendencia_Plano():
             set 
                 "DataHora" = %s, "Servico" = 'Tendencia'
             where 
-                "codPlano" = %s
+                "codPlano" = %s 
+                and "Servico" = 'Tendencia'
         """
 
         consulta = self.obtendoUltimaTendencia()
