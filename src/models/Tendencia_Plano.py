@@ -570,7 +570,7 @@ class Tendencia_Plano():
 
 
         insert = """
-            insert into pcp."controleAnaliseMateriais" ("DataHora", "codPlano", "Servico" ) values ( %s , %s, 'Tendencia' )
+            insert into pcp."controleServicos" ("DataHora", "codPlano", "Servico" ) values ( %s , %s, 'Tendencia' )
         """
 
         uptade = """
