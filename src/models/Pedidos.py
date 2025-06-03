@@ -395,7 +395,7 @@ class Pedidos():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
-    def reservaFatAtual(self):
+    def reservaFatAtual(self, detalha = ''):
         '''Metodo que encontra a reserva atual por sku'''
         diaAtual = datetime.strptime(self.__obterDiaAtual(), '%Y-%m-%d')
         plano = Plano.Plano(self.codPlano)
@@ -406,6 +406,13 @@ class Pedidos():
 
         if diaAtual <= IniFat:
             df_loaded = self.__consultaArquivoFastVendasAnteriores()
+
+
+            if detalha != '':
+                disponivel = df_loaded.groupby(["codProduto","codPedido"]).agg({
+                    "qtdePedida": "sum",
+                    "qtdeCancelada": "sum",
+                    "qtdeFaturada": 'sum'}).reset_index()
 
             disponivel = df_loaded.groupby(["codProduto"]).agg({
                                                              "qtdePedida": "sum",
@@ -418,6 +425,9 @@ class Pedidos():
                                        }, inplace=True)
 
             disponivel['SaldoColAnt'] = disponivel['qtdePedidaSaldo'] - disponivel['qtdeFaturadaSaldo'] - disponivel['qtdeCanceladaSaldo']
+
+
+
         else:
             disponivel = pd.DataFrame([{'status':'vazio'}])
         return disponivel
@@ -504,7 +514,7 @@ class Pedidos():
         codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
         '''
 
-        df_loaded = self.reservaFatAtual()
+        df_loaded = self.reservaFatAtual('sim')
         df_loaded = df_loaded[df_loaded['codReduzido'] == self.codReduzido].reset_index()
 
         df_loaded = df_loaded.sort_values(by=['qtdePedidaSaldo'],
