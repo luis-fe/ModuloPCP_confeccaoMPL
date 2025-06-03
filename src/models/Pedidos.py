@@ -496,6 +496,22 @@ class Pedidos():
         groupBy = groupBy.sort_values(by=['qtdePedida'],
                                                         ascending=False)  # escolher como deseja classificar
         return groupBy
+
+
+
+    def detalhaPedidosSkuSaldo(self):
+        '''Metodo que consulta os pedidos do sku:
+        codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
+        '''
+
+        df_loaded = self.reservaFatAtual()
+        df_loaded = df_loaded[df_loaded['codReduzido'] == self.codReduzido].reset_index()
+
+        df_loaded = df_loaded.sort_values(by=['qtdePedida'],
+                                                        ascending=False)  # escolher como deseja classificar
+        return df_loaded
+
+
     def __consultaArquivoFastVendasAnteriores(self, detalhaSku = ''):
         '''Metodo utilizado para ler um arquivo do tipo parquet e converter em um DataFrame, retornando um DataFrame com as vendas
          nos 300 dias anteriores ao periodo de faturamento do plano atual'''
