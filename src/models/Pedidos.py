@@ -414,10 +414,11 @@ class Pedidos():
                     "qtdeCancelada": "sum",
                     "qtdeFaturada": 'sum'}).reset_index()
 
-            disponivel = df_loaded.groupby(["codProduto"]).agg({
-                                                             "qtdePedida": "sum",
-                                                            "qtdeCancelada": "sum",
-                                                            "qtdeFaturada": 'sum'}).reset_index()
+            else:
+                disponivel = df_loaded.groupby(["codProduto"]).agg({
+                                                                 "qtdePedida": "sum",
+                                                                "qtdeCancelada": "sum",
+                                                                "qtdeFaturada": 'sum'}).reset_index()
             disponivel.rename(columns={"codProduto":"codReduzido",
                                        "qtdePedida": "qtdePedidaSaldo",
                                        "qtdeCancelada": "qtdeCanceladaSaldo",
