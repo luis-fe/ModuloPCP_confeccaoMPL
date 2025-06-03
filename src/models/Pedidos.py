@@ -518,7 +518,10 @@ class Pedidos():
         df_loaded = self.reservaFatAtual('sim')
         df_loaded = df_loaded[df_loaded['codReduzido'] == self.codReduzido].reset_index()
 
-        df_loaded = df_loaded.sort_values(by=['qtdePedidaSaldo'],
+        df_loaded = df_loaded[df_loaded['SaldoColAnt'] > 0].reset_index()
+
+
+        df_loaded = df_loaded.sort_values(by=['SaldoColAnt'],
                                                         ascending=False)  # escolher como deseja classificar
         return df_loaded
 
