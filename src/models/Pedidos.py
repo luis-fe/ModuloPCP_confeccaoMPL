@@ -593,7 +593,7 @@ class Pedidos():
 
 
         df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFatAnterior
-        df_loaded['filtro4'] = df_loaded['dataPrevFat'] <= self.iniFat
+        df_loaded['filtro4'] = df_loaded['dataPrevFat'] < self.iniFat
 
 
 
