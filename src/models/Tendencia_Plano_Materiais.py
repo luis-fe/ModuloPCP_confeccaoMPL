@@ -370,7 +370,7 @@ class Tendencia_Plano_Materiais():
                                                 'valorVendido','qtdeFaturada'])
 
         Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
-        Necessidade['11-CodComponente'] = Necessidade['11-CodComponente'] +'-'+Necessidade['descricaoComponente']+' ('+Necessidade['12-unid']+')'
+        Necessidade['11-CodComponente'] = Necessidade['11-CodComponente'] +'-'+Necessidade['descricaoComponente']+' ('+Necessidade['12-unid']+f')       {self.nomeSimulacao}'
 
         return Necessidade
 
