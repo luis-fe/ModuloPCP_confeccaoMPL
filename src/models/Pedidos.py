@@ -416,6 +416,10 @@ class Pedidos():
                     "qtdeCancelada": "sum",
                     "qtdeFaturada": 'sum'}).reset_index()
 
+                disponivel['dataPrevFat'] = pd.to_datetime(disponivel['dataPrevFat'],
+                                                        format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
+
+
             else:
                 disponivel = df_loaded.groupby(["codProduto"]).agg({
                                                                  "qtdePedida": "sum",
