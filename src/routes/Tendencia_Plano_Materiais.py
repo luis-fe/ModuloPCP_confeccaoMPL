@@ -201,6 +201,9 @@ def post_DetalhaNecessidade():
     codComponente = data.get('codComponente')
     nomeSimulacao = data.get("nomeSimulacao",'nao')
 
+    if nomeSimulacao == 'nao':
+        nomeSimulacao = ''
+
 
     dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais('1',codPlano, consideraPedBloq,'',
                                                                 str(codComponente)).detalhaNecessidade(nomeSimulacao)
