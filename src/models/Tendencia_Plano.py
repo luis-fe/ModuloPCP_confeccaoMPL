@@ -378,6 +378,18 @@ class Tendencia_Plano():
         consultaVendasSku['disponivel'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
                 consultaVendasSku['SaldoColAnt']+ consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
 
+        consultaVendasSku['disponivel Pronta Entrega'] = (consultaVendasSku['estoqueAtual']) - (
+                consultaVendasSku['SaldoColAnt']+ consultaVendasSku['qtdePedida'] - consultaVendasSku['qtdeFaturada'])
+
+
+        consultaVendasSku['disponivel Pronta Entrega'] = np.where(
+            consultaVendasSku['disponivel Pronta Entrega'] < 0,  # Condição
+            0,
+            consultaVendasSku['disponivel Pronta Entrega']
+        )
+
+
+
         # 11 - Calculando a Previsao de sobra  - baseado na previsao de vendas
         consultaVendasSku['Prev Sobra'] = (consultaVendasSku['emProcesso'] + consultaVendasSku['estoqueAtual']) - (
                 consultaVendasSku['SaldoColAnt'] + consultaVendasSku['previcaoVendas'] - consultaVendasSku['qtdeFaturada'])

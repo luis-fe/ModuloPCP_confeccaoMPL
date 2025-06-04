@@ -497,6 +497,7 @@ class Pedidos():
         groupBy['emProcesso'].fillna(0,inplace=True)
 
         groupBy['disponivel'] = (groupBy['emProcesso'] + groupBy['estoqueAtual'] ) - (groupBy['qtdePedida'] - groupBy['qtdeFaturada'] )
+        groupBy['disponivel Pronta Entega'] = (groupBy['estoqueAtual'] ) - (groupBy['qtdePedida'] - groupBy['qtdeFaturada'] )
 
         groupBy['valorVendido'] = groupBy['valorVendido'].apply(self.formatar_financeiro)
         groupBy['qtdePedida'] = groupBy['qtdePedida'].apply(self.__formatar_padraoInteiro)
