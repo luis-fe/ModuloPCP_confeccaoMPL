@@ -164,10 +164,9 @@ def get_DetalhaPedidosGeralSaldo():
 
     codPlano = request.args.get('codPlano', '-')
     consideraPedidosBloqueado = request.args.get('consideraPedidosBloqueado', 'nao')
-    codReduzido = request.args.get('codReduzido', '-')
 
 
-    dados = Pedidos.Pedidos('1',str(codPlano),consideraPedidosBloqueado,str(codReduzido)).detalhaPedidosGeralaldo()
+    dados = Pedidos.Pedidos('1',str(codPlano),consideraPedidosBloqueado).detalhaPedidosGeralaldo()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
