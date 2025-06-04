@@ -206,7 +206,7 @@ def post_DetalhaNecessidade():
 
 
     dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais('1',codPlano, consideraPedBloq,'',
-                                                                str(codComponente)).detalhaNecessidade(nomeSimulacao)
+                                                                str(codComponente),nomeSimulacao).detalhaNecessidade(nomeSimulacao)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
