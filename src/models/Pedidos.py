@@ -411,6 +411,7 @@ class Pedidos():
             if detalha != '':
                 disponivel = df_loaded.groupby(["codProduto","codPedido"]).agg({
                     "dataEmissao":"first",
+                    "codTipoNota":"first",
                     "dataPrevFat": "first",
                     "qtdePedida": "sum",
                     "qtdeCancelada": "sum",
