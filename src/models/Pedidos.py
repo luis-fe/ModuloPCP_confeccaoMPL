@@ -552,7 +552,7 @@ class Pedidos():
         codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
         '''
 
-        df_loaded = self.reservaFatAtual('Todos')
+        df_loaded = self.reservaFatAtual('todos')
 
         df_loaded = df_loaded[df_loaded['SaldoColAnt'] > 0].reset_index()
 
