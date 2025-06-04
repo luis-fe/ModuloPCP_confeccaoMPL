@@ -420,6 +420,21 @@ class Pedidos():
                 disponivel['dataPrevFat'] = pd.to_datetime(disponivel['dataPrevFat'],
                                                         format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
 
+            elif detalha =='todos':
+                disponivel = df_loaded.groupby(["codProduto","codPedido"]).agg({
+                    "marca":"first",
+                    "nome":"first",
+                    "dataEmissao":"first",
+                    "codTipoNota":"first",
+                    "dataPrevFat": "first",
+                    "qtdePedida": "sum",
+                    "qtdeCancelada": "sum",
+                    "qtdeFaturada": 'sum'}).reset_index()
+
+                disponivel['dataPrevFat'] = pd.to_datetime(disponivel['dataPrevFat'],
+                                                        format='%a, %d %b %Y %H:%M:%S %Z').dt.strftime('%Y-%m-%d')
+
+
 
             else:
                 disponivel = df_loaded.groupby(["codProduto"]).agg({
@@ -524,6 +539,20 @@ class Pedidos():
 
         df_loaded = self.reservaFatAtual('sim')
         df_loaded = df_loaded[df_loaded['codReduzido'] == self.codReduzido].reset_index()
+
+        df_loaded = df_loaded[df_loaded['SaldoColAnt'] > 0].reset_index()
+
+
+        df_loaded = df_loaded.sort_values(by=['SaldoColAnt'],
+                                                        ascending=False)  # escolher como deseja classificar
+        return df_loaded
+
+    def detalhaPedidosGeralaldo(self):
+        '''Metodo que consulta os pedidos do sku:
+        codPedido, tipoNota, dataEmisao, dataPrev , cliente , qtdPedida
+        '''
+
+        df_loaded = self.reservaFatAtual('sim')
 
         df_loaded = df_loaded[df_loaded['SaldoColAnt'] > 0].reset_index()
 
