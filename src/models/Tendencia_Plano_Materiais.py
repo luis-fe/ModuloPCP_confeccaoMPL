@@ -370,6 +370,7 @@ class Tendencia_Plano_Materiais():
                                                 'valorVendido','qtdeFaturada'])
 
         Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
+        Necessidade['11-CodComponente'] = Necessidade['11-CodComponente'] +'-'+Necessidade['03-nome']
 
         return Necessidade
 
@@ -613,6 +614,75 @@ class Tendencia_Plano_Materiais():
 
             return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
 
+
+
+    def obtendoUltimaAnalise_porMPPlanoSimulacao(self):
+        '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
+
+        sql = """
+        select 
+            "DataHora", "codPlano" , "nomeSimulacao"
+        from 
+            pcp."controleServicos"
+        where 
+            "codPlano"  = %s
+            and "Servico" = 'SimulacaoPlanoMP'
+            and "nomeSimulacao" = %s
+        order by 
+            "DataHora" desc
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        sql = pd.read_sql(sql, conn, params=(self.codPlano,self.nomeSimulacao))
+
+        if sql.empty:
+
+            return pd.DataFrame([{'Mensagem':f'Cálculo dessa Simulacao nunca foi calculado para o plano {self.codPlano}_{self.nomeSimulacao}','status':False}])
+
+        else:
+
+            return pd.DataFrame([{'Mensagem':f'Último dessa Simulacao feito em {sql["DataHora"][0]}, deseja recalcular ?',"status":True}])
+
+
+    def atualizando_MPPlanoSimulacao(self):
+        '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
+
+
+        insert = """
+            insert into pcp."controleServicos" ("DataHora", "codPlano", "Servico", "nomeSimulacao" ) values ( %s , %s , 'SimulacaoPlanoMP', %s )
+        """
+
+        uptade = """
+            update 
+                pcp."controleServicos"
+            set 
+                "DataHora" = %s, "Servico" = 'SimulacaoPlanoMP', "nomeSimulacao" = %s
+            where 
+                "codPlano" = %s 
+                and "Servico" = 'SimulacaoPlanoMP'
+        """
+
+        consulta = self.obtendoUltimaAnalise_porPlano()
+
+        if consulta['status'][0] == False:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
+        else:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(uptade, (self.obterdiaAtual(), self.codPlano))
+                    conn.commit()
+
+
+
+
     def atualizando_InserindoCalAnalise(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
 
@@ -627,7 +697,8 @@ class Tendencia_Plano_Materiais():
             set 
                 "DataHora" = %s, "Servico" = 'AnaliseMateriais'
             where 
-                "codPlano" = %s
+                "codPlano" = %s 
+                and "Servico" = 'AnaliseMateriais'
         """
 
         consulta = self.obtendoUltimaAnalise_porPlano()
@@ -699,6 +770,8 @@ class Tendencia_Plano_Materiais():
             # 1.6 Calcula odisponivelVendas converido em materia prima
             Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
             Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
+
+            # GRAVANDO O CALCULO DA SIMULACAO
 
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
             # 1.7 Resume a necessidade agrupando por codigo componentente
