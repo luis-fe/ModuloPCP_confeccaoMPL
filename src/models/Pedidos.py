@@ -408,7 +408,7 @@ class Pedidos():
             df_loaded = self.__consultaArquivoFastVendasAnteriores()
 
 
-            if detalha != '':
+            if detalha != '' and detalha != 'todos' :
                 disponivel = df_loaded.groupby(["codProduto","codPedido"]).agg({
                     "dataEmissao":"first",
                     "codTipoNota":"first",
