@@ -365,12 +365,12 @@ class Tendencia_Plano_Materiais():
                      'Necessidade faltaProg (Tendencia)':'14-Necessidade faltaProg (Tendencia)'
                      },
             inplace=True)
-        Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index','descricaoComponente'
+        Necessidade = Necessidade.drop(columns=['Prev Sobra','Unnamed: 0','categoria','marca','index'
             ,'descricaoPlano','disponivel','dist%','emProcesso','estoqueAtual','codItemPai','codPlano','codSeqTamanho','codSortimento',
                                                 'valorVendido','qtdeFaturada'])
 
         Necessidade['14-Necessidade faltaProg (Tendencia)'] = Necessidade['14-Necessidade faltaProg (Tendencia)'].round(2)
-        Necessidade['11-CodComponente'] = Necessidade['11-CodComponente'] +'-'+Necessidade['03-nome']
+        Necessidade['11-CodComponente'] = Necessidade['11-CodComponente'] +'-'+Necessidade['descricaoComponente']
 
         return Necessidade
 
