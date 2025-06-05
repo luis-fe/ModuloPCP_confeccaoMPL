@@ -1,5 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response, send_file
 from functools import wraps
+import io
+
+import src.connection.ConexaoERP
 from src.models import Tendencia_Plano_Materiais, Produtos
 
 Tendencia_Plano_Materiais_routes = Blueprint('Tendencia_Plano_Materiais_routes', __name__)
@@ -272,3 +275,35 @@ def post_detalharSku_x_AnaliseEmpenhoe():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>")
+def obter_imagem(cpf):
+    try:
+        conn = src.connection.ConexaoERP.ConexaoInternoMPL()
+        cursor = conn.cursor()
+
+        query = """
+        SELECT stream 
+        FROM Utils_Persistence.Csw1Stream 
+        WHERE rotinaAcesso = '%CSWANEXO' 
+        AND nomeArquivo LIKE ?
+        """
+        cursor.execute(query, f'{cpf}%')
+        row = cursor.fetchone()
+
+        if row and row[0]:
+            imagem_bytes = row[0]  # campo 'stream'
+
+            # Retorna a imagem como response HTTP
+            return send_file(
+                io.BytesIO(imagem_bytes),
+                mimetype='image/jpeg',
+                as_attachment=False,
+                download_name=f"{cpf}.jpg"
+            )
+        else:
+            return make_response("Imagem não encontrada.", 404)
+
+    except Exception as e:
+        return make_response(f"Erro: {str(e)}", 500)
