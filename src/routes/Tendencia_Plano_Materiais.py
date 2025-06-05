@@ -306,4 +306,5 @@ def obter_imagem(cpf):
             return make_response("Imagem não encontrada.", 404)
 
     except Exception as e:
+        print(type(row[0]))
         return make_response(f"Erro: {str(e)}", 500)
