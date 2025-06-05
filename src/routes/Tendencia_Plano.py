@@ -88,6 +88,28 @@ def post_tendenciaSku():
     del dados
     return jsonify(OP_data)
 
+@Tendencia_Plano_routes.route('/pcp/api/obtendoUltimaTendencia_porPlano', methods=['GET'])
+@token_required
+def obtendoUltimaTendencia_porPlano():
+
+    codPlano = request.args.get('codPlano','-')
+    codEmpresa = request.args.get('codEmpresa','1')
+
+
+    dados = Tendencia_Plano.Tendencia_Plano(codEmpresa,codPlano).obtendoUltimaTendencia()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
 
 @Tendencia_Plano_routes.route('/pcp/api/simulacaoProgramacao', methods=['POST'])
 @token_required
