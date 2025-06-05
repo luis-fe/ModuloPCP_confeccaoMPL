@@ -280,17 +280,19 @@ def post_detalharSku_x_AnaliseEmpenhoe():
 @Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>")
 def obter_imagem(cpf):
     try:
+        imagem_bytes = None  # Inicializa fora do bloco
+
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
             cursor = conn.cursor()
             sql = "SELECT stream FROM Utils_Persistence.Csw1Stream WHERE rotinaAcesso = ? AND nomeArquivo LIKE ?"
             cursor.execute(sql, ['%CSWANEXO', f'{cpf}%'])
             row = cursor.fetchone()
 
-        if row and row[0]:
-            # Conversão do CacheInputStream Java para bytes
-            java_stream = row[0]
-            imagem_bytes = java_stream.read()  # ← conversão importante aqui
+            if row and row[0]:
+                java_stream = row[0]
+                imagem_bytes = java_stream.read()  # Lê os bytes com a conexão ainda aberta
 
+        if imagem_bytes:
             return send_file(
                 io.BytesIO(imagem_bytes),
                 mimetype='image/jpeg',
