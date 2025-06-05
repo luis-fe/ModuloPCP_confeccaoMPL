@@ -431,6 +431,7 @@ class Tendencia_Plano():
 
         caminhoAbsoluto = configApp.localProjeto
         consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
+        consultaVendasSku['codItemPai'] = consultaVendasSku['codItemPai'].astype(str)
 
         # 15 - Tratando o valor financeiro
         consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.__formatar_financeiro)
@@ -438,6 +439,7 @@ class Tendencia_Plano():
         # 16 - Acescentando tendencia abc
         abc = self.tendenciaAbc('sim')
         abc['codItemPai'] = abc['codItemPai'].astype(str)
+
         consultaVendasSku = pd.merge(consultaVendasSku, abc , on='codItemPai', how='left')
         consultaVendasSku.fillna('-', inplace=True)
 
