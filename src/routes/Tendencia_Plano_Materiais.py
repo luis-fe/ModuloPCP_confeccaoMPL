@@ -301,6 +301,8 @@ def obter_imagem(cpf):
                 download_name=f"{cpf}.jpg"
             )
         else:
+            print(type(row[0]))
+
             return make_response("Imagem não encontrada.", 404)
 
     except Exception as e:
