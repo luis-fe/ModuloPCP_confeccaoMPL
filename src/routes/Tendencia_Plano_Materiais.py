@@ -280,7 +280,7 @@ def post_detalharSku_x_AnaliseEmpenhoe():
 @Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>")
 def obter_imagem(cpf):
     try:
-        imagem_bytes = None  # Inicializa fora do bloco
+        imagem_bytes = None
 
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
             cursor = conn.cursor()
@@ -290,7 +290,7 @@ def obter_imagem(cpf):
 
             if row and row[0]:
                 java_stream = row[0]
-                imagem_bytes = java_stream.read()  # Lê os bytes com a conexão ainda aberta
+                imagem_bytes = java_stream.read()  # **Ler aqui dentro, enquanto a conexão está aberta**
 
         if imagem_bytes:
             return send_file(
