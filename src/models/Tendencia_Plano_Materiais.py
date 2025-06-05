@@ -382,6 +382,10 @@ class Tendencia_Plano_Materiais():
         if simulacao == 'nao':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
         else:
+            verificador = self.obtendoUltimaAnalise_porMPPlanoSimulacao()
+            if  verificador['status'][0] == False:
+                self.estrutura_ItensCongelada('sim')
+
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
 
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
@@ -452,6 +456,8 @@ class Tendencia_Plano_Materiais():
         if self.nomeSimulacao == 'nao':
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
         else:
+
+            self.atualizando_MPPlanoSimulacao()
             Necessidade.to_csv(
                 f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
 
@@ -657,10 +663,11 @@ class Tendencia_Plano_Materiais():
             update 
                 pcp."controleServicos"
             set 
-                "DataHora" = %s, "Servico" = 'SimulacaoPlanoMP', "nomeSimulacao" = %s
+                "DataHora" = %s, "Servico" = 'SimulacaoPlanoMP'
             where 
                 "codPlano" = %s 
                 and "Servico" = 'SimulacaoPlanoMP'
+                and "nomeSimulacao" = %s
         """
 
         consulta = self.obtendoUltimaAnalise_porPlano()
@@ -670,14 +677,14 @@ class Tendencia_Plano_Materiais():
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
-                    curr.execute(insert, (self.obterdiaAtual(), self.codPlano))
+                    curr.execute(insert, (self.obterdiaAtual(), self.codPlano, self.nomeSimulacao))
                     conn.commit()
 
         else:
 
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
-                    curr.execute(uptade, (self.obterdiaAtual(), self.codPlano))
+                    curr.execute(uptade, (self.obterdiaAtual(), self.codPlano, self.nomeSimulacao))
                     conn.commit()
 
 
