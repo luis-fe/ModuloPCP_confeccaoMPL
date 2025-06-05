@@ -280,17 +280,19 @@ def post_detalharSku_x_AnaliseEmpenhoe():
 @Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>")
 def obter_imagem(cpf):
     try:
-        conn = src.connection.ConexaoERP.ConexaoInternoMPL()
-        cursor = conn.cursor()
 
-        query = """
-        SELECT stream 
-        FROM Utils_Persistence.Csw1Stream 
-        WHERE rotinaAcesso = '%CSWANEXO' 
-        AND nomeArquivo LIKE ?
-        """
-        cursor.execute(query, f'{cpf}%')
-        row = cursor.fetchone()
+        with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
+
+            query = """
+            SELECT stream 
+            FROM Utils_Persistence.Csw1Stream 
+            WHERE rotinaAcesso = '%CSWANEXO' 
+            AND nomeArquivo LIKE ?
+            """
+
+            cursor = conn.cursor()
+            cursor.execute(query, f'{cpf}%')
+            row = cursor.fetchone()
 
         if row and row[0]:
             imagem_bytes = row[0]  # campo 'stream'
