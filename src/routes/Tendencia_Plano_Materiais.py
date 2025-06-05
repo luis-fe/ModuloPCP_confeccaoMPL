@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, make_response, send_file
 from functools import wraps
 import io
+import jpype
 
 import src.connection.ConexaoERP
 from src.models import Tendencia_Plano_Materiais, Produtos
@@ -284,24 +285,25 @@ def obter_imagem(cpf):
 
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
             cursor = conn.cursor()
-            sql = f"""
-            SELECT top 1 stream FROM Utils_Persistence.Csw1Stream WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%'
-            """
-            cursor.execute(sql,)
+            sql = "SELECT stream FROM Utils_Persistence.Csw1Stream WHERE rotinaAcesso = ? AND nomeArquivo LIKE ?"
+            cursor.execute(sql, ['%CSWANEXO', f'{cpf}%'])
             row = cursor.fetchone()
 
             if row and row[0]:
                 java_stream = row[0]
 
-                # Lê o stream convertendo JInt para int
-                bytes_list = []
-                byte = java_stream.read()
+                # Criar um buffer Java de 4096 bytes
+                JByteArray = jpype.JArray(jpype.JByte)
+                buffer = JByteArray(4096)
 
-                while int(byte) != -1:
-                    bytes_list.append(int(byte))
-                    byte = java_stream.read()
+                bytes_data = bytearray()
+                read_len = java_stream.read(buffer)
 
-                imagem_bytes = bytes(bytes_list)
+                while read_len != -1:
+                    bytes_data.extend(buffer[:read_len])
+                    read_len = java_stream.read(buffer)
+
+                imagem_bytes = bytes(bytes_data)
 
         if imagem_bytes:
             return send_file(
@@ -315,5 +317,4 @@ def obter_imagem(cpf):
 
     except Exception as e:
         return make_response(f"Erro: {str(e)}", 500)
-
 
