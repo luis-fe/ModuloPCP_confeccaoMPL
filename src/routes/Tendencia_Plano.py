@@ -76,6 +76,7 @@ def post_tendenciaSku():
     if congelar == False:
         dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaVendas()
     else:
+        print(data)
         dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaCongeladSku()
 
     #controle.salvarStatus(rotina, ip, datainicio)
