@@ -416,7 +416,7 @@ class Tendencia_Plano():
 
         caminhoAbsoluto = configApp.localProjeto
 
-        dataAjustada = self.obterdiaAtual().replace('/','_')
+        dataAjustada = self.obterdiaAtual().replace('/','_')[:9]
 
 
         consultaVendasSku.to_csv(f'{caminhoAbsoluto}/dados/backup/{dataAjustada}_tendenciaPlano-{self.codPlano}.csv')
