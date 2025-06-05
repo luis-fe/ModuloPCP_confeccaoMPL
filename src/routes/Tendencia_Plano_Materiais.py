@@ -283,15 +283,10 @@ def obter_imagem(cpf):
 
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
 
-            query = """
-            SELECT stream 
-            FROM Utils_Persistence.Csw1Stream 
-            WHERE rotinaAcesso = '%CSWANEXO' 
-            AND nomeArquivo LIKE ?
-            """
 
             cursor = conn.cursor()
-            cursor.execute(query, f'{cpf}%')
+            sql = "SELECT stream FROM Utils_Persistence.Csw1Stream WHERE rotinaAcesso = ? AND nomeArquivo LIKE ?"
+            cursor.execute(sql, ['%CSWANEXO', f'{cpf}%'])
             row = cursor.fetchone()
 
         if row and row[0]:
