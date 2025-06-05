@@ -670,7 +670,7 @@ class Tendencia_Plano_Materiais():
                 and "nomeSimulacao" = %s
         """
 
-        consulta = self.obtendoUltimaAnalise_porPlano()
+        consulta = self.obtendoUltimaAnalise_porMPPlanoSimulacao()
 
         if consulta['status'][0] == False:
 
