@@ -71,9 +71,13 @@ def post_tendenciaSku():
     codPlano = data.get('codPlano')
     empresa = data.get('empresa','1')
     consideraPedBloq = data.get('consideraPedBloq','nao')
+    congelar = data.get('congelar',False)
 
+    if congelar == False:
+        dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaVendas()
+    else:
+        dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaCongeladSku()
 
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq).tendenciaVendas()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
