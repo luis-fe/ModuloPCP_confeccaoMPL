@@ -291,12 +291,12 @@ def obter_imagem(cpf):
             if row and row[0]:
                 java_stream = row[0]
 
-                # Lê todo o conteúdo do stream como bytes
+                # Lê o stream convertendo JInt para int
                 bytes_list = []
                 byte = java_stream.read()
 
-                while byte != -1:
-                    bytes_list.append(byte)
+                while int(byte) != -1:
+                    bytes_list.append(int(byte))
                     byte = java_stream.read()
 
                 imagem_bytes = bytes(bytes_list)
@@ -313,4 +313,5 @@ def obter_imagem(cpf):
 
     except Exception as e:
         return make_response(f"Erro: {str(e)}", 500)
+
 
