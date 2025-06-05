@@ -290,8 +290,16 @@ def obter_imagem(cpf):
 
             if row and row[0]:
                 java_stream = row[0]
-                imagem_bytes = java_stream.read()  # **Ler aqui dentro, enquanto a conexão está aberta**
-                print(type(row[0]))
+
+                # Lê todo o conteúdo do stream como bytes
+                bytes_list = []
+                byte = java_stream.read()
+
+                while byte != -1:
+                    bytes_list.append(byte)
+                    byte = java_stream.read()
+
+                imagem_bytes = bytes(bytes_list)
 
         if imagem_bytes:
             return send_file(
@@ -301,10 +309,8 @@ def obter_imagem(cpf):
                 download_name=f"{cpf}.jpg"
             )
         else:
-            print(type(row[0]))
-
             return make_response("Imagem não encontrada.", 404)
 
     except Exception as e:
-        print(type(row[0]))
         return make_response(f"Erro: {str(e)}", 500)
+
