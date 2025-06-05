@@ -291,6 +291,7 @@ def obter_imagem(cpf):
             if row and row[0]:
                 java_stream = row[0]
                 imagem_bytes = java_stream.read()  # **Ler aqui dentro, enquanto a conexão está aberta**
+                print(type(row[0]))
 
         if imagem_bytes:
             return send_file(
