@@ -342,3 +342,19 @@ def obter_imagem(cpf, indice):
         return make_response(f"Erro: {str(e)}", 500)
 
 
+@Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>/quantidade")
+def obter_quantidade_imagens(cpf):
+    try:
+        with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
+            cursor = conn.cursor()
+            sql = f"""
+                SELECT COUNT(*) FROM Utils_Persistence.Csw1Stream 
+                WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%'
+            """
+            cursor.execute(sql)
+            count = cursor.fetchone()[0]
+        return {"total_imagens": count}
+    except Exception as e:
+        return make_response(f"Erro: {str(e)}", 500)
+
+
