@@ -281,43 +281,64 @@ def post_detalharSku_x_AnaliseEmpenhoe():
     return jsonify(OP_data)
 
 
-@Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>")
-def obter_imagem(cpf):
+
+@Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>", defaults={'indice': 0})
+@Tendencia_Plano_Materiais_routes.route("/imagem/<string:cpf>/<int:indice>")
+def obter_imagem(cpf, indice):
     try:
-        imagem_bytes = None
+        imagens_bytes = []
 
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
             cursor = conn.cursor()
-            sql = f"""SELECT stream FROM Utils_Persistence.Csw1Stream WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%' """
-            cursor.execute(sql,)
-            row = cursor.fetchone()
+            sql = f"""
+                SELECT stream FROM Utils_Persistence.Csw1Stream 
+                WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%'
+                ORDER BY nomeArquivo
+            """
+            cursor.execute(sql)
+            rows = cursor.fetchall()
 
-            if row and row[0]:
-                java_stream = row[0]
+            for row in rows:
+                if row and row[0]:
+                    java_stream = row[0]
 
-                # Criar um buffer Java de 4096 bytes
-                JByteArray = jpype.JArray(jpype.JByte)
-                buffer = JByteArray(4096)
+                    # Criar buffer de leitura
+                    JByteArray = jpype.JArray(jpype.JByte)
+                    buffer = JByteArray(4096)
 
-                bytes_data = bytearray()
-                read_len = java_stream.read(buffer)
-
-                while read_len != -1:
-                    bytes_data.extend(buffer[:read_len])
+                    bytes_data = bytearray()
                     read_len = java_stream.read(buffer)
 
-                imagem_bytes = bytes(bytes_data)
+                    while read_len != -1:
+                        bytes_data.extend(buffer[:read_len])
+                        read_len = java_stream.read(buffer)
 
-        if imagem_bytes:
-            return send_file(
-                io.BytesIO(imagem_bytes),
-                mimetype='image/jpeg',
-                as_attachment=False,
-                download_name=f"{cpf}.jpg"
-            )
-        else:
-            return make_response("Imagem não encontrada.", 404)
+                    imagens_bytes.append(bytes(bytes_data))
+
+        total_imagens = len(imagens_bytes)
+
+        if total_imagens == 0:
+            return make_response("Nenhuma imagem encontrada.", 404)
+
+        if indice >= total_imagens or indice < 0:
+            return make_response(f"Índice inválido. Existem {total_imagens} imagens disponíveis.", 400)
+
+        imagem_escolhida = imagens_bytes[indice]
+
+        response = send_file(
+            io.BytesIO(imagem_escolhida),
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name=f"{cpf}_{indice + 1}.jpg"
+        )
+
+        # Cabeçalho customizado indicando total de imagens
+        response.headers["X-Total-Imagens"] = str(total_imagens)
+        response.headers["X-Imagem-Atual"] = str(indice + 1)
+
+        return response
 
     except Exception as e:
         return make_response(f"Erro: {str(e)}", 500)
+
 
