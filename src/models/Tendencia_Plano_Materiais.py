@@ -575,7 +575,7 @@ class Tendencia_Plano_Materiais():
 
             Necessidade.rename(
                 columns={
-                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)Simulacao'
+                    'faltaProg (Tendencia)Simulacao': 'faltaProg (Tendencia)'
                 },
                 inplace=True)
 
