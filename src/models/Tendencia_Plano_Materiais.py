@@ -388,7 +388,7 @@ class Tendencia_Plano_Materiais():
                 self.estrutura_ItensCongelada('sim')
 
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
-
+            Necessidade['faltaProg (Tendencia)']= Necessidade['faltaProg (Tendencia)Simulacao']
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
         Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
