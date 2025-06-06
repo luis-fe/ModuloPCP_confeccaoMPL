@@ -531,7 +531,7 @@ class Tendencia_Plano_Materiais():
 
         caminho_absoluto2 = configApp.localProjeto
 
-        if simulacao == 'nao':
+        if simulacao == 'nao' or simulacao == '':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
         else:
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
