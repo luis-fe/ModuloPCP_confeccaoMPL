@@ -546,18 +546,38 @@ class Tendencia_Plano_Materiais():
 
         Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
         Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
+        if simulacao == 'nao':
+            Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
+                    {
+                        "estoqueAtualMP":"first",
+                        "EmRequisicao": "first",
+                        "EstoqueAtualMPLiquido": "first",
+                        "faltaProg (Tendencia)MP_total": "first",
+                        "descricaoComponente":"first",
+                        "EstoqueDistMP": "first",
+                        "faltaProg (Tendencia)":"first",
+                        "obs":"first",
+                        "Sugestao_PCs": "first"}).reset_index()
+        else:
+            Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
+                    {
+                        "estoqueAtualMP":"first",
+                        "EmRequisicao": "first",
+                        "EstoqueAtualMPLiquido": "first",
+                        "faltaProg (Tendencia)MP_total": "first",
+                        "descricaoComponente":"first",
+                        "EstoqueDistMP": "first",
+                        "faltaProg (Tendencia)Simulacao":"first",
+                        "obs":"first",
+                        "Sugestao_PCs": "first"}).reset_index()
 
-        Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
-                {
-                    "estoqueAtualMP":"first",
-                    "EmRequisicao": "first",
-                    "EstoqueAtualMPLiquido": "first",
-                    "faltaProg (Tendencia)MP_total": "first",
-                    "descricaoComponente":"first",
-                    "EstoqueDistMP": "first",
-                    "faltaProg (Tendencia)":"first",
-                    "obs":"first",
-                    "Sugestao_PCs": "first"}).reset_index()
+            Necessidade.rename(
+                columns={
+                    'faltaProg (Tendencia)': 'faltaProg (Tendencia)Simulacao'
+                },
+                inplace=True)
+
+
 
         Necessidade['Sugestao_PCs'] = np.where(
             Necessidade['Sugestao_PCs']>0,
