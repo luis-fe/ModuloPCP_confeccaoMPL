@@ -259,6 +259,9 @@ def post_detalharSku_x_AnaliseEmpenhoe():
     nomeSimulacao = data.get("nomeSimulacao",'nao')
     arrayCategoriaMP = data.get('arrayCategoriaMP','')
 
+    if nomeSimulacao == '':
+        nomeSimulacao = 'nao'
+
 
 
     dados = Tendencia_Plano_Materiais.Tendencia_Plano_Materiais(codEmpresa,codPlano, consideraPedBloq,'','',nomeSimulacao,
