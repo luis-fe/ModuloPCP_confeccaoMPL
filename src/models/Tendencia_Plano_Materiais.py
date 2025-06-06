@@ -340,6 +340,7 @@ class Tendencia_Plano_Materiais():
         else:
             self.nomeSimulacao = simulacao
             Necessidade = pd.read_csv(f'{caminho_absoluto}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
+            Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)Simulacao']
 
 
         Necessidade['CodComponente'] = Necessidade['CodComponente'].astype(float).astype(int).astype(str)
