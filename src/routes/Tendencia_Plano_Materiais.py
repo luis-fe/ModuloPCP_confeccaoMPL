@@ -349,7 +349,7 @@ def obter_quantidade_imagens(cpf):
             cursor = conn.cursor()
             sql = f"""
                 SELECT COUNT(*) FROM Utils_Persistence.Csw1Stream 
-                WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%'
+                WHERE rotinaAcesso = '%CSWANEXO' AND documentoReferencia LIKE 'Item-{cpf}%'
             """
             cursor.execute(sql)
             count = cursor.fetchone()[0]
