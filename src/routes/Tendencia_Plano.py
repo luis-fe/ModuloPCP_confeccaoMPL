@@ -174,8 +174,8 @@ def post_simulacaoDetalhadaPorSku():
     return jsonify(OP_data)
 
 
-@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>", defaults={'indice': 0})
-@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>/<int:indice>")
+@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>", defaults={'indice': 0})
+@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>/<int:indice>")
 def obter_imagemEng(Eng, indice):
     try:
         imagens_bytes = []
@@ -237,7 +237,7 @@ def obter_imagemEng(Eng, indice):
         return make_response(f"Erro: {str(e)}", 500)
 
 
-@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>/quantidade")
+@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>/quantidade")
 def obter_quantidade_imagensEngenharia(eng):
     try:
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
