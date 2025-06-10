@@ -292,8 +292,11 @@ def obter_imagem(cpf, indice):
             cursor = conn.cursor()
             sql = f"""
                 SELECT stream FROM Utils_Persistence.Csw1Stream 
-                WHERE rotinaAcesso = '%CSWANEXO' AND nomeArquivo LIKE '{cpf}%'
-                ORDER BY nomeArquivo
+                WHERE 
+                    rotinaAcesso = '%CSWANEXO' 
+                    AND documentoReferencia LIKE 'Item-{cpf}%'
+                    AND stream is not null                
+                    ORDER BY nomeArquivo
             """
             cursor.execute(sql)
             rows = cursor.fetchall()
