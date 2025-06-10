@@ -452,7 +452,7 @@ class Pedidos():
 
 
         else:
-            disponivel = pd.DataFrame([{'status':'vazio','codReduzido':''}])
+            disponivel = pd.DataFrame([{'status':'vazio','codReduzido':'',"SaldoColAnt":0}])
         return disponivel
 
 
