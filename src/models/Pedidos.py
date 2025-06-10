@@ -395,12 +395,12 @@ class Pedidos():
         except ValueError:
             return valor  # Retorna o valor original caso não seja convertível
 
-    def reservaFatAtual(self, detalha = ''):
+    def reservaFatAtual(self, detalha = '', diasConsideraPedidos = 30 ):
         '''Metodo que encontra a reserva atual por sku'''
         diaAtual = datetime.strptime(self.__obterDiaAtual(), '%Y-%m-%d')
         plano = Plano.Plano(self.codPlano)
         self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
-        IniFat = datetime.strptime(self.iniFat, '%Y-%m-%d')
+        IniFat = datetime.strptime(self.iniFat, '%Y-%m-%d') + pd.Timedelta(days=diasConsideraPedidos)
 
         print(f'obtendo a reserva saldo dia atual {diaAtual} x inicio fat {IniFat}')
         df_loaded = self.__consultaArquivoFastVendasAnteriores()
