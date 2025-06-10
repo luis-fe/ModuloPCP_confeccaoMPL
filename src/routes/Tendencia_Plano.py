@@ -1,5 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response, send_file
 from functools import wraps
+import io
+import jpype
+import src.connection.ConexaoERP
 from src.models import Tendencia_Plano
 
 Tendencia_Plano_routes = Blueprint('Tendencia_Plano_routes', __name__)
@@ -169,3 +172,85 @@ def post_simulacaoDetalhadaPorSku():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>", defaults={'indice': 0})
+@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>/<int:indice>")
+def obter_imagemEng(Eng, indice):
+    try:
+        imagens_bytes = []
+
+        with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
+            cursor = conn.cursor()
+            sql = f"""
+                SELECT stream FROM Utils_Persistence.Csw1Stream 
+                WHERE 
+                    rotinaAcesso = '%CSWANEXO' 
+                    AND documentoReferencia LIKE 'Eng-{Eng}%'
+                    AND stream is not null                
+                    ORDER BY nomeArquivo
+            """
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+
+            for row in rows:
+                if row and row[0]:
+                    java_stream = row[0]
+
+                    # Criar buffer de leitura
+                    JByteArray = jpype.JArray(jpype.JByte)
+                    buffer = JByteArray(4096)
+
+                    bytes_data = bytearray()
+                    read_len = java_stream.read(buffer)
+
+                    while read_len != -1:
+                        bytes_data.extend(buffer[:read_len])
+                        read_len = java_stream.read(buffer)
+
+                    imagens_bytes.append(bytes(bytes_data))
+
+        total_imagens = len(imagens_bytes)
+
+        if total_imagens == 0:
+            return make_response("Nenhuma imagem encontrada.", 404)
+
+        if indice >= total_imagens or indice < 0:
+            return make_response(f"Índice inválido. Existem {total_imagens} imagens disponíveis.", 400)
+
+        imagem_escolhida = imagens_bytes[indice]
+
+        response = send_file(
+            io.BytesIO(imagem_escolhida),
+            mimetype='image/jpeg',
+            as_attachment=False,
+            download_name=f"{Eng}_{indice + 1}.jpg"
+        )
+
+        # Cabeçalho customizado indicando total de imagens
+        response.headers["X-Total-Imagens"] = str(total_imagens)
+        response.headers["X-Imagem-Atual"] = str(indice + 1)
+
+        return response
+
+    except Exception as e:
+        return make_response(f"Erro: {str(e)}", 500)
+
+
+@Tendencia_Plano_routes.route("/imagemEng/<string:cpf>/quantidade")
+def obter_quantidade_imagensEngenharia(eng):
+    try:
+        with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
+            cursor = conn.cursor()
+            sql = f"""
+                SELECT COUNT(*) FROM Utils_Persistence.Csw1Stream 
+                WHERE 
+                    rotinaAcesso = '%CSWANEXO' 
+                    AND documentoReferencia LIKE 'Eng-{eng}%'
+                    AND stream is not null
+            """
+            cursor.execute(sql)
+            count = cursor.fetchone()[0]
+        return {"total_imagens": count}
+    except Exception as e:
+        return make_response(f"Erro: {str(e)}", 500)
