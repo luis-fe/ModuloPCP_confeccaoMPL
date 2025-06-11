@@ -237,7 +237,7 @@ def obter_imagemEng(Eng, indice):
         return make_response(f"Erro: {str(e)}", 500)
 
 
-@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>/quantidade")
+@Tendencia_Plano_routes.route("/imagemEng/<string:eng>/quantidade")
 def obter_quantidade_imagensEngenharia(eng):
     try:
         with src.connection.ConexaoERP.ConexaoInternoMPL() as conn:
