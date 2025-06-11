@@ -176,7 +176,7 @@ def post_simulacaoDetalhadaPorSku():
 
 @Tendencia_Plano_routes.route("/imagemEng/<string:eng>", defaults={'indice': 0})
 @Tendencia_Plano_routes.route("/imagemEng/<string:eng>/<int:indice>")
-def obter_imagemEng(Eng, indice):
+def obter_imagemEng(eng, indice):
     try:
         imagens_bytes = []
 
