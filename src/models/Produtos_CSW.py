@@ -7,12 +7,13 @@ from src.connection import ConexaoERP
 class Produtos_CSW():
     '''Classe utilizada para fazer buscas relativo aos Produtos cadastrados no ERP CSW'''
 
-    def __init__(self, codEmpresa = '1' , codSku = None, ultimoItem = None, codNatureza = '5'):
+    def __init__(self, codEmpresa = '1' , codSku = None, ultimoItem = None, codNatureza = '5', codItemPai = ''):
 
         self.codSku = codSku
         self.ultimoItem = ultimoItem
         self.codNatureza = str(codNatureza)
         self.codEmpresa = codEmpresa
+        self.codItemPai = codItemPai
 
     def get_itensFilhos_Novos_CSW(self):
         '''Metodo que busca no csw os novos itens filhos que ainda nao foram atualizados no banco Postgre desse projeto '''
@@ -434,4 +435,36 @@ class Produtos_CSW():
         print(consumo['CodComponente'])
 
         return consumo
+
+
+    def obterColecaoItemPai(self):
+        '''Metodo que obtem a colecao do item PAi  '''
+
+
+        sql = f"""
+        SELECT
+            top 1 
+            convert(varchar(10),e.codColecao) as colecao 
+        FROM
+            tcp.DadosGeraisEng  e
+        WHERE
+            e.codEmpresa = 1
+            and e.codengenharia like '%{str(self.codItemPai)}%'
+                """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
 

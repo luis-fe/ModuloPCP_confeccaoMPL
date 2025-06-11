@@ -8,11 +8,12 @@ from src.connection import ConexaoPostgre
 class Produtos():
     '''Classe utilizada para o gerenciamento dos produtos (sku)  que compoe o PCP Confeccao'''
 
-    def __init__(self, codEmpresa = '1', codSku = None, codNatureza = '5'):
+    def __init__(self, codEmpresa = '1', codSku = None, codNatureza = '5', codItemPai = ''):
 
         self.codEmpresa = codEmpresa
         self.codSku = codSku
         self.codNatureza = codNatureza
+        self.codItemPai = codItemPai
 
     def __obter_UltimoSkuCadastrosNoPCP(self):
         '''Metodo que obtem os skus cadastrados no banco postgres da aplicacao '''
@@ -245,6 +246,15 @@ class Produtos():
         consulta = produto_Csw.informacoesComponente()
 
         return consulta
+
+
+    def codColceaoPai(self):
+        '''Metodo que busca a colecao de um item '''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None,None,self.codItemPai)
+        consulta = produto_Csw.obterColecaoItemPai()
+
+        return consulta['colecao'][0]
 
 
     def carregandoComponentes(self):
