@@ -185,8 +185,7 @@ def obter_imagemEng(eng, indice):
             sql = f"""
                 SELECT stream FROM Utils_Persistence.Csw1Stream 
                 WHERE 
-                    rotinaAcesso = '%CSWANEXO' 
-                    AND documentoReferencia LIKE 'Eng-{eng}%'
+                     documentoReferencia LIKE 'Eng-{eng}%'
                     AND stream is not null                
                     ORDER BY nomeArquivo
             """
@@ -245,8 +244,7 @@ def obter_quantidade_imagensEngenharia(eng):
             sql = f"""
                 SELECT COUNT(*) FROM Utils_Persistence.Csw1Stream 
                 WHERE 
-                    rotinaAcesso = '%CSWANEXO' 
-                    AND documentoReferencia LIKE 'Eng-{eng}%'
+                    documentoReferencia LIKE 'Eng-{eng}%'
                     AND stream is not null
             """
             cursor.execute(sql)
