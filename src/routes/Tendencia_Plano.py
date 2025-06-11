@@ -223,7 +223,7 @@ def obter_imagemEng(eng, indice):
             io.BytesIO(imagem_escolhida),
             mimetype='image/jpeg',
             as_attachment=False,
-            download_name=f"{Eng}_{indice + 1}.jpg"
+            download_name=f"{eng}_{indice + 1}.jpg"
         )
 
         # Cabeçalho customizado indicando total de imagens
