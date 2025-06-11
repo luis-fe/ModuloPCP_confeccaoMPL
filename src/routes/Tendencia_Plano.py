@@ -174,8 +174,8 @@ def post_simulacaoDetalhadaPorSku():
     return jsonify(OP_data)
 
 
-@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>", defaults={'indice': 0})
-@Tendencia_Plano_routes.route("/imagemEng/<string:Eng>/<int:indice>")
+@Tendencia_Plano_routes.route("/imagemEng/<string:eng>", defaults={'indice': 0})
+@Tendencia_Plano_routes.route("/imagemEng/<string:eng>/<int:indice>")
 def obter_imagemEng(Eng, indice):
     try:
         imagens_bytes = []
@@ -186,7 +186,7 @@ def obter_imagemEng(Eng, indice):
                 SELECT stream FROM Utils_Persistence.Csw1Stream 
                 WHERE 
                     rotinaAcesso = '%CSWANEXO' 
-                    AND documentoReferencia LIKE 'Eng-{Eng}%'
+                    AND documentoReferencia LIKE 'Eng-{eng}%'
                     AND stream is not null                
                     ORDER BY nomeArquivo
             """
