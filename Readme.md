@@ -1,13 +1,14 @@
 # Modulo PCP para Confecao
     Cliente: Grupo MPL
-    Framework: Flask - python
+    Tipo do Projeto: BackEnd
+    Framework: Flask - Python
     Criador: Luís Fernando Gonçalves de Lima Machado
     Versao Produção: 1.0 /Homologado 06-06-2025
 
-## 1.0 Objetivo do Projeto
+## 1 Objetivo do Projeto
     
         Um microserviço backend que conecta-se ao ERP da Empresa 
-    e ao banco de dados Postgre que está vinculado a aplicação, 
+    e ao banco de dados Postgre, que está vinculado a aplicação, 
     produzindo Api's com informações para projeto de PCP Confeccao. 
 ## 2 Inicializando o app
     
@@ -44,13 +45,15 @@
     
     2.1 - Alternativa via Docker: Dockerfile 
 
-## 3 Diagrama de Classes:![Diagrama de Classes.png](docsProject%2FDiagrama%20de%20Classes.png)
+## 3 Diagrama de Classes:
+#### Abaixo é detalhado o diagrama de classes, as classes que utilizam informacoes linkadas ao ERP da empresa, foram isoladas (destacadas em verde) para melhor manutencao.
+#### Na esquerda do digrama foi destacada as rotas de API que sao consumidas no FrontEnd, no diretorio "/routes" do projeto.
+#### ![Diagrama de Classes.png](docsProject%2FDiagrama%20de%20Classes.png)
 
 ## 4 Recursos de Otimização  usando congelamento '.CSV':
-        Esse projeto possue recursos de otimizacao usando api's que buscam arquivos .csv congelado.
-        Essa estrátegia ajuda na performance do projeto e na otimizacao dos recurso. Abaixo é descrito 
-    como isso ocorre no projeto:
-![Exemplo de Diretorio dados.png](docsProject%2FExemplo%20de%20Diretorio%20dados.png)
+#### Esse projeto possue recursos de otimizacao usando api's que buscam arquivos .csv congelado.
+#### Essa estrátegia ajuda na performance do projeto e na otimizacao dos recurso. Abaixo é descrito como isso ocorre no projeto:
+##### ![Exemplo de Diretorio dados.png](docsProject%2FExemplo%20de%20Diretorio%20dados.png)
 ##### Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
 | Arquivo                                                                                                    | Descrição                                                                                                                                                               | API's de Disparo                                                                                                                                |
 |------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
