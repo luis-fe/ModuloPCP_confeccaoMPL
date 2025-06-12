@@ -3,7 +3,7 @@
     Tipo do Projeto: BackEnd
     Framework: Flask - Python
     Criador: Luís Fernando Gonçalves de Lima Machado
-    Versao Produção: 1.0 /Homologado 06-06-2025
+    Versao Produção: 1.1 /Homologado 16-06-2025
 
 ## 1 Objetivo do Projeto
     
