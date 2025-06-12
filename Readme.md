@@ -50,7 +50,7 @@
         Esse projeto possue recursos de otimizacao usando api's que buscam arquivos .csv congelado.
         Essa estrátegia ajuda na performance do projeto e na otimizacao dos recurso. Abaixo é descrito 
     como isso ocorre no projeto:
-
+![Exemplo de Diretorio dados.png](docsProject%2FExemplo%20de%20Diretorio%20dados.png)
 ##### Diretorio "/dados" : encontra-se os arquivos temporarios em csv que fazem parte do projeto. 
 | Arquivo                                                                                                    | Descrição                                                                                                                                                               | API's de Disparo                                                                                                                                |
 |------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
