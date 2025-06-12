@@ -10,6 +10,7 @@
         Um microserviço backend que conecta-se ao ERP da Empresa 
     e ao banco de dados Postgre, que está vinculado a aplicação, 
     produzindo Api's com informações para projeto de PCP Confeccao. 
+
 ## 2 Inicializando o app
     
     1 - Configurar o projeto para o funcionamento: 
