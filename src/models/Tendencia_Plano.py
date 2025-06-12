@@ -426,6 +426,52 @@ class Tendencia_Plano():
         return consultaVendasSku
 
 
+    def tendenciaResumoEngharia(self):
+        '''Método que resume a tendencia a nivel de engenharia'''
+
+        caminhoAbsoluto = configApp.localProjeto
+        consultaVendasSku = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
+        consultaVendasSku['codItemPai'] = consultaVendasSku['codItemPai'].astype(str)
+
+        # 15 - Tratando o valor financeiro
+        consultaVendasSku['valorVendido'] = consultaVendasSku['valorVendido'].apply(self.__formatar_financeiro)
+
+        # 16 - Acescentando tendencia abc
+        abc = self.tendenciaAbc('sim')
+        abc['codItemPai'] = abc['codItemPai'].astype(str)
+
+        consultaVendasSku = pd.merge(consultaVendasSku, abc, on='codItemPai', how='left')
+        consultaVendasSku.fillna('-', inplace=True)
+
+        consultaVendasEngenharia = consultaVendasSku.groupby(['codItemPai']).agg({
+        'Ocorrencia em Pedidos':'max',
+        'marca':'first',
+        'categoria':'first',
+        'previcaoVendas':'sum',
+        'qtdeFaturada':'sum',
+        'qtdeFaturadaSaldo':'sum',
+        'qtdePedida':'sum',
+        'class':'first',
+        'classCategoria':'first',
+        'faltaProg (Tendencia)':'sum',
+        'Prev Sobra':'sum',
+        'SaldoColAnt':'sum',
+        'disponivel Pronta Entrega':'sum',
+        'emProcesso':'sum',
+        'estoqueAtual':'sum'
+        }).reset_index()
+
+        consultaVendasEngenharia['statusAFV'] = '-'
+        consultaVendasEngenharia['tam'] = '-'
+        consultaVendasEngenharia['codCor'] = '-'
+        consultaVendasEngenharia['codReduzido'] = '-'
+        consultaVendasEngenharia['disponivel'] = '-'
+        consultaVendasEngenharia['valorVendido'] = '-'
+
+
+        return consultaVendasEngenharia
+
+
     def tendenciaCongeladSku(self):
         '''Metodo que busca o ultimo backup do plano e carrega conelando a tendencia'''
 
