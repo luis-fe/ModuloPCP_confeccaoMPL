@@ -1,7 +1,7 @@
 import pandas as pd
 import fastparquet as fp
 from src.configApp import configApp
-from src.models import Produtos_CSW
+from src.models import Produtos_CSW, Produtos_colorBook
 from src.connection import ConexaoPostgre
 
 
@@ -255,6 +255,16 @@ class Produtos():
         consulta = produto_Csw.obterColecaoItemPai()
 
         return consulta['colecao'][0]
+
+    def imagemColorBook(self):
+        """Metodo que capitura a imagem de um produto do color book"""
+
+
+        produto_colorBook = Produtos_colorBook.Produtos_colorBook(str(self.codItemPai), str(self.codColceaoPai()))
+        imagem = produto_colorBook.obtendoImagemColorBook()
+
+        return imagem
+
 
 
     def carregandoComponentes(self):

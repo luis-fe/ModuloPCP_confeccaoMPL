@@ -1,7 +1,8 @@
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_file
 from functools import wraps
 from src.models import Produtos
+from io import BytesIO
 
 produtos_routes = Blueprint('produtos_routes', __name__)
 
@@ -57,3 +58,18 @@ def get_obterColecao():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+
+@produtos_routes.route('/pcp/api/obterImagemColorBook', methods=['GET'])
+@token_required
+def get_obterImagemColorBook():
+    codItemPai = request.args.get('codItemPai','1')
+
+    response = Produtos.Produtos('1','','',codItemPai).imagemColorBook()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    if response.status_code == 200:
+        return send_file(BytesIO(response.content), mimetype='image/jpeg')
+    else:
+        return jsonify({"erro": "Imagem não encontrada"}), 404
