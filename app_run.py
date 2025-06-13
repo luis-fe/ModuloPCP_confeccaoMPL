@@ -6,7 +6,6 @@ from src.routes import routes_blueprint  # Certifique-se de que 'routes.py' est√
 from dotenv import load_dotenv
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 CORS(app)
 
