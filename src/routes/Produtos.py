@@ -69,7 +69,6 @@ def get_obterImagemColorBook():
     response = Produtos.Produtos('1','','',codItemPai).imagemColorBook()
     #controle.salvarStatus(rotina, ip, datainicio)
 
-    if response.status_code == 200:
-        return send_file(BytesIO(response.content), mimetype='image/jpeg')
-    else:
-        return jsonify({"erro": "Imagem não encontrada"}), 404
+
+    return send_file(BytesIO(response.content), mimetype='image/jpeg')
+
