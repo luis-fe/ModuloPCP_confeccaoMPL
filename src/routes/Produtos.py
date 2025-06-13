@@ -69,6 +69,5 @@ def get_obterImagemColorBook():
     response = Produtos.Produtos('1','','',codItemPai).imagemColorBook()
     #controle.salvarStatus(rotina, ip, datainicio)
 
-
     return send_file(BytesIO(response.content), mimetype='image/jpeg')
 
