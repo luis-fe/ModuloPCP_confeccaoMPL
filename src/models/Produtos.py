@@ -8,12 +8,13 @@ from src.connection import ConexaoPostgre
 class Produtos():
     '''Classe utilizada para o gerenciamento dos produtos (sku)  que compoe o PCP Confeccao'''
 
-    def __init__(self, codEmpresa = '1', codSku = None, codNatureza = '5', codItemPai = ''):
+    def __init__(self, codEmpresa = '1', codSku = None, codNatureza = '5', codItemPai = '', indice = 0):
 
         self.codEmpresa = codEmpresa
         self.codSku = codSku
         self.codNatureza = codNatureza
         self.codItemPai = codItemPai
+        self.indice = indice
 
     def __obter_UltimoSkuCadastrosNoPCP(self):
         '''Metodo que obtem os skus cadastrados no banco postgres da aplicacao '''
@@ -264,6 +265,16 @@ class Produtos():
         imagem = produto_colorBook.obtendoImagemColorBook()
 
         return imagem
+
+    def imagem_S_ColorBook(self):
+        """Metodo que capitura a imagem de um produto do color book"""
+
+
+        produto_colorBook = Produtos_colorBook.Produtos_colorBook(str(self.codItemPai), str(self.codColceaoPai()),self.indice)
+        resposta = produto_colorBook.obtendoImagem_S_ColorBook()
+
+        return resposta
+
 
 
 

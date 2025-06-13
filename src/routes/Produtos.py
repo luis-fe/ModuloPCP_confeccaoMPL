@@ -71,3 +71,17 @@ def get_obterImagemColorBook():
 
     return send_file(BytesIO(response.content), mimetype='image/jpeg')
 
+
+@produtos_routes.route('/pcp/api/obterImagemSColorBook', methods=['GET'])
+@token_required
+def get_obterImagemSColorBook():
+    codItemPai = request.args.get('codItemPai','1')
+    indice = int(request.args.get('indice', '0'))
+
+
+    response = Produtos.Produtos('1','','',codItemPai, indice).imagem_S_ColorBook()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    return jsonify(response)
+
+
