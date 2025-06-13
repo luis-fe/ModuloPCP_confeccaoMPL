@@ -73,7 +73,6 @@ def get_obterImagemColorBook():
 
 
 @produtos_routes.route('/pcp/api/obterImagemSColorBook', methods=['GET'])
-@token_required
 def get_obterImagemSColorBook():
     codItemPai = request.args.get('codItemPai','1')
     indice = int(request.args.get('indice', '0'))
