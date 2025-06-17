@@ -551,6 +551,8 @@ class Tendencia_Plano_Materiais():
         if simulacao == 'nao':
             Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
                     {
+                        "codItemPai": "first",
+                        "nome": "first",
                         "estoqueAtualMP":"first",
                         "EmRequisicao": "first",
                         "EstoqueAtualMPLiquido": "first",
@@ -563,6 +565,8 @@ class Tendencia_Plano_Materiais():
         else:
             Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
                     {
+                        "codItemPai":"first",
+                        "nome": "first",
                         "estoqueAtualMP":"first",
                         "EmRequisicao": "first",
                         "EstoqueAtualMPLiquido": "first",
