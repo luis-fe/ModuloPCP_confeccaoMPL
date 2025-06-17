@@ -497,7 +497,7 @@ class Tendencia_Plano_Materiais():
 
 
     def __categoria(self, contem, valorReferencia, valorNovo, categoria):
-        if contem in valorReferencia and categoria == '-':
+        if isinstance(valorReferencia, str) and contem in valorReferencia and categoria == '-':
             return valorNovo
         else:
             return categoria
