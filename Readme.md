@@ -7,6 +7,8 @@
 
 ## Path Atualizacao
 
+    Adicionado novas categorias de Materia Prima ao codigo;
+
 
 ## 1 Objetivo do Projeto
     
