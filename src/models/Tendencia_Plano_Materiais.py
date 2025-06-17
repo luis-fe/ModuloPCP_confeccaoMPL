@@ -122,6 +122,7 @@ class Tendencia_Plano_Materiais():
 
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
                 {"codEditado":"first",
+                 "LeadTime":"first",
                  "loteMut":"first",
                  "LoteMin":"first",
                     "disponivelVendas": "sum",
