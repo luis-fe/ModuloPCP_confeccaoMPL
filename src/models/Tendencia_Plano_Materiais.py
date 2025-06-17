@@ -389,7 +389,7 @@ class Tendencia_Plano_Materiais():
         '''Metodo que calcula o numero de peças necessario para atender a materia prima baseado no falta programar'''
         caminho_absoluto2 = configApp.localProjeto
 
-        if simulacao == 'nao':
+        if simulacao == 'nao' or simulacao == '':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}.csv')
         else:
             verificador = self.obtendoUltimaAnalise_porMPPlanoSimulacao()
