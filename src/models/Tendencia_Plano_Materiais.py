@@ -106,6 +106,8 @@ class Tendencia_Plano_Materiais():
 
 
             # Salvar o DataFrame na memoria:
+            informacoes = produtos.informacoesComponente()
+            Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente', how='left')
 
             # Verificar se é para congelar a simulacao
             if simula == 'nao':
@@ -145,8 +147,7 @@ class Tendencia_Plano_Materiais():
             obterSubstitutos.rename(
                 columns={'codMateriaPrimaSubstituto': 'codEditado'},
                 inplace=True)
-            informacoes = produtos.informacoesComponente()
-            Necessidade = pd.merge(Necessidade, informacoes, on='CodComponente', how='left')
+
 
             NecessidadeSubstituto = Necessidade.groupby('codEditado').agg({'saldo Novo': 'sum'}).reset_index()
 
