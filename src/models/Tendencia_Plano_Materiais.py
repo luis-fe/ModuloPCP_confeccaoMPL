@@ -557,9 +557,10 @@ class Tendencia_Plano_Materiais():
 
         Necessidade['codReduzido'] = Necessidade['codReduzido'].astype(str)
         Necessidade =  Necessidade[Necessidade['codReduzido'] == self.codReduzido].reset_index()
-        if simulacao == 'nao':
+        if simulacao == 'nao' or simulacao == '':
             Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
                     {
+                        "codEditado":"first",
                         "codItemPai": "first",
                         "nome": "first",
                         "estoqueAtualMP":"first",
