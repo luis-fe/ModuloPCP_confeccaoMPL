@@ -3,13 +3,10 @@
     Tipo do Projeto: BackEnd
     Framework: Flask - Python
     Criador: Luís Fernando Gonçalves de Lima Machado
-    Versao Produção: 1.1 /Homologado 16-06-2025
+    Versao Produção: 1.2 /Homologado 23-06-2025
 
 ## Path Atualizacao
-    
-    corrigido "bug" no detalhamento da necessidade de MP para o sku, na API de  calculo de materiais que restringe a programacao.
-    Adicao de Apis que conecta a plataforma de Color Book de fotos por colecao.
-    contrucao de uma Api que devolve a colecao de uma engenharia, para reaproveitar na API de fotos do Color Book.
+
 
 ## 1 Objetivo do Projeto
     
