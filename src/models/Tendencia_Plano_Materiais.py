@@ -398,6 +398,7 @@ class Tendencia_Plano_Materiais():
 
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/EstruturacaoPrevisao{self.codPlano}_Simulacao{self.nomeSimulacao}.csv')
             Necessidade['faltaProg (Tendencia)']= Necessidade['faltaProg (Tendencia)Simulacao']
+
         Necessidade['faltaProg (Tendencia)MP'] = Necessidade['faltaProg (Tendencia)'] * Necessidade['quantidade']
 
         Necessidade['disponivelVendasMP'] = Necessidade['disponivel'] * Necessidade['quantidade']
@@ -559,7 +560,6 @@ class Tendencia_Plano_Materiais():
         if simulacao == 'nao':
             Necessidade = Necessidade.groupby(["codReduzido","CodComponente"]).agg(
                     {
-                        "codEditado":"first",
                         "codItemPai": "first",
                         "nome": "first",
                         "estoqueAtualMP":"first",
