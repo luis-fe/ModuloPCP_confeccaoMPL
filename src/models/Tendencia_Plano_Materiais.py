@@ -464,7 +464,7 @@ class Tendencia_Plano_Materiais():
         Necessidade['faltaProg (Tendencia)'] = Necessidade['faltaProg (Tendencia)']   * -1
 
 
-        if self.nomeSimulacao == 'nao':
+        if self.nomeSimulacao == 'nao' or self.nomeSimulacao =='':
             Necessidade.to_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
         else:
 
