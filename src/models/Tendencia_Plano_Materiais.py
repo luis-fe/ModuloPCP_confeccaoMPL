@@ -517,7 +517,7 @@ class Tendencia_Plano_Materiais():
         dados = {
             "categoriaMP": [
                 "-",
-                "ACESSORIOS",
+                "PRODUTO REVENDA",
                 "TAGS/TRAVANEL",
                 "ITENS CAMISARIA",
                 "CADARCO/CORDAO",
@@ -610,8 +610,8 @@ class Tendencia_Plano_Materiais():
     def aplicar_categorias(self, row):
         categorias = [
             ('ZIPER', 'ZIPER'),
-            ('BONE', 'ACESSORIOS'),
-            ('CARTEIRA', 'ACESSORIOS'),
+            ('BONE', 'PRODUTO REVENDA'),
+            ('CARTEIRA', 'PRODUTO REVENDA'),
             ('KIT TAG', 'TAGS/TRAVANEL'),
             ('TRAVANEL', 'TAGS/TRAVANEL'),
             ('BORBOLETA', 'ITENS CAMISARIA'),
