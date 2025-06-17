@@ -470,7 +470,7 @@ class Tendencia_Plano_Materiais():
 
             self.atualizando_MPPlanoSimulacao()
             Necessidade.to_csv(
-                f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
+                f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}{self.nomeSimulacao}.csv')
 
         if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
             Necessidade = Necessidade
@@ -543,7 +543,7 @@ class Tendencia_Plano_Materiais():
         if simulacao == 'nao' or simulacao == '':
             Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}.csv')
         else:
-            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}_{self.nomeSimulacao}.csv')
+            Necessidade = pd.read_csv(f'{caminho_absoluto2}/dados/DetalhamentoGeralProgramacao{self.codPlano}{self.nomeSimulacao}.csv')
 
 
         if arrayFiltroCategoria == [] or arrayFiltroCategoria == '' :
