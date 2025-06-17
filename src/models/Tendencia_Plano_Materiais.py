@@ -121,7 +121,8 @@ class Tendencia_Plano_Materiais():
             Necessidade['disponivelVendas'] = Necessidade['disponivel'] * Necessidade['quantidade']
 
             Necessidade = Necessidade.groupby(["CodComponente"]).agg(
-                {"disponivelVendas": "sum",
+                {"codEditado":"first",
+                    "disponivelVendas": "sum",
                  "faltaProg (Tendencia)": "sum",
                  "descricaoComponente": 'first',
                  "unid": 'first'
