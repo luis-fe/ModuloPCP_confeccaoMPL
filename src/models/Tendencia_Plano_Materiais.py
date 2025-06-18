@@ -610,6 +610,7 @@ class Tendencia_Plano_Materiais():
     def aplicar_categorias(self, row):
         categorias = [
             ('ZIPER', 'ZIPER'),
+            ('MALHA CONFORTO ', 'MALHA'),
             ('BONE', 'PRODUTO REVENDA'),
             ('CARTEIRA', 'PRODUTO REVENDA'),
             ('KIT TAG', 'TAGS/TRAVANEL'),
