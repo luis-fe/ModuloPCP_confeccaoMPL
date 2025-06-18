@@ -1,21 +1,24 @@
-# Modulo PCP para Confecao
-    Cliente: Grupo MPL
-    Tipo do Projeto: BackEnd
-    Framework: Flask - Python
-    Criador: Luís Fernando Gonçalves de Lima Machado
-    Versao Produção: 1.2 /Homologado 23-06-2025
+# Módulo PCP para Confecção
+
+- **Cliente:** Grupo MPL  
+- **Tipo de Projeto:** Backend  
+- **Framework:** Flask (Python)  
+- **Criador:** Luís Fernando Gonçalves de Lima Machado  
+- **Versão Produção:** 1.2 (Homologado em 23/06/2025)
+
+---
 
 ## Path Atualizacao
 
-    Adicionado novas categorias de Materia Prima ao codigo;
-    Adicionando o recurso de Monitor de Pre faturmanto ao BackEnd, class "MonitorPedidosOP"
+- Inclusão de novas categorias de matéria-prima no código
+- Adição do recurso de **Monitor de Pré-Faturamento** no backend (classe `MonitorPedidosOP`)
 
-
+---
 ## 1 Objetivo do Projeto
-    
-        Um microserviço backend que conecta-se ao ERP da Empresa 
-    e ao banco de dados Postgre, que está vinculado a aplicação, 
-    produzindo Api's com informações para projeto de PCP Confeccao. 
+
+Este projeto é um **microserviço backend** que conecta-se ao ERP da empresa e a um banco de dados PostgreSQL vinculado à aplicação. Ele expõe APIs com informações para o projeto de **PCP Confecção**, otimizando os processos de planejamento e controle da produção.
+
+---
 
 ## 2 Inicializando o app
     
