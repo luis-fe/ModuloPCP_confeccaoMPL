@@ -82,7 +82,7 @@ class Pedidos():
             return pd.DataFrame([{'Status': True, 'Mensagem': 'TipoNotas adicionados ao Plano com sucesso !'}])
 
 
-    def listagemPedidosSku(self, detalhaSku = ''):
+    def listagemPedidosSku(self, detalhaSku = '', iniVendas = '', fimVendas = '', iniFat = '' , fimFat = ''):
 
 
         caminho_arquivo = f"{configApp.localArquivoParquet}/pedidos.parquet"
@@ -104,8 +104,16 @@ class Pedidos():
 
         # 3 Obtendo Informacoes do Plano Para filtragem
         plano = Plano.Plano(self.codPlano)
-        self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
-        self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+
+        if self.codPlano != '':
+            self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
+            self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+        else:
+            self.iniVendas = iniVendas
+            self.fimVendas = fimVendas
+            self.iniFat = iniFat
+            self.fimFat = fimFat
+
 
         #4 Filtrando de acordo com os intervalos encontrados de Vendas e Faturamento
         df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)

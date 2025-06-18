@@ -8,6 +8,7 @@
 ## Path Atualizacao
 
     Adicionado novas categorias de Materia Prima ao codigo;
+    Adicionando o recurso de Monitor de Pre faturmanto ao BackEnd, class "MonitorPedidosOP"
 
 
 ## 1 Objetivo do Projeto
