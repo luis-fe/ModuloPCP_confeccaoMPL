@@ -10,7 +10,7 @@ class Plano():
     '''
 
     def __init__(self, codPlano = None, descricaoPlano= None, iniVendas = None , fimVendas = None, iniFat = None, fimFat = None,
-                 usuarioGerador = None ):
+                 usuarioGerador = None, codEmpresa = '1' ):
         '''
         Definicao do construtor: atributos do plano
         '''
@@ -21,6 +21,7 @@ class Plano():
         self.iniFat = iniFat
         self.fimFat = fimFat
         self.usuarioGerador = usuarioGerador
+        self.codEmpresa = codEmpresa
 
     def inserirNovoPlano(self):
         '''
@@ -40,14 +41,14 @@ class Plano():
 
         else:
 
-            insert = """INSERT INTO pcp."Plano" ("codigo","descricaoPlano","inicioVenda","FimVenda","inicoFat", "finalFat", "usuarioGerador","dataGeracao") 
-            values (%s, %s, %s, %s, %s, %s, %s, %s ) """
+            insert = """INSERT INTO pcp."Plano" ("codEmpresa", "codigo","descricaoPlano","inicioVenda","FimVenda","inicoFat", "finalFat", "usuarioGerador","dataGeracao") 
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s ) """
 
             data = self.obterdiaAtual()
             conn = ConexaoPostgre.conexaoInsercao()
             cur = conn.cursor()
             cur.execute(insert,
-                        (self.codPlano, self.descricaoPlano, self.iniVendas, self.fimVendas, self.iniFat, self.fimFat, self.usuarioGerador, str(data),))
+                        (self.codEmpresa, self.codPlano, self.descricaoPlano, self.iniVendas, self.fimVendas, self.iniFat, self.fimFat, self.usuarioGerador, str(data),))
             conn.commit()
             cur.close()
             conn.close()
@@ -62,7 +63,14 @@ class Plano():
         DataFrame (em pandas) com todos os planos
         '''
         conn = ConexaoPostgre.conexaoEngine()
-        planos = pd.read_sql('SELECT * FROM pcp."Plano" ORDER BY codigo ASC;', conn)
+        planos = pd.read_sql("""
+                    SELECT 
+                        * 
+                    FROM 
+                        pcp."Plano" 
+                    WHERE
+                        "codEmpresa" = %s
+                    ORDER BY codigo ASC;""", conn, params=(self.codEmpresa,))
 
         return planos
 
@@ -112,12 +120,12 @@ class Plano():
                 self.fimFat = finalFatAtual
 
             update = """update pcp."Plano"  set "descricaoPlano" = %s , "inicioVenda" = %s , "FimVenda" = %s , "inicoFat" = %s , "finalFat" = %s
-            where "codigo" = %s
+            where "codigo" = %s and "codEmpresa" = %s
             """
 
             conn = ConexaoPostgre.conexaoInsercao()
             cur = conn.cursor()
-            cur.execute(update, (self.descricaoPlano, self.iniVendas, self.fimVendas, self.iniFat, self.fimFat, self.codPlano,))
+            cur.execute(update, (self.descricaoPlano, self.iniVendas, self.fimVendas, self.iniFat, self.fimFat, self.codPlano ,self.codEmpresa))
             conn.commit()
             cur.close()
             conn.close()
@@ -128,7 +136,15 @@ class Plano():
     def obterPlanos(self):
         '''Metodo que obtem os Planos cadatrados '''
         conn = ConexaoPostgre.conexaoEngine()
-        planos = pd.read_sql('SELECT * FROM pcp."Plano" ORDER BY codigo ASC;', conn)
+        planos = pd.read_sql("""
+                SELECT 
+                    * 
+                FROM 
+                    pcp."Plano"
+                where
+                    "codEmpresa" = %s 
+                ORDER BY 
+                    codigo ASC;""", conn, params=(self.codEmpresa,))
         planos.rename(
             columns={'codigo': '01- Codigo Plano', 'descricaoPlano': '02- Descricao do Plano',
                      'inicioVenda': '03- Inicio Venda',
@@ -145,6 +161,8 @@ class Plano():
             nomelote
         from
             pcp."LoteporPlano"
+        where 
+            "codEmpresa" = %s 
         """
 
         sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
@@ -190,7 +208,7 @@ class Plano():
         '''Metodo que obtem um determinado plano '''
 
         conn = ConexaoPostgre.conexaoEngine()
-        planos = pd.read_sql('SELECT * FROM pcp."Plano" ORDER BY codigo ASC;', conn)
+        planos = pd.read_sql('SELECT * FROM pcp."Plano" wheere "codEmpresa" = %s ORDER BY codigo ASC;', conn, params=(self.codEmpresa,))
         planos.rename(
             columns={'codigo': '01- Codigo Plano', 'descricaoPlano': '02- Descricao do Plano',
                      'inicioVenda': '03- Inicio Venda',
@@ -207,11 +225,13 @@ class Plano():
             nomelote
         from
             pcp."LoteporPlano"
+        where 
+            "codEmpresa" = %s
         """
 
         sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
 
-        lotes = pd.read_sql(sqlLoteporPlano, conn)
+        lotes = pd.read_sql(sqlLoteporPlano, conn, params=(self.codEmpresa,))
         TipoNotas = pd.read_sql(sqlTipoNotasPlano, conn)
 
         lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)

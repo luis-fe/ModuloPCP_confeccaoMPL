@@ -22,12 +22,12 @@ class Plano_Lote():
             inner join 
                 pcp."LoteporPlano"  lp 
                 on lp.plano  = p.codigo 
-            where p.codigo = %s
+            where p.codigo = %s and "codEmpresa" = %s
         """
 
 
         conn = ConexaoPostgre.conexaoEngine()
-        consulta = pd.read_sql(sql, conn, params=(self.codPlano,))
+        consulta = pd.read_sql(sql, conn, params=(self.codPlano, self.codEmpresa))
 
         return consulta
 
@@ -47,10 +47,10 @@ class Plano_Lote():
         else:
 
             # Deletando caso ja exista vinculo do lote no planto
-            deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s AND plano = %s """
+            deleteVinculo = """Delete from pcp."LoteporPlano" where "lote" = %s AND plano = %s and "codEmpresa" = %s """
 
             # Inserindo o lote ao Plano
-            insert = """insert into pcp."LoteporPlano" ("empresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
+            insert = """insert into pcp."LoteporPlano" ("codEmpresa", "plano","lote", "nomelote") values (%s, %s, %s, %s  )"""
 
 
             delete = """Delete from pcp.lote_itens where "codLote" = %s """
@@ -63,7 +63,7 @@ class Plano_Lote():
             for lote in arrayCodLoteCsw:
                 self.codLote = lote
                 nomelote = Lote_Csw.Lote_Csw(self.codLote).consultarLoteEspecificoCsw()
-                cur.execute(deleteVinculo, (lote, self.codPlano,))
+                cur.execute(deleteVinculo, (lote, self.codPlano,self.codEmpresa,))
                 conn.commit()
                 cur.execute(insert, (self.codEmpresa, self.codPlano, lote, nomelote,))
                 conn.commit()
@@ -145,16 +145,16 @@ class Plano_Lote():
                 self.codLote = lote
 
                 # Passo 1: Excluir o lote do plano vinculado
-                deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s """
+                deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s and "codEmpresa" = %s """
                 conn = ConexaoPostgre.conexaoInsercao()
                 cur = conn.cursor()
-                cur.execute(deletarLote, (self.codLote, self.codPlano))
+                cur.execute(deletarLote, (self.codLote, self.codPlano, self.codEmpresa))
                 conn.commit()
 
                 # Passo 2: Verifica se o lote existe em outros planos
                 conn2 = ConexaoPostgre.conexaoEngine()
-                sql = """Select lote from pcp."LoteporPlano" WHERE lote = %s """
-                verifca = pd.read_sql(sql, conn2, params=(self.codLote,))
+                sql = """Select lote from pcp."LoteporPlano" WHERE lote = %s and "codEmpresa" =%s """
+                verifca = pd.read_sql(sql, conn2, params=(self.codLote,self.codEmpresa,))
 
                 if verifca.empty:
 

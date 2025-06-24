@@ -12,7 +12,7 @@
 
 - Inclusão de novas categorias de matéria-prima no código
 - Adição do recurso de **Monitor de Pré-Faturamento** no backend (classe `MonitorPedidosOP`)
-
+- Inclusao de codEmpresa no Plano e no "lote_plano"
 ---
 ## 1 Objetivo do Projeto
 
