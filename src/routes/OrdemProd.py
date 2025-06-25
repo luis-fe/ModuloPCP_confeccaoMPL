@@ -21,7 +21,7 @@ def token_required(f):
 def get_OrdemProd_porSku():
     codSku = request.args.get('codSku','1')
 
-    dados = OrdemProd.OrdemProd('1',codSku).get_OrdemProdSku()
+    dados = OrdemProd.OrdemProd('1',str(codSku)).get_OrdemProdSku()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
