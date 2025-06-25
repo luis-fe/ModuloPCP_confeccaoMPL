@@ -165,6 +165,7 @@ class Produtos():
             on substring(o."codProduto",2,8) = "codItemPai"
             and o."codSortimento" = ic."codSortimento"::varchar
             and o."seqTamanho" = "codSeqTamanho"::varchar
+        where o."codProduto" not like  '6%'
         group by 
             ic.codigo 
         """
