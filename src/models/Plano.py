@@ -167,7 +167,7 @@ class Plano():
 
         sqlTipoNotasPlano = """select "tipo nota"||'-'||nome as "tipoNota" , plano as "01- Codigo Plano"  from pcp."tipoNotaporPlano" tnp """
 
-        lotes = pd.read_sql(sqlLoteporPlano, conn)
+        lotes = pd.read_sql(sqlLoteporPlano, conn, params=(self.codEmpresa,))
         TipoNotas = pd.read_sql(sqlTipoNotasPlano, conn)
 
         lotes['01- Codigo Plano'] = lotes['01- Codigo Plano'].astype(str)
