@@ -22,7 +22,7 @@ class OrdemProd ():
         where
             o.codreduzido = %s
         order by 
-        "qtdAcumulada" desc 
+        "qtdAcumulada"::int desc 
         """
         conn = conexaoEngine()
         consulta = pd.read_sql(sql, conn, params=(self.codSku,))
