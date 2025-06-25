@@ -16,13 +16,13 @@ class OrdemProd ():
         sql = """
         select
             numeroop,
-            "qtdAcumulada"
+            "total_pcs"
         from
             "PCP".pcp.ordemprod o
         where
             o.codreduzido = %s
         order by 
-        "qtdAcumulada"::int desc 
+        "total_pcs"::int desc 
         """
         conn = conexaoEngine()
         consulta = pd.read_sql(sql, conn, params=(self.codSku,))
