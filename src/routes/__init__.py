@@ -16,6 +16,7 @@ from src.routes.Parametrizacao_ABC import parametrizacaoABC_routes
 from src.routes.Tendencia_Plano_Materiais import Tendencia_Plano_Materiais_routes
 from src.routes.Simulacao_Prog import Simulacao_prod_routes
 from src.routes.Produtos import produtos_routes
+from src.routes.OrdemProd import OrdemProd_routes
 
 
 # Importacao das rotas para o blueprint:
@@ -28,3 +29,4 @@ routes_blueprint.register_blueprint(parametrizacaoABC_routes)
 routes_blueprint.register_blueprint(Tendencia_Plano_Materiais_routes)
 routes_blueprint.register_blueprint(Simulacao_prod_routes)
 routes_blueprint.register_blueprint(produtos_routes)
+routes_blueprint.register_blueprint(OrdemProd_routes)
