@@ -16,7 +16,7 @@ class OrdemProd ():
         sql = """
         select
             numeroop,
-            codFaseAtual,
+            "codFaseAtual",
             "total_pcs"
         from
             "PCP".pcp.ordemprod o
