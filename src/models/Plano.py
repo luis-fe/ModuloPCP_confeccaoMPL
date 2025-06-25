@@ -208,7 +208,7 @@ class Plano():
         '''Metodo que obtem um determinado plano '''
 
         conn = ConexaoPostgre.conexaoEngine()
-        planos = pd.read_sql('SELECT * FROM pcp."Plano" wheere "codEmpresa" = %s ORDER BY codigo ASC;', conn, params=(self.codEmpresa,))
+        planos = pd.read_sql('SELECT * FROM pcp."Plano" where "codEmpresa" = %s ORDER BY codigo ASC;', conn, params=(self.codEmpresa,))
         planos.rename(
             columns={'codigo': '01- Codigo Plano', 'descricaoPlano': '02- Descricao do Plano',
                      'inicioVenda': '03- Inicio Venda',
