@@ -20,7 +20,7 @@ class OrdemProd ():
         from
             "PCP".pcp.ordemprod o
         where
-            o.codreduzido = %
+            o.codreduzido = %s
         order by 
         "qtdAcumulada" desc 
         """
