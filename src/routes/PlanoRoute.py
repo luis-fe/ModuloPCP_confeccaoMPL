@@ -17,7 +17,10 @@ def token_required(f):
 @plano_routes.route('/pcp/api/Plano', methods=['GET'])
 @token_required
 def get_Plano():
-    dados = Plano.Plano().obterPlanos()
+
+    codEmpresa = request.args.get('codEmpresa','1')
+
+    dados = Plano.Plano('','','','','','','',codEmpresa).obterPlanos()
     return jsonify(dados)
 
 @plano_routes.route('/pcp/api/PlanoPorPlano', methods=['GET'])
