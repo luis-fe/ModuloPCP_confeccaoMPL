@@ -14,6 +14,7 @@ def token_required(f):
 
     return decorated_function
 
+
 @plano_routes.route('/pcp/api/Plano', methods=['GET'])
 @token_required
 def get_Plano():
