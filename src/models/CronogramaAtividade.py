@@ -20,7 +20,7 @@ class CronogramaAtividades():
         conn = ConexaoPostgre.conexaoEngine()
 
         sql = """
-        Select * from "pcp"."DashbordTV"."AcompanhamentoAtividades"
+        Select * from "DashbordTV"."AcompanhamentoAtividades"
         """
 
         consulta = pd.read_sql(sql, conn)
