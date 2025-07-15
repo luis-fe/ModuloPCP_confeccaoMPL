@@ -28,7 +28,7 @@ class CronogramaAtividades():
         consulta['dataFinal'] = pd.to_datetime(consulta['dataFinal'], utc=True)
 
         # Formatar para o padrão "dd-mm-aaaa"
-        consulta['dataInicio'] = consulta['dataInicio'].dt.strftime('%d-%m-%Y')
-        consulta['dataFinal'] = consulta['dataFinal'].dt.strftime('%d-%m-%Y')
+        consulta['dataInicio'] = consulta['dataInicio'].dt.strftime('%d/%m/%Y')
+        consulta['dataFinal'] = consulta['dataFinal'].dt.strftime('%d/%m/%Y')
 
         return consulta
