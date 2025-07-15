@@ -24,6 +24,7 @@ class CronogramaAtividades():
         """
 
         consulta = pd.read_sql(sql, conn)
+        consulta['dataInicio'] = pd.to_datetime(consulta['dataInicio'], utc=True)
 
         # Formatar para o padrão "dd-mm-aaaa"
         consulta['dataInicio'] = consulta['dataInicio'].dt.strftime('%d-%m-%Y')
