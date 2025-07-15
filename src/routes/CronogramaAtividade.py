@@ -14,7 +14,6 @@ def token_required(f):
 
     return decorated_function
 
-
 @CronogramaAtividades_routes.route('/pcp/api/obterCronogramaAtividades', methods=['GET'])
 @token_required
 def get_obterCronogramaAtividades():
