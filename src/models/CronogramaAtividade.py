@@ -6,12 +6,13 @@ class CronogramaAtividades():
     '''Classe que interage com o planejamento de cronograma'''
 
     def __init__(self, atividade = '', dataPrevInicio = '',
-                 dataFinalPrev = '', responsavel = '' ):
+                 dataFinalPrev = '', responsavel = '', status = '' ):
 
         self.atividade = atividade
         self.dataPrevInicio = dataPrevInicio
         self.dataFinalPrev = dataFinalPrev
         self.responsavel = responsavel
+        self.status = status
 
 
     def get_cronograma(self):
@@ -32,3 +33,27 @@ class CronogramaAtividades():
         consulta['dataFinal'] = consulta['dataFinal'].dt.strftime('%d/%m/%Y')
 
         return consulta
+
+    def atualizarStatus(self):
+        '''Metodo que altera o status da atividade'''
+
+        update = """
+        update 
+            "DashbordTV"."AcompanhamentoAtividades"
+        set 
+            status = %s
+        where 
+            "atividade" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn :
+            with conn.cursor() as curr:
+
+                curr.execute(update,self.status, self.atividade)
+                conn.commit()
+
+        return pd.DataFrame({'Status':True, "Mensagem":"Status atualizado"})
+
+
+
+
