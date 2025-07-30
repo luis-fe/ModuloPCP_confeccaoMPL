@@ -601,6 +601,22 @@ class Plano():
             mes1 = '//'
         return lote[3:5] + mes1 + '20' + lote[:2] + '-' + nomeLote
 
+    def ConsultarTipoNotasVinculados(self):
+        sql = """
+            select 
+                "tipo nota",
+                "tipo nota"||'-'||nome as "Descricao" , 
+                plano  
+            from 
+                pcp."tipoNotaporPlano" tnp  
+            WHERE plano = %s 
+            and "codEmpresa" = %s
+            """
+        conn = ConexaoPostgre.conexaoEngine()
+        sql = pd.read_sql(sql, conn, params=(self.codPlano, self.codEmpresa))
+
+        return sql
+
 
 
 
