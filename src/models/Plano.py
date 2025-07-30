@@ -549,7 +549,7 @@ class Plano():
             plano, 
             lote, 
             nomelote, 
-            "codEmpresa",
+            p."codEmpresa",
             p."descricaoPlano" 
         FROM 
             pcp."LoteporPlano" l
