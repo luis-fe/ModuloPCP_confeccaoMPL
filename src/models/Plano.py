@@ -543,6 +543,65 @@ class Plano():
         return consulta
 
 
+    def obterLotesporPlano(self):
+        sql = """
+        SELECT 
+            plano, 
+            lote, 
+            nomelote, 
+            p."descricaoPlano" 
+        FROM 
+            pcp."LoteporPlano" l
+        INNER JOIN 
+            pcp."Plano" p 
+            ON p.codigo = l.plano
+        WHERE 
+            plano = %s
+            and "codEmpresa" = %s 
+            """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        try:
+            df = pd.read_sql(sql, conn, params=(self.codPlano,self.codEmpresa))
+            df['nomelote'] = df.apply(
+                lambda r: self.transformarDataLote(r['lote'][2] if len(r['lote']) > 2 else '', r['nomelote'], r['lote']),
+                axis=1)
+        finally:
+            conn.dispose()
+
+
+    def transformarDataLote(self, mes, nomeLote, lote):
+        '''Metodo utilizado para converter a data no formato ano-mes-dia'''
+        if mes == 'R':
+            mes1 = '/01/'
+        elif mes == 'F':
+            mes1 = '/02/'
+        elif mes == 'M':
+            mes1 = '/03/'
+        elif mes == 'A':
+            mes1 = '/04/'
+        elif mes == 'I':
+            mes1 = '/05/'
+        elif mes == 'L':
+            mes1 = '/06/'
+        elif mes == 'L':
+            mes1 = '/07/'
+        elif mes == 'G':
+            mes1 = '/08/'
+        elif mes == 'S':
+            mes1 = '/09/'
+        elif mes == 'O':
+            mes1 = '/10/'
+        elif mes == 'N':
+            mes1 = '/10/'
+        elif mes == 'D':
+            mes1 = '/12/'
+        else:
+            mes1 = '//'
+        return lote[3:5] + mes1 + '20' + lote[:2] + '-' + nomeLote
+
+
+
 
 
 
