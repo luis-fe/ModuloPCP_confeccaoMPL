@@ -141,7 +141,7 @@ class Plano_Lote():
 
     def desvincularLotesAoPlano(self,arrayCodLoteCsw):
 
-        plano = Plano.Plano(self.codPlano)
+        plano = Plano.Plano(self.codPlano,'','','','','','',self.codEmpresa)
 
         # Validando se o Plano ja existe
         validador = plano.consultarPlano()
