@@ -158,6 +158,7 @@ class Plano_Lote():
 
                 # Passo 1: Excluir o lote do plano vinculado
                 deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s and "codEmpresa" = %s """
+                print(deletarLote)
                 conn = ConexaoPostgre.conexaoInsercao()
                 cur = conn.cursor()
                 cur.execute(deletarLote, (self.codLote, self.codPlano, self.codEmpresa))
