@@ -157,11 +157,11 @@ class Plano_Lote():
                 self.codLote = lote
 
                 # Passo 1: Excluir o lote do plano vinculado
-                deletarLote = """DELETE FROM pcp."LoteporPlano" WHERE lote = %s and plano = %s and "codEmpresa" = %s """
+                deletarLote = f"""DELETE FROM pcp."LoteporPlano" WHERE lote = '{lote}' and plano = %s and "codEmpresa" = %s """
                 print(deletarLote)
                 conn = ConexaoPostgre.conexaoInsercao()
                 cur = conn.cursor()
-                cur.execute(deletarLote, (self.codLote, self.codPlano, self.codEmpresa))
+                cur.execute(deletarLote, (self.codPlano, self.codEmpresa))
                 conn.commit()
 
                 # Passo 2: Verifica se o lote existe em outros planos
