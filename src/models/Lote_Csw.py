@@ -14,25 +14,18 @@ class Lote_Csw():
         Get dos Lotes cadastrados no CSW para PREVISAO.
         """
 
-        if self.codEmpresa == '1':
-            sql = """ 
+        sql = f""" 
             SELECT 
                 codLote, 
                 descricao as nomeLote 
             FROM 
                 tcl.Lote  l
             WHERE 
-                l.descricao like '%PREV%' 
-                and l.codEmpresa = 1 
+                l.descricao like '%%PREV%%' 
+                and l.codEmpresa = {self.codEmpresa} 
                 order by codLote desc 
                 """
-        else:
-            sql = """ SELECT 
-                        codLote, 
-                        descricao as nomeLote 
-                    FROM tcl.Lote  l
-                    WHERE 
-                    l.descricao like '%PREV%' and l.codEmpresa = 4 order by codLote desc """
+
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
