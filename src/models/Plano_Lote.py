@@ -148,8 +148,10 @@ class Plano_Lote():
         validador = validador[validador['codigo'] == self.codPlano].reset_index()
 
         if validador.empty:
+            retorno = pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+            print(retorno)
 
-            return pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+            return retorno
         else:
             for lote in arrayCodLoteCsw:
                 self.codLote = lote
