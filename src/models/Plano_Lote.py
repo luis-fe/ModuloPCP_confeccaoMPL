@@ -129,6 +129,16 @@ class Plano_Lote():
             print('segue o baile')
 
 
+
+    def loteCsw(self):
+
+        lotecsw1 = Lote_Csw.Lote_Csw('',self.codEmpresa)
+
+        consuta = lotecsw1.obterLotesCsw()
+
+        return consuta
+
+
     def desvincularLotesAoPlano(self,arrayCodLoteCsw):
 
         plano = Plano.Plano(self.codPlano)

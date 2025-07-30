@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
-from src.models import Meta_Plano, Plano
+from src.models import Meta_Plano, Plano, Plano_Lote
 
 metaPlano_routes = Blueprint('metaPlano_routes', __name__)
 
@@ -147,4 +147,24 @@ def GET_ConsultaTipoNotasVinculados():
         for column_name in column_names:
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
+    return jsonify(OP_data)
+
+
+@metaPlano_routes.route('/pcp/api/lotes_csw', methods=['GET'])
+@token_required
+def get_lotes_csw():
+    empresa = request.args.get('empresa','1')
+
+    dados = Plano_Lote.Plano_Lote("",empresa).loteCsw()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
     return jsonify(OP_data)
