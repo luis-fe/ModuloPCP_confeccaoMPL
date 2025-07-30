@@ -21,7 +21,7 @@ class Lote_Csw():
             FROM 
                 tcl.Lote  l
             WHERE 
-                l.descricao like '%%PREV%%' 
+                l.descricao like '%PREV%' 
                 and l.codEmpresa = {self.codEmpresa} 
                 order by codLote desc 
                 """
