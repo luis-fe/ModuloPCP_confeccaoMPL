@@ -36,7 +36,7 @@ class Produtos():
 
         ultimoSku = self.__obter_UltimoSkuCadastrosNoPCP()
 
-        produtos_CSW = Produtos_CSW.Produtos_CSW(self.codEmpresa,ultimoSku)
+        produtos_CSW = Produtos_CSW.Produtos_CSW(self.codEmpresa,'',ultimoSku)
 
         # 1 - Obter itens ainda nao cadastrados no postgre
         consulta_novosItens = produtos_CSW.get_itensFilhos_Novos_CSW()
