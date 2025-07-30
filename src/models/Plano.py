@@ -562,13 +562,13 @@ class Plano():
             """
 
         conn = ConexaoPostgre.conexaoEngine()
-        try:
-            df = pd.read_sql(sql, conn, params=(self.codPlano,self.codEmpresa))
-            df['nomelote'] = df.apply(
+        df = pd.read_sql(sql, conn, params=(self.codPlano,self.codEmpresa))
+        df['nomelote'] = df.apply(
                 lambda r: self.transformarDataLote(r['lote'][2] if len(r['lote']) > 2 else '', r['nomelote'], r['lote']),
                 axis=1)
-        finally:
-            conn.dispose()
+
+        return df
+
 
 
     def transformarDataLote(self, mes, nomeLote, lote):
