@@ -523,4 +523,26 @@ class Plano():
 
 
 
+    def obterColecoesporPlano(self):
+        '''Metodo utilizado para obter as Colecoes vinculados a um Plano'''
+
+        get = """
+        select
+            plano as "codPlano",
+            colecao as "codColecao",
+            nomecolecao as "nomeColecao"
+        from
+            "PCP".pcp."colecoesPlano" cp
+        where 
+            plano = %s  and "codEmpresa" = %s 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(get,conn,params=(self.codPlano,self.codEmpresa))
+
+        return consulta
+
+
+
+
 
