@@ -155,7 +155,7 @@ def GET_ConsultaTipoNotasVinculados():
 def get_lotes_csw():
     empresa = request.args.get('empresa','1')
 
-    dados = Plano_Lote.Plano_Lote("",empresa).loteCsw()
+    dados = Plano_Lote.Plano_Lote(empresa).loteCsw()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
