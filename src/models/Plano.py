@@ -558,7 +558,7 @@ class Plano():
             ON p.codigo = l.plano
         WHERE 
             plano = %s
-            and "codEmpresa" = %s 
+            and p."codEmpresa" = %s 
             """
 
         conn = ConexaoPostgre.conexaoEngine()
