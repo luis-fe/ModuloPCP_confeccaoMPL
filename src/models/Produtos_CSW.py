@@ -52,6 +52,30 @@ class Produtos_CSW():
 
 
 
+    def obterColecaoCsw(self):
+        '''Metodo utilizado para obter as Colecoes do ERP CSW DA CONSISTEM'''
+
+        get = """
+        SELECT
+            c.codColecao ,
+            c.nome
+        FROM
+            tcp.Colecoes c
+        WHERE
+            c.codEmpresa = 1
+        """
+
+        with ConexaoBanco.Conexao2() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(get)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
+
+
+
     def estoqueNat(self):
         '''metodo que consulta o estoque da natureza 05 '''
 

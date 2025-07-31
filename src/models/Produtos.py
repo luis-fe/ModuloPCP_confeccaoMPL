@@ -150,6 +150,15 @@ class Produtos():
 
         return consulta
 
+
+    def obterColecaoCsw(self):
+        '''Metodo que consulta o estoque por natureza e empresa '''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa)
+        consulta = produto_Csw.obterColecaoCsw()
+
+        return consulta
+
     def emProducao(self):
         '''Metodo que consulta o estoque em processo a nivel sku '''
 
