@@ -65,7 +65,7 @@ class Produtos_CSW():
             c.codEmpresa = 1
         """
 
-        with ConexaoBanco.Conexao2() as conn:
+        with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(get)
                 colunas = [desc[0] for desc in cursor.description]
