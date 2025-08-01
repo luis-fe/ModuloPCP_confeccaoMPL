@@ -617,6 +617,33 @@ class Plano():
 
         return sql
 
+    def desvincularNotasAoPlano(self, arrayTipoNotas):
+
+        # Validando se o Plano ja existe
+        validador = self.consultarPlano()
+        validador = validador[validador['codigo'] == self.codPlano].reset_index()
+
+        if validador.empty:
+
+            return pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+        else:
+            for nota in arrayTipoNotas:
+                self.desvincularNotaPlano(nota, self.codPlano)
+
+            return pd.DataFrame([{'Status': True, 'Mensagem': 'Tipo Notas Desvinculados do Plano com sucesso !'}])
+
+    def desvincularNotaPlano(self,codigoNota, plano):
+        # Passo 1: Excluir o lote do plano vinculado
+        deletarNota = """
+        DELETE FROM pcp."tipoNotaporPlano" WHERE "tipo nota" = %s and "plano" = %s and "codEmpresa" = %s
+        """
+        conn = ConexaoPostgre.conexaoInsercao()
+        cur = conn.cursor()
+        cur.execute(deletarNota, (str(codigoNota), plano, self.codEmpresa))
+        conn.commit()
+
+        cur.close()
+        conn.close()
 
 
 

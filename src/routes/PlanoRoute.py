@@ -84,3 +84,26 @@ def PUT_AlterPlano():
             op_dict[column_name] = row[column_name]
         OP_data.append(op_dict)
     return jsonify(OP_data)
+
+
+@plano_routes.route('/pcp/api/DesvincularNotasPlano', methods=['DELETE'])
+@token_required
+def Delete_DesvincularNotasPlano():
+
+    data = request.get_json()
+
+    codigoPlano = data.get('codigoPlano')
+    arrayTipoNotas = data.get('arrayTipoNotas', '-')
+    codEmpresa = data.get('codEmpresa', '-')
+
+
+    dados = Plano.Plano(codigoPlano,'','','','','','',codEmpresa).desvincularNotasAoPlano(arrayTipoNotas)
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    return jsonify(OP_data)
