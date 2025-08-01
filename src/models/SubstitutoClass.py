@@ -13,12 +13,17 @@ class Substituto():
 
         produto_Csw = Produtos_CSW.Produtos_CSW()
 
-        self.pesquisarNomeMaterial = produto_Csw.pesquisarNomeMaterial(self.codMateriaPrima)
 
-        self.nomeCodSubstituto = produto_Csw.pesquisarNomeMaterial(self.codMateriaPrima)
 
-        self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
-        self.nomeCodMateriaPrima = self.nomeCodMateriaPrima['nome'][0]
+
+        if  self.codMateriaPrima  != '':
+            self.nomeCodSubstituto = produto_Csw.pesquisarNomeMaterial(self.codMateriaPrima)
+            self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
+
+        if  self.codMateriaPrimaSubstituto  != '':
+
+            self.nomeCodSubstituto = produto_Csw.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
+            self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
 
     def consultaSubstitutos(self):
         '''Metodo que consulta todos os substitutos '''
