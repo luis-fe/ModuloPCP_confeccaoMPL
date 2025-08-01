@@ -23,7 +23,9 @@ def token_required(f):
 def get_consultaPlanejamentoABC_plano():
 
     codPlano = request.args.get('codPlano','-')
-    dados = Tendencia_Plano.Tendencia_Plano('1',codPlano).consultaPlanejamentoABC()
+    codEmpresa = request.args.get('codEmpresa','-')
+
+    dados = Tendencia_Plano.Tendencia_Plano(codEmpresa,codPlano).consultaPlanejamentoABC()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

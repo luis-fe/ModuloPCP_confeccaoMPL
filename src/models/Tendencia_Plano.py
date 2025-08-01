@@ -25,10 +25,12 @@ class Tendencia_Plano():
     def consultaPlanejamentoABC(self):
         '''Metodo utilizado para planejar a distribuicacao ABC'''
 
-        sql = """
-        Select "nomeABC" , "perc_dist" from pcp."Plano_ABC"
+        sql = f"""
+        Select "nomeABC" , "perc_dist" 
+        from 
+            pcp."Plano_ABC"
         where 
-            "codPlano" = %s
+            "codPlano" = %s and "codEmpresa" = '{self.codEmpresa}'
         order by 
             "nomeABC"
         """
@@ -102,10 +104,10 @@ class Tendencia_Plano():
 
 
         # Consultando o ABC cadastrado para o Plano:
-        sql = """
+        sql = f"""
         Select "nomeABC" , "perc_dist", "codPlano" from pcp."Plano_ABC"
         where 
-            "codPlano" = %s
+            "codPlano" = %s and "codEmpresa" = '{self.codEmpresa}'
         order by 
             "nomeABC"
         """

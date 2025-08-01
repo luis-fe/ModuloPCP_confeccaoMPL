@@ -265,11 +265,13 @@ class SimulacaoProg():
     def consultaDetalhadaSimulacao(self):
         '''metodo que consulta a simulacao em detalhes'''
 
-        consultaParamentrosAbc = """
+        consultaParamentrosAbc = f"""
         select
             distinct "nomeABC" as class
         from
             pcp."Plano_ABC" pa
+        where 
+            pa."codEmpresa" = '{self.codEmpresa}'
         order by
             "nomeABC" asc 
         """

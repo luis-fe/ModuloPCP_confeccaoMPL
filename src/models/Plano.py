@@ -3,6 +3,8 @@ import pandas as pd
 import pytz
 from src.connection import ConexaoPostgre
 from src.models import Plano_Lote, Produtos_CSW
+from src.models.Parametrizacao_ABC import Parametrizacao_ABC
+
 
 class Plano():
     '''
@@ -10,7 +12,7 @@ class Plano():
     '''
 
     def __init__(self, codPlano = None, descricaoPlano= None, iniVendas = None , fimVendas = None, iniFat = None, fimFat = None,
-                 usuarioGerador = None, codEmpresa = '1' ):
+                 usuarioGerador = None, codEmpresa = '1', parametroABC = '' ):
         '''
         Definicao do construtor: atributos do plano
         '''
@@ -22,6 +24,7 @@ class Plano():
         self.fimFat = fimFat
         self.usuarioGerador = usuarioGerador
         self.codEmpresa = codEmpresa
+        self.parametroABC = parametroABC
 
     def inserirNovoPlano(self):
         '''
@@ -292,7 +295,7 @@ class Plano():
     def consultaVinculoABC_Plano(self):
         '''Metodo que consulta a estrutura ABC vinculado ao plano '''
 
-        sql = """
+        sql = f"""
         select 
             * 
         from 
@@ -300,7 +303,7 @@ class Plano():
         inner join 
             pcp."Plano_ABC"  pa 
             on pa."codPlano" = p.codigo 
-        where p.codigo = %s
+        where p.codigo = %s and p."codEmpresa" = '{self.codEmpresa}'
         """
 
 
@@ -738,6 +741,70 @@ class Plano():
                 conn.commit()
 
 
+
+
+
+    def inserirOuAlterarPlanj_ABC(self, perc_dist):
+        '''Metodo para inserir ou alterar o planejamento abc '''
+        parametrizacao_ABC = Parametrizacao_ABC(self.codEmpresa, '')
+        verifica1 = parametrizacao_ABC.consultaParametrizacaoABC()
+
+        verifica1 = verifica1[verifica1['nomeABC'] == self.parametroABC].reset_index()
+
+        self.perc_dist = perc_dist
+
+        if verifica1.empty:
+            return pd.DataFrame([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
+
+        verifica = f"""
+        Select "nomeABC" , "perc_dist" from pcp."Plano_ABC"
+        where 
+            "codPlano" = %s and "nomeABC" = %s and "codEmpresa" = '{self.codEmpresa}'
+        """
+        conn = ConexaoPostgre.conexaoEngine()
+        verifica = pd.read_sql(verifica,conn,params=(self.codPlano, self.parametroABC,))
+        if verifica.empty:
+            self.inserirPlanejamentoABC()
+        else:
+            self.updatePlanejamentoABC()
+        return pd.DataFrame([{'status':True,'Mensagem':'Inserido ou Atualizado com sucesso!'}])
+
+
+
+    def inserirPlanejamentoABC(self):
+        '''Metodo utilizado para inserir plano'''
+
+        inserir = """
+        insert into pcp."Plano_ABC" ("codPlano", "nomeABC", "perc_dist", "codEmpresa" ) values ( %s, %s, %s, %s)
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(inserir,(self.codPlano, self.parametroABC,self.perc_dist))
+                conn.commit()
+
+        return pd.DataFrame([{'status':True,'Mensagem':'Planejamento ABC alterado com sucesso'}])
+
+
+
+
+    def updatePlanejamentoABC(self):
+        '''Metodo que faz o update no planejamento ABC do Plano'''
+
+        update = f"""
+        update pcp."Plano_ABC"
+        set "perc_dist" = %s
+        where "nomeABC" = %s and "codPlano" = %s and "codEmpresa" = '{self.codEmpresa}'
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(update,(self.perc_dist, self.parametroABC,self.codPlano))
+                conn.commit()
+
+        return pd.DataFrame([{'status':True,'Mensagem':'Planejamento ABC alterado com sucesso'}])
 
 
 
