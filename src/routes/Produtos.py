@@ -1,7 +1,7 @@
 
 from flask import Blueprint, jsonify, request, send_file
 from functools import wraps
-from src.models import Produtos
+from src.models import Produtos, SubstitutoClass
 from io import BytesIO
 
 produtos_routes = Blueprint('produtos_routes', __name__)
@@ -109,6 +109,26 @@ def get_MarcasDisponiveis():
 
     dados = Produtos.Produtos().consultaMarcasDisponiveis()
     #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
+@produtos_routes.route('/pcp/api/consultaSubstitutosMP', methods=['GET'])
+@token_required
+def get_consultaSubstitutosMP():
+
+    dados = SubstitutoClass.Substituto().consultaSubstitutos()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
