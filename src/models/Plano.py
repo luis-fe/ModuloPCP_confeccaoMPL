@@ -625,6 +625,7 @@ class Plano():
 
         if validador.empty:
             retorno =  pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+            print(retorno)
 
             return retorno
         else:
