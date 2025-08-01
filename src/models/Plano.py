@@ -63,14 +63,16 @@ class Plano():
         DataFrame (em pandas) com todos os planos
         '''
         conn = ConexaoPostgre.conexaoEngine()
-        planos = pd.read_sql("""
+        planos = pd.read_sql(f"""
                     SELECT 
                         * 
                     FROM 
                         pcp."Plano" 
                     WHERE
-                        "codEmpresa" = %s
-                    ORDER BY codigo ASC;""", conn, params=(self.codEmpresa,))
+                        "codEmpresa" = '{self.codEmpresa}'
+                    ORDER BY codigo ASC;""", conn)
+
+        print(planos)
 
         return planos
 
