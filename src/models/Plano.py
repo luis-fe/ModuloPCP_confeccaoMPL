@@ -753,6 +753,10 @@ class Plano():
 
         self.perc_dist = perc_dist
 
+        if self.perc_dist != None:
+            if ',' in self.perc_dist:
+                self.perc_dist = self.perc_dist.replace(',', '.')
+
         if verifica1.empty:
             return pd.DataFrame([{'status': False, 'Mensagem': 'Parametro Abc nao existe !'}])
 
