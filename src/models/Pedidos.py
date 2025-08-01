@@ -60,10 +60,14 @@ class Pedidos():
 
             return pd.DataFrame([{'Status':False,'Mensagem':f'O Plano {self.codPlano} NAO existe'}])
         else:
-            delete = """DELETE FROM pcp."tipoNotaporPlano" WHERE plano = %s and "tipo nota" = %s """
+            delete = """
+            DELETE FROM 
+                pcp."tipoNotaporPlano" 
+            WHERE plano = %s and "tipo nota" = %s and "codEmpresa" = %s
+            """
 
-            insert = """INSERT INTO pcp."tipoNotaporPlano" ("tipo nota" , plano, nome ) values 
-            ( %s, %s, %s )"""
+            insert = """INSERT INTO pcp."tipoNotaporPlano" ("tipo nota" , plano, nome, "codEmpresa" ) values 
+            ( %s, %s, %s, %s )"""
 
             conn = ConexaoPostgre.conexaoInsercao()
             cur = conn.cursor()
@@ -71,9 +75,9 @@ class Pedidos():
             for codNota in arrayTipoNotas:
 
                 nomeNota = Pedidos_CSW.Pedidos_CSW(self.codEmpresa, codNota).consultarTipoNotaEspecificoCsw()
-                cur.execute(delete, (self.codPlano, str(codNota),))
+                cur.execute(delete, (self.codPlano, str(codNota), self.codEmpresa))
                 conn.commit()
-                cur.execute(insert,(str(codNota), self.codPlano, nomeNota,))
+                cur.execute(insert,(str(codNota), self.codPlano, nomeNota,self.codEmpresa))
                 conn.commit()
 
             cur.close()
