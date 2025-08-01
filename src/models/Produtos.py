@@ -31,6 +31,20 @@ class Produtos():
 
         return ultimoSku
 
+
+    def consultaMarcasDisponiveis(self):
+        '''Metodo que consulta as marcas disponiveis '''
+
+        sql = """
+        select * from "PCP".pcp."Marcas"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
+
+
     def recarregar_novosSkus_noBanco(self):
         '''Metodo utilizado para recarregar novos Sku's no banco de dados Postgres para utilizar na Plantaforma PCP '''
 
