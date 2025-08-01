@@ -94,7 +94,7 @@ def Delete_DesvincularNotasPlano():
 
     codigoPlano = data.get('codigoPlano')
     arrayTipoNotas = data.get('arrayTipoNotas', '-')
-    codEmpresa = data.get('codEmpresa', '-')
+    codEmpresa = data.get('codEmpresa', '1')
 
 
     dados = Plano.Plano(codigoPlano,'','','','','','',codEmpresa).desvincularNotasAoPlano(arrayTipoNotas)
