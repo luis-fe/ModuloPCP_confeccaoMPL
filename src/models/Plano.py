@@ -624,8 +624,9 @@ class Plano():
         validador = validador[validador['codigo'] == self.codPlano].reset_index()
 
         if validador.empty:
+            retorno =  pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
 
-            return pd.DataFrame([{'Status': False, 'Mensagem': f'O Plano {self.codPlano} NAO existe'}])
+            return retorno
         else:
             for nota in arrayTipoNotas:
                 self.desvincularNotaPlano(nota, self.codPlano)
