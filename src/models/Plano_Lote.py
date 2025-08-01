@@ -139,7 +139,7 @@ class Plano_Lote():
         return consuta
 
 
-    def desvincularLotesAoPlano(self,arrayCodLoteCsw):
+    def desvincularLotesAoPlano(self, arrayCodLoteCsw):
 
         plano = Plano.Plano(self.codPlano,'','','','','','',self.codEmpresa)
 
