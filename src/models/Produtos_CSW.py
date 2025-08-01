@@ -7,13 +7,15 @@ from src.connection import ConexaoERP
 class Produtos_CSW():
     '''Classe utilizada para fazer buscas relativo aos Produtos cadastrados no ERP CSW'''
 
-    def __init__(self, codEmpresa = '1' , codSku = None, ultimoItem = None, codNatureza = '5', codItemPai = ''):
+    def __init__(self, codEmpresa = '1' , codSku = None, ultimoItem = None, codNatureza = '5', codItemPai = '',codColecao=''):
 
         self.codSku = codSku
         self.ultimoItem = ultimoItem
         self.codNatureza = str(codNatureza)
         self.codEmpresa = codEmpresa
         self.codItemPai = codItemPai
+        self.codColecao = codColecao
+
 
     def get_itensFilhos_Novos_CSW(self):
         '''Metodo que busca no csw os novos itens filhos que ainda nao foram atualizados no banco Postgre desse projeto '''
@@ -73,6 +75,31 @@ class Produtos_CSW():
                 consulta = pd.DataFrame(rows, columns=colunas)
             del rows
             return consulta
+
+
+    def obterNomeColecaoCSW(self):
+        '''Metodo utilizado para obter um Determinado nome da Colecao  do ERP CSW DA CONSISTEM'''
+
+        get = """
+        SELECT
+            c.codColecao ,
+            c.nome
+        FROM
+            tcp.Colecoes c
+        WHERE
+            c.codEmpresa = 1 
+            and 
+            c.codColecao = """+str(self.codColecao)+""""""
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(get)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta['nome'][0]
+
 
 
 

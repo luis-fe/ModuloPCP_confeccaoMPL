@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import pytz
 from src.connection import ConexaoPostgre
-from src.models import Plano_Lote
+from src.models import Plano_Lote, Produtos_CSW
 
 class Plano():
     '''
@@ -650,6 +650,60 @@ class Plano():
         conn.close()
 
         print(deletarNota)
+
+
+    def vincularArrayColecaoPlano(self, array):
+
+        '''Metodo utilizado para vincular um array de colecao ao plano'''
+        tam = 0
+        for i in array:
+            self.codColecao = i
+            produtos_CSW = Produtos_CSW.Produtos_CSW(self.codEmpresa, '', '', '', '', self.codColecao)
+            self.nomeColecao = produtos_CSW.obterNomeColecaoCSW()
+            self.vincularColecaoNoPlano()
+            tam = tam + 1
+
+        return pd.DataFrame(
+            [{'Status': True,
+              'Mensagem': f'Colecoes incluida no plano {self.codPlano}  com sucesso!'}])
+
+
+    def vincularColecaoNoPlano(self):
+        '''Metodo utilizado para vincular uma colecao ao plano'''
+
+        # Consultar se a colecao ja foi vinculada:
+        verificar ="""
+        select
+            plano as "codPlano",
+            colecao as "codColecao",
+            nomecolecao as "nomeColecao",
+            "codEmpresa"
+        from
+            "PCP".pcp."colecoesPlano" cp
+        where 
+            plano = %s and colecao = %s and "codEmpresa" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        verificar = pd.read_sql(verificar,conn,params=(self.codPlano,self.codColecao,self.codEmpresa))
+
+        if verificar.empty:
+
+            insert = """
+            insert into "PCP".pcp."colecoesPlano" (plano, colecao, nomecolecao, "codEmpresa" ) values ( %s, %s, %s, %s )
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as connInsert:
+                with connInsert.cursor() as curr:
+                    curr.execute(insert, (self.codPlano, str(self.codColecao),str(self.nomeColecao),self.codEmpresa))
+                    connInsert.commit()
+
+            return pd.DataFrame(
+                [{'Status': True, 'Mensagem': f'Colecao {self.codColecao}-{self.nomeColecao} incluida no plano {self.codPlano} !'}])
+
+        else:
+            return pd.DataFrame(
+                [{'Status': True, 'Mensagem': f'Colecao {self.codColecao}-{self.nomeColecao} incluida no plano {self.codPlano} !'}])
 
 
 
