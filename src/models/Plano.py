@@ -634,16 +634,18 @@ class Plano():
 
     def desvincularNotaPlano(self,codigoNota, plano):
         # Passo 1: Excluir o lote do plano vinculado
-        deletarNota = """
-        DELETE FROM pcp."tipoNotaporPlano" WHERE "tipo nota" = %s and "plano" = %s and "codEmpresa" = %s
+        deletarNota = f"""
+        DELETE FROM pcp."tipoNotaporPlano" WHERE "tipo nota" = %s and "plano" = %s and "codEmpresa" = '{self.codEmpresa}'
         """
         conn = ConexaoPostgre.conexaoInsercao()
         cur = conn.cursor()
-        cur.execute(deletarNota, (str(codigoNota), plano, self.codEmpresa))
+        cur.execute(deletarNota, (str(codigoNota), plano,))
         conn.commit()
 
         cur.close()
         conn.close()
+
+        print(deletarNota)
 
 
 
