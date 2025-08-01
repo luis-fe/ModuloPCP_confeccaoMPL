@@ -706,6 +706,39 @@ class Plano():
                 [{'Status': True, 'Mensagem': f'Colecao {self.codColecao}-{self.nomeColecao} incluida no plano {self.codPlano} !'}])
 
 
+    def desvincularArrayColecaoPlano(self, array):
+
+        '''Metodo utilizado para des-vincular um array de colecao ao plano'''
+
+        tam = 0
+        for i in array:
+            self.codColecao = i
+            produtos_CSW = Produtos_CSW.Produtos_CSW(self.codEmpresa, '', '', '', '', self.codColecao)
+            self.nomeColecao = produtos_CSW.obterNomeColecaoCSW()
+            self.excluirColecao()
+            tam = tam + 1
+
+        return pd.DataFrame(
+            [{'Status': True,
+              'Mensagem': f'Colecoes excluidas do plano {self.codPlano}  com sucesso!'}])
+
+
+
+    def excluirColecao(self):
+        '''metodo utilizado para excluir as colecoes '''
+
+        sql = """
+        delete from "PCP".pcp."colecoesPlano"
+        where plano = %s and colecao = %s and "codEmpresa" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(sql,(self.codPlano, self.codColecao, self.codEmpresa))
+                conn.commit()
+
+
+
 
 
 
