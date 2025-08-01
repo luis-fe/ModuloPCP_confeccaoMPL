@@ -46,7 +46,7 @@ def Delete_DesvincularLotesPlano():
     arrayCodLoteCsw = data.get('arrayCodLoteCsw', '-')
 
 
-    dados = Plano_Lote.Plano_Lote(codEmpresa, codigoPlano).desvincularLotesAoPlano(arrayCodLoteCsw)
+    dados = Plano_Lote.Plano_Lote('1', codigoPlano).desvincularLotesAoPlano(arrayCodLoteCsw)
     column_names = dados.columns
     # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
     OP_data = []
