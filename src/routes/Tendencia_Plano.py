@@ -23,7 +23,7 @@ def token_required(f):
 def get_consultaPlanejamentoABC_plano():
 
     codPlano = request.args.get('codPlano','-')
-    codEmpresa = request.args.get('codEmpresa','-')
+    codEmpresa = request.args.get('codEmpresa','1')
 
     dados = Tendencia_Plano.Tendencia_Plano(codEmpresa,codPlano).consultaPlanejamentoABC()
     #controle.salvarStatus(rotina, ip, datainicio)
