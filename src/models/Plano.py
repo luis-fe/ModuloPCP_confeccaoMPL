@@ -72,7 +72,7 @@ class Plano():
                         "codEmpresa" = '{self.codEmpresa}'
                     ORDER BY codigo ASC;""", conn)
 
-        print(planos)
+        print(self.codEmpresa)
 
         return planos
 
