@@ -14,7 +14,7 @@ class Substituto():
     def consultaSubstitutos(self):
         '''Metodo que consulta todos os substitutos '''
 
-        sql = """
+        sql = f"""
         select 
             "codMateriaPrima",
             "nomeCodMateriaPrima",
@@ -22,6 +22,8 @@ class Substituto():
             "nomeCodSubstituto"
         from
             pcp."SubstituicaoMP"
+        where 
+            "codEmpresa" = '{self.codEmpresa}'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -51,13 +53,11 @@ class Substituto():
     def updateSubstituto(self):
         '''Metodo que insere um substituto'''
 
-        self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
-        self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
-        update = """update  pcp."SubstituicaoMP" 
+        update = f"""update  pcp."SubstituicaoMP" 
         set 
             "codMateriaPrimaSubstituto" = %s , "nomeCodSubstituto" =%s
         where 
-            "codMateriaPrima" = %s 
+            "codMateriaPrima" = %s and "codEmpresa" = '{self.codEmpresa}'
         """
 
         with ConexaoPostgre.conexaoInsercao() as conn:

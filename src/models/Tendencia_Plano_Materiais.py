@@ -150,7 +150,7 @@ class Tendencia_Plano_Materiais():
             Necessidade['saldo Novo'] = Necessidade['saldo Novo'] - Necessidade['SaldoPedCompras']
 
             # Consulta o substitutos:
-            obterSubstitutos = Substitutos_Materiais.Substituto().consultaSubstitutos()
+            obterSubstitutos = Substitutos_Materiais.Substituto('','','','',self.codEmpresa).consultaSubstitutos()
             obterSubstitutos.rename(
                 columns={'codMateriaPrimaSubstituto': 'codEditado'},
                 inplace=True)
