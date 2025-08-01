@@ -3,12 +3,13 @@ import pandas as pd
 from src.models import Produtos_CSW
 
 class Substituto():
-    def __init__(self, codMateriaPrima = '' , codMateriaPrimaSubstituto = '', nomeCodMateriaPrima = None, nomeCodSubstituto = None):
+    def __init__(self, codMateriaPrima = '' , codMateriaPrimaSubstituto = '', nomeCodMateriaPrima = None, nomeCodSubstituto = None, codEmpresa = ''):
 
         self.codMateriaPrima = codMateriaPrima
         self.codMateriaPrimaSubstituto = codMateriaPrimaSubstituto
         self.nomeCodMateriaPrima = nomeCodMateriaPrima
         self.nomeCodSubstituto = nomeCodSubstituto
+        self.codEmpresa = codEmpresa
 
 
         produto_Csw = Produtos_CSW.Produtos_CSW()
@@ -28,7 +29,7 @@ class Substituto():
     def consultaSubstitutos(self):
         '''Metodo que consulta todos os substitutos '''
 
-        sql = """
+        sql = f"""
         select 
             "codMateriaPrima",
             "nomeCodMateriaPrima",
@@ -36,6 +37,8 @@ class Substituto():
             "nomeCodSubstituto"
         from
             pcp."SubstituicaoMP"
+        where 
+            "codEmpresa" = '{self.codEmpresa}'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -47,25 +50,23 @@ class Substituto():
         '''Metodo que insere um substituto'''
 
 
-        insert = """Insert into pcp."SubstituicaoMP" ("codMateriaPrima" , "nomeCodMateriaPrima" , "codMateriaPrimaSubstituto", "nomeCodSubstituto") 
-        values ( %s, %s, %s, %s )"""
+        insert = """Insert into pcp."SubstituicaoMP" ("codMateriaPrima" , "nomeCodMateriaPrima" , "codMateriaPrimaSubstituto", "nomeCodSubstituto", "codEmpresa") 
+        values ( %s, %s, %s, %s , %s )"""
 
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(insert,(self.codMateriaPrima, self.nomeCodMateriaPrima, self.codMateriaPrimaSubstituto, self.nomeCodSubstituto))
+                curr.execute(insert,(self.codMateriaPrima, self.nomeCodMateriaPrima, self.codMateriaPrimaSubstituto, self.nomeCodSubstituto,self.codEmpresa))
                 conn.commit()
 
     def updateSubstituto(self):
         '''Metodo que insere um substituto'''
 
-        self.nomeCodSubstituto = self.pesquisarNomeMaterial(self.codMateriaPrimaSubstituto)
-        self.nomeCodSubstituto = self.nomeCodSubstituto['nome'][0]
-        update = """update  pcp."SubstituicaoMP" 
+        update = f"""update  pcp."SubstituicaoMP" 
         set 
             "codMateriaPrimaSubstituto" = %s , "nomeCodSubstituto" =%s
         where 
-            "codMateriaPrima" = %s 
+            "codMateriaPrima" = %s  and "codEmpresa" = '{self.codEmpresa}'
         """
 
         with ConexaoPostgre.conexaoInsercao() as conn:
@@ -94,7 +95,7 @@ class Substituto():
     def verificarMP(self):
         '''Metodo que verifica se a Materia Prima ja possui substituto'''
 
-        sql = """
+        sql = f"""
         select 
             "codMateriaPrima",
             "nomeCodMateriaPrima",
@@ -103,7 +104,7 @@ class Substituto():
         from
             pcp."SubstituicaoMP"
         where
-            "codMateriaPrima" = %s
+            "codMateriaPrima" = %s and "codEmpresa" = '{self.codEmpresa}'
         """
 
         conn = ConexaoPostgre.conexaoEngine()

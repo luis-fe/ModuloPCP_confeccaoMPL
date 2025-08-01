@@ -128,7 +128,10 @@ def get_MarcasDisponiveis():
 @token_required
 def get_consultaSubstitutosMP():
 
-    dados = SubstitutoClass.Substituto().consultaSubstitutos()
+    codEmpresa = request.args.get('codEmpresa','1')
+
+
+    dados = SubstitutoClass.Substituto('','','','',codEmpresa).consultaSubstitutos()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
@@ -142,4 +145,30 @@ def get_consultaSubstitutosMP():
     del dados
     return jsonify(OP_data)
 
+
+@produtos_routes.route('/pcp/api/inserirAlterarSubstitutosMP', methods=['POST'])
+@token_required
+def post_inserirAlterarSubstitutosMP():
+    data = request.get_json()
+
+    codMateriaPrima = data.get('codMateriaPrima')
+    nomeCodMateriaPrima = data.get('nomeCodMateriaPrima')
+    codMateriaPrimaSubstituto = data.get('codMateriaPrimaSubstituto')
+    nomeCodSubstituto = data.get('nomeCodSubstituto')
+    codEmpresa = request.args.get('codEmpresa','1')
+
+
+    dados = SubstitutoClass.Substituto(codMateriaPrima,codMateriaPrimaSubstituto,nomeCodMateriaPrima,nomeCodSubstituto,codEmpresa).inserirOuAlterSubstitutoMP()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
 
