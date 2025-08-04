@@ -43,6 +43,7 @@ class ServicoAutomacao():
                     "PCP".pcp."ControleAutomacao"
                 where 
                     rotina = '{self.rotina}'
+                order by data_hora desc
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -59,8 +60,6 @@ class ServicoAutomacao():
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'
         else:
-            consulta = consulta.sort_values(by=['data_hora'],
-                                                          ascending=False)  # escolher como deseja classificar
 
             ultimo = consulta['data_hora'][0]
 
