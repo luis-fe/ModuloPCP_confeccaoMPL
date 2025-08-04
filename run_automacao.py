@@ -8,7 +8,7 @@ from src.models import Componentes_Csw
 if __name__ == '__main__':
     PID = os.getpid()
 
-    Componentes_Csw.Componentes_CSW().inserirComponentesVariaveis()
+    Componentes_Csw.Componentes_CSW('1',60*5).inserirComponentesVariaveis()
 
 
 
