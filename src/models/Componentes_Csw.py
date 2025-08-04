@@ -6,11 +6,11 @@ from src.models import ServicoAutomacao
 
 class Componentes_CSW():
 
-    def __init__(self, codEmpresa = '1', intervalo_automacao = 100):
+    def __init__(self, codEmpresa = '1', intervalo_automacao = 100, ultima_atualizacao= ''):
 
         self.codEmpresa = codEmpresa
         self.intervalo_automacao = intervalo_automacao # Atrubuto para Controlar o intervalo de automacao em Segundos
-
+        self.ultima_atualizacao = ultima_atualizacao
 
 
 
@@ -58,9 +58,9 @@ class Componentes_CSW():
         """
         servicoAutomacao = ServicoAutomacao.ServicoAutomacao('','insercao dos compontentes do csw no postgre')
 
-
-
-        if servicoAutomacao.obtentendo_intervalo_atualizacao_rotina() > self.intervalo_automacao:
+        self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_rotina()
+        print(f'ultima atualizacao {self.ultima_atualizacao}')
+        if self.ultima_atualizacao > self.intervalo_automacao:
 
             with ConexaoERP.ConexaoInternoMPL() as conn:
                 with conn.cursor() as cursor_csw:

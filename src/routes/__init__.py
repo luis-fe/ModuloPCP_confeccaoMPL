@@ -18,6 +18,7 @@ from src.routes.Simulacao_Prog import Simulacao_prod_routes
 from src.routes.Produtos import produtos_routes
 from src.routes.OrdemProd import OrdemProd_routes
 from src.routes.CronogramaAtividade import CronogramaAtividades_routes
+from src.routes.MonitorPedidos import MonitorPedidos_routes
 
 # Importacao das rotas para o blueprint:
 routes_blueprint.register_blueprint(plano_routes)
@@ -31,3 +32,4 @@ routes_blueprint.register_blueprint(Simulacao_prod_routes)
 routes_blueprint.register_blueprint(produtos_routes)
 routes_blueprint.register_blueprint(OrdemProd_routes)
 routes_blueprint.register_blueprint(CronogramaAtividades_routes)
+routes_blueprint.register_blueprint(MonitorPedidos_routes)

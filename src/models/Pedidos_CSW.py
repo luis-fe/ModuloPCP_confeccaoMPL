@@ -25,7 +25,7 @@ class Pedidos_CSW():
         '''Metodo que pesquisa no Csw os pedidos bloqueados '''
 
 
-        consultacsw = """
+        consultacsw = f"""
         SELECT 
             * 
         FROM 
@@ -36,7 +36,7 @@ class Pedidos_CSW():
                 from 
                     ped.PedidoBloqComl  bc 
                 WHERE 
-                    codEmpresa = 1  
+                    codEmpresa = {self.codEmpresa}   
                     and bc.situacaoBloq = 1
                 order by 
                     codPedido desc
@@ -47,7 +47,7 @@ class Pedidos_CSW():
                 FROM 
                     Cre.PedidoCreditoBloq 
                 WHERE 
-                    Empresa  = 1  
+                    Empresa  = {self.codEmpresa}  
                     and situacao = 1
                 order BY 
                     codPedido DESC
@@ -195,7 +195,7 @@ class Pedidos_CSW():
                 WHEN situacaoSugestao = 0 then 'Sugerido(Gerado)' WHEN situacaoSugestao = 2 then 'Sugerido(Em Conferencia)' 
                 WHEN situacaoSugestao = 1 then 'Sugerido(Gerado)' else '' end StatusSugestao
         FROM 
-            ped.SugestaoPed c WHERE c.codEmpresa = """+str(self.codEmpresa)
+            ped.SugestaoPed c WHERE c.codEmpresa = {str(self.codEmpresa)} """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
@@ -279,7 +279,7 @@ class Pedidos_CSW():
         else:
             consultasqlCsw = """
             select 
-                top 100000 CAST(codPedido as varchar) as codPedido, 
+                top 150000 CAST(codPedido as varchar) as codPedido, 
                 numeroEntrega as entregas_Solicitadas 
             from 
                 asgo_ped.Entregas 
