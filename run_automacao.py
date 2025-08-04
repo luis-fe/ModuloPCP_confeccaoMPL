@@ -8,11 +8,9 @@ from src.models import Componentes_Csw
 if __name__ == '__main__':
     PID = os.getpid()
 
-    try:
-        Componentes_Csw.Componentes_CSW().inserirComponentesVariaveis()
+    Componentes_Csw.Componentes_CSW().inserirComponentesVariaveis()
 
-    except:
-        print('erro')
+
 
 
 
