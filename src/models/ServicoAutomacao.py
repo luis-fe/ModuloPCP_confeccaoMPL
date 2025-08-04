@@ -69,9 +69,9 @@ class ServicoAutomacao():
 
     def obtentendo_intervalo_atualizacao_rotina(self):
         # Converte as strings para objetos datetime
-        data1_obj = datetime.strptime(self.obterHoraAtual(), "%Y-%m-%d %H:%M:%S.%f")
+        data1_obj = datetime.strptime(self.obterHoraAtual(), "%Y-%m-%d %H:%M:%S")
 
-        data2_obj = datetime.strptime(self.obtendo_ultima_atualizacao_rotina(), "%Y-%m-%d  %H:%M:%S.%f")
+        data2_obj = datetime.strptime(self.obtendo_ultima_atualizacao_rotina(), "%Y-%m-%d  %H:%M:%S")
 
         # Calcula a diferença entre as datas
         diferenca = data1_obj - data2_obj
@@ -105,7 +105,7 @@ class ServicoAutomacao():
 
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)
-        agora = agora.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
         return agora
 
 
