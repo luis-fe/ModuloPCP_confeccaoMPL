@@ -867,7 +867,7 @@ class MonitorPedidosOP():
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'/home/grupompl/ModuloPCP/dados/monitor_filtro.parquet', monitor)
+            fp.write(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet', monitor)
         except:
             parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet')
             monitor = parquet_file.to_pandas()
