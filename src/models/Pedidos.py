@@ -155,11 +155,12 @@ class Pedidos():
 
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
-        df_loaded.to_csv('testeSku.csv')
 
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
+        df_loaded.to_csv('testeSku.csv')
+
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
 
