@@ -648,7 +648,10 @@ class MonitorPedidosOP():
         env_path = configApp.localProjeto
         load_dotenv(f'{env_path}/_ambiente.env')
         caminhoAbsoluto = os.getenv('CAMINHO_PARQUET_FAT')
-        fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
+        try:
+            fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
+        except:
+            pedidos.to_csv('erro.csv')
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
