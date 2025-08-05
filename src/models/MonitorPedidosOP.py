@@ -650,6 +650,7 @@ class MonitorPedidosOP():
         caminhoAbsoluto = os.getenv('CAMINHO_PARQUET_FAT')
 
         #try:
+        pedidos['tipoDesconto'] = pedidos['tipoDesconto'].astype('int64')
         fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
         #except:
             #print(pedidos.columns.tolist())
