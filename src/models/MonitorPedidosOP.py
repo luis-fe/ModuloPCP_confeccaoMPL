@@ -651,6 +651,7 @@ class MonitorPedidosOP():
         pedidos = pedidos.reset_index()  # se quiser uma solução simples e segura
 
         try:
+            pedidos = pedidos.loc[:, ~pedidos.columns.str.contains('^Unnamed')]
             fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
         except:
             pedidos.to_csv('erro.csv')
