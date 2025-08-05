@@ -116,13 +116,10 @@ class Pedidos():
         elif padrao_monitor ==True:
 
             self.iniVendas = iniVendas
-            print(f'iniv vendas :{self.iniVendas} ')
             self.iniVendas = pd.to_datetime(self.iniVendas)
-            df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'])
 
             self.fimVendas = fimVendas
             self.fimVendas = pd.to_datetime(self.fimVendas)
-            df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'])
 
             if iniFat =='' and fimFat == '':
                 self.iniFat = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=0)
@@ -148,6 +145,7 @@ class Pedidos():
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
+        df_loaded['inivendas'] = self.iniVendas
         df_loaded.to_csv('testeSku.csv')
 
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
