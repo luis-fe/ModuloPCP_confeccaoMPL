@@ -648,6 +648,8 @@ class MonitorPedidosOP():
         env_path = configApp.localProjeto
         load_dotenv(f'{env_path}/_ambiente.env')
         caminhoAbsoluto = os.getenv('CAMINHO_PARQUET_FAT')
+        pedidos = pedidos.reset_index()  # se quiser uma solução simples e segura
+
         try:
             fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
         except:
