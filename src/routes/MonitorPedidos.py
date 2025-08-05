@@ -30,7 +30,7 @@ def POST_MonitorPedidos():
 
     parametroClassificacao = data.get('parametroClassificacao', 'DataPrevisao')  # Faturamento ou DataPrevisao
 
-    tipoData = data.args.get('tipoData','DataEmissao') #DataEmissao x DataPrevOri
+    tipoData = data.get('tipoData','DataEmissao') #DataEmissao x DataPrevOri
 
     # Parametros NAO OBRIGATORIOS NO POST (ESPECIAIS)
     # Array de tipo de nota
