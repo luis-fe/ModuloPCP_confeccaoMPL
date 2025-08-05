@@ -164,14 +164,14 @@ class Produtos_CSW():
     def statusAFV(self):
         '''Metodo que consulta o status AFV dos skus '''
 
-        sql = """
+        sql = f"""
         SELECT
             b.Reduzido as codReduzido,
             'Bloqueado' as statusAFV
         FROM
             Asgo_Afv.EngenhariasBloqueadas b
         WHERE
-            b.Empresa = 1
+            b.Empresa = {self.codEmpresa}
         union	
         SELECT
             b.Reduzido as codReduzido ,
@@ -179,7 +179,7 @@ class Produtos_CSW():
         FROM
             Asgo_Afv.EngenhariasAcompanhamento b
         WHERE
-            b.Empresa = 1
+            b.Empresa = {self.codEmpresa}
         """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
@@ -198,7 +198,7 @@ class Produtos_CSW():
     def sqlEstoqueMP_nomes(self):
         '''Método que busca o estoque de aviamentos detalhado na nat 1, 3 , 2 ,10 juntamente com o Nome'''
 
-        sql = """
+        sql = f"""
                        SELECT
            	            d.codItem as CodComponente ,
            	            (select n.codnatureza||'-'||n.descricao from est.Natureza n WHERE n.codempresa = 1 and d.codNatureza = n.codnatureza)as natureza,
@@ -208,7 +208,7 @@ class Produtos_CSW():
            	            est.DadosEstoque d
            	        join cgi.Item i on i.codigo = d.codItem 
                        WHERE
-           	            d.codEmpresa = 1
+           	            d.codEmpresa = {self.codEmpresa}
            	            and d.codNatureza in (1, 3, 2,10)
            	            and d.estoqueAtual > 0
            """
@@ -256,7 +256,7 @@ class Produtos_CSW():
         '''Metodo que busca os componentes com requisicao em aberto no CSW'''
 
 
-        sql = """
+        sql = f"""
                  SELECT
                  	r.numOPConfec as OP,
         	        ri.codMaterial as CodComponente ,
@@ -266,10 +266,10 @@ class Produtos_CSW():
         	        tcq.RequisicaoItem ri
                 join 
                     tcq.Requisicao r on
-        	        r.codEmpresa = 1
+        	        r.codEmpresa = {self.codEmpresa}
         	        and r.numero = ri.codRequisicao
                 where
-        	        ri.codEmpresa = 1
+        	        ri.codEmpresa = {self.codEmpresa}
         	        and r.sitBaixa <0
                 """
 
@@ -294,7 +294,7 @@ class Produtos_CSW():
         '''Metodo que busca o que ja foi antendido parcial nas requisicoes de compras '''
 
 
-        sql = """
+        sql = f"""
                 SELECT
         		    i.codPedido as numero,
         		    i.codPedidoItem as seqitem,
@@ -302,7 +302,7 @@ class Produtos_CSW():
         	    FROM
         		    Est.NotaFiscalEntradaItens i
         	    WHERE
-        		    i.codempresa = 1 
+        		    i.codempresa = {self.codEmpresa} 
         		    and i.codPedido >0 
         		    and codPedido in (select codpedido FROM sup.PedidoCompraItem p WHERE
         	        p.situacao in (0, 2))
@@ -388,7 +388,7 @@ class Produtos_CSW():
             codigoMP = codigoMP
 
 
-        sql = """
+        sql = f"""
     SELECT
         i.nome
     FROM
@@ -396,7 +396,7 @@ class Produtos_CSW():
     inner join cgi.Item i on
         i.codigo = i2.codItem
     WHERE
-        i2.Empresa = 1
+        i2.Empresa = {self.codEmpresa}
         and i2.codEditado ='""" + codigoMP+"""'"""
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
@@ -418,7 +418,7 @@ class Produtos_CSW():
         '''Metodo de informacao dos componentes '''
 
 
-        sql = """
+        sql = f"""
         SELECT
             q.codigo as CodComponente ,
             f.nomeFornecedor as fornencedorPreferencial,
@@ -435,13 +435,13 @@ class Produtos_CSW():
             and f.codItem = q.codigo
             and f.codFornecedor = q.codFornecedor
         WHERE
-            f.codEmpresa = 1
+            f.codEmpresa = {self.codEmpresa}
             and f.fornecedorPreferencial = 1
             and q.referenciaPrincipal = 1
             and q.codigo > 18
                 """
 
-        sql2 = """
+        sql2 = f"""
         SELECT
             f.CodItem as CodComponente ,
             f2.nomeFornecedor as novoNome
@@ -451,7 +451,7 @@ class Produtos_CSW():
             f.codItem = f2.codItem
             and f.codFornecedor = f2.codFornecedor
         WHERE
-            f.Empresa = 1 
+            f.Empresa = {self.codEmpresa}
         """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:

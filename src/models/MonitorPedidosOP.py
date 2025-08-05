@@ -34,7 +34,7 @@ class MonitorPedidosOP():
         self.filtroDataEmissaoIni = filtroDataEmissaoIni
         self.filtroDataEmissaoFim = filtroDataEmissaoFim
         self.analiseOPGarantia = analiseOPGarantia
-        self.descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+        self.descricaoArquivo = f'{self.empresa}_{self.dataInicioFat}_{self.dataFinalFat}'
         self.arrayTipoNota = '1,2,3,4,5,6,7,8,10,24,92,201,1012,77,27,28,172,9998,66,67,233,237'  # Arrumar o Tipo de Nota 40
         self.arrayOPSimuladas = arrayOPSimuladas
 
@@ -187,7 +187,6 @@ class MonitorPedidosOP():
     def __atualizando_data_previsao_nova(self):
 
         pedidos = self.__adicionando_inf_estoques()
-        pedidos.to_csv('analiseParcialLuis.csv')
 
         # 7 Calculando a nova data de Previsao do pedido
         pedidos['dias_a_adicionar'] = pd.to_timedelta(pedidos['entregas_enviadas'] * 15,
@@ -649,7 +648,7 @@ class MonitorPedidosOP():
         env_path = configApp.localProjeto
         load_dotenv(f'{env_path}/_ambiente.env')
         caminhoAbsoluto = os.getenv('CAMINHO_PARQUET_FAT')
-        fp.write(f'{caminhoAbsoluto}/monitorSimulacao.parquet', pedidos)
+        fp.write(f'{caminhoAbsoluto}/dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
