@@ -183,6 +183,7 @@ class MonitorPedidosOP():
     def __atualizando_data_previsao_nova(self):
 
         pedidos = self.__adicionando_inf_estoques()
+        pedidos.to_csv('analiseParcialLuis.csv')
 
         # 7 Calculando a nova data de Previsao do pedido
         pedidos['dias_a_adicionar'] = pd.to_timedelta(pedidos['entregas_enviadas'] * 15,
