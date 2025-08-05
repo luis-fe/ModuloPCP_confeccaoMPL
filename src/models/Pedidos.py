@@ -145,8 +145,6 @@ class Pedidos():
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
 
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
-        df_loaded['inivendas'] = self.iniVendas
-        df_loaded.to_csv('testeSku.csv')
 
         df_loaded['filtro2'] = df_loaded['dataEmissao'] <= self.fimVendas
         df_loaded['filtro3'] = df_loaded['dataPrevFat'] >= self.iniFat
@@ -157,6 +155,8 @@ class Pedidos():
 
 
         df_loaded = df_loaded[df_loaded['filtro'] == True].reset_index()
+        df_loaded.to_csv('testeSku.csv')
+
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
