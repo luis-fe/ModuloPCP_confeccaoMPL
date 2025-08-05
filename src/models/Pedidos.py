@@ -115,11 +115,9 @@ class Pedidos():
 
         elif padrao_monitor ==True:
 
-            self.iniVendas = iniVendas
             self.iniVendas = pd.to_datetime(self.iniVendas)
             df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'])
 
-            self.fimVendas = fimVendas
             self.fimVendas = pd.to_datetime(self.fimVendas)
             df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'])
 
