@@ -863,13 +863,13 @@ class MonitorPedidosOP():
 
         # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
         try:
-            parquet_file = fp.ParquetFile(f'/home/mplti/ModuloPCP_confeccaoMPL/dados/monitor{self.descricaoArquivo}.parquet')
+            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor{self.descricaoArquivo}.parquet')
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'/home/mplti/ModuloPCP/dados/monitor_filtro.parquet', monitor)
+            fp.write(f'/home/grupompl/ModuloPCP/dados/monitor_filtro.parquet', monitor)
         except:
-            parquet_file = fp.ParquetFile(f'/home/mplti/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet')
+            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet')
             monitor = parquet_file.to_pandas()
 
             # Condição para o cálculo da coluna 'NecessodadeOP'
