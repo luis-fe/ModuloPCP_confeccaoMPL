@@ -127,6 +127,11 @@ class Pedidos():
             if iniFat =='' and fimFat == '':
                 self.iniFat = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=0)
                 self.fimVendas = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=120)
+            else:
+                self.iniFat = iniFat
+                self.iniFat = pd.to_datetime(self.iniFat)
+                self.fimFat = fimFat
+                self.fimFat = pd.to_datetime(self.fimFat)
 
 
 
