@@ -79,11 +79,11 @@ def get_monitorOPs():
     dataInico = request.args.get('dataInico', '-')
     dataFim = request.args.get('dataFim')
 
-    empresa = 1
+    empresa = '1'
     monitor = MonitorPedidosOP.MonitorPedidosOP(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
                                                        None, None, None, None, None)
     dados = monitor.geracao_monitor_op()
-
+    print(dados)
     # Obtém os nomes das colunas
     column_names = dados.columns
 
