@@ -100,3 +100,18 @@ def get_monitorOPs():
 
 
     return response
+
+
+
+@MonitorPedidos_routes.route('/pcp/api/ProdutosSemOP', methods=['POST'])
+@token_required
+def POST_ProdutosSemOP():
+    data = request.get_json()
+    dataInico = data.get('dataInico', '-')
+    dataFim = data.get('dataFim', '-')
+    dados = MonitorPedidosOP.MonitorPedidosOP('1' , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None).produtosSemOP_()
+
+    # Converte o DataFrame em uma lista de dicionários
+    OP_data = dados.to_dict(orient='records')
+
+    return jsonify(OP_data)

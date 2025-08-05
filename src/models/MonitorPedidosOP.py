@@ -1219,6 +1219,79 @@ class MonitorPedidosOP():
 
 
 
+    def produtosSemOP_(self):
+
+        # Ler o estoque atual a nivel de sku, retornando o merge com o monitor
+        sql = """
+                    select
+            	        o.codreduzido::int AS "codProduto",
+            	        sum(o.total_pcs) as total_pc
+                    from
+            	        "PCP".pcp.ordemprod o
+                    where
+            	        codreduzido::int > 0
+                    group by
+            	        codreduzido"""
+        conn = ConexaoPostgre.conexaoEngine()
+        sql = pd.read_sql(sql, conn)
+
+        # 1 - ler o arquivo csv do monitor de ops
+        descricaoArquivo = self.dataInicioFat + '_' + self.dataFinalFat
+        monitorDetalhadoOps = pd.read_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitorOps{descricaoArquivo}.csv')
+
+        #monitorDetalhadoOps2 = monitorDetalhadoOps[
+            #(monitorDetalhadoOps['id_op2'] == 'Atendeu') & (monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
+
+
+        monitorDetalhadoOps2 = monitorDetalhadoOps.groupby(['nomeSKU', 'codProduto']).agg(
+            {'QtdSaldo': 'sum'}).reset_index()
+
+
+        sql = pd.merge(sql, monitorDetalhadoOps2, on='codProduto', how='left')
+
+        # Encontrando o saldo Naocomprometido do estoque
+        sql['QtdSaldo'] = sql['total_pc'] - sql['QtdSaldo']
+        sql.rename(columns={'QtdSaldo': 'QtdComprometido', 'total_pc': 'Total em OPs'}, inplace=True)
+        sql = sql[sql['QtdComprometido'] > 0]
+        sql = sql.drop(['codProduto'], axis=1)
+
+
+        # Organizando a informacao para levandar o saldo sem op
+        monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0]
+        monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu']
+        monitorDetalhadoOps = monitorDetalhadoOps.groupby(['nomeSKU']).agg(
+            {'QtdSaldo': 'sum', 'codItemPai': 'first', 'codProduto': 'first', 'codCor': 'first'}).reset_index()
+        monitorDetalhadoOps.fillna('-', inplace=True)
+        monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['codItemPai'] != '-']
+        monitorDetalhadoOps = monitorDetalhadoOps.sort_values(by=['QtdSaldo'],
+                                                              ascending=[False]).reset_index()
+        monitorDetalhadoOps.rename(columns={'codItemPai': 'codEngenharia'}, inplace=True)
+        monitorDetalhadoOps['codEngenharia'] = monitorDetalhadoOps['codEngenharia'].astype(str)
+        monitorDetalhadoOps = pd.merge(monitorDetalhadoOps, sql, on='nomeSKU', how='left')
+
+
+
+        monitorDetalhadoOps.fillna(0, inplace=True)
+        monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdComprometido']
+        monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index()
+
+        #Alternativa para transformar o valor
+        #monitorDetalhadoOps['codEngenharia'] = (
+         #       monitorDetalhadoOps['codEngenharia']
+          #      .str[:-2]  # Remove os dois últimos caracteres ".0"
+           #     .str.zfill(9)  # Preenche com zeros à esquerda até 9 caracteres
+            #    + '-0'  # Adiciona o sufixo "-0"
+        #)
+        monitorDetalhadoOps['tamanho'] = monitorDetalhadoOps['nomeSKU'].apply(lambda x: x.split()[-2])
+        monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
+        monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido'}, inplace=True)
+
+        return monitorDetalhadoOps
+
+
+
+
+
 
 
 
