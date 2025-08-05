@@ -653,7 +653,7 @@ class MonitorPedidosOP():
             fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
         except:
             print(pedidos.columns.tolist())
-            pedidos.to_csv('erro.csv')
+            pedidos.to_csv(f'{self.descricaoArquivo}_erro.csv')
 
         # etapa25 = controle.salvarStatus_Etapa25(rotina, ip, etapa24, 'Salvando os dados gerados no postgre')#Registrar etapa no controlador
         return pedidos
@@ -695,7 +695,6 @@ class MonitorPedidosOP():
         pedidos['%'] = pedidos['Qnt. Cor(Distrib.)'] / (pedidos['Saldo +Sugerido'])
         pedidos['%'] = pedidos['%'] * 100
         pedidos['%'] = pedidos['%'].round(0)
-        print(pedidos[pedidos['codPedido'] == '323256'])
 
         pedidos.rename(columns={'MARCA': '01-MARCA', "codPedido": "02-Pedido",
                                 "codTipoNota": "03-tipoNota", "dataPrevFat": "04-Prev.Original",
