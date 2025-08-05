@@ -159,7 +159,6 @@ class Pedidos():
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
         df_loaded = df_loaded[df_loaded['filtro2'] == True].reset_index()
-        df_loaded.to_csv('testeSku.csv')
 
         if 'level_0' in df_loaded.columns:
             df_loaded = df_loaded.drop(columns=['level_0'])
@@ -178,6 +177,8 @@ class Pedidos():
             columns={'codigo': 'codProduto'},
             inplace=True)
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
+        df_loaded.to_csv('testeSku.csv')
+
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
         df_loaded['codItemPai'].fillna('-', inplace=True)
 
