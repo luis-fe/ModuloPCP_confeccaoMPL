@@ -141,7 +141,7 @@ class Pedidos():
         try:
             df_loaded['dataEmissao'] = pd.to_datetime(df_loaded['dataEmissao'], errors='coerce', infer_datetime_format=True)
         except Exception as e:
-            print(f'Erro ao converter dataEmissao. iniVendas: {self.iniVendas} | Erro: {e}')
+            print(f'Erro ao converter dataEmissao. iniVendas: {self.iniVendas} | Erro: {e}\n {self.iniVendas} ')
 
         df_loaded['dataPrevFat'] = pd.to_datetime(df_loaded['dataPrevFat'], errors='coerce', infer_datetime_format=True)
         df_loaded['filtro'] = df_loaded['dataEmissao'] >= self.iniVendas
