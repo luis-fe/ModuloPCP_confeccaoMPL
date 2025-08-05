@@ -120,10 +120,14 @@ class MonitorPedidosOP():
         else:
             sku = self.faturamento.listagemPedidosSku('',self.filtroDataEmissaoIni, self.filtroDataEmissaoFim,self.dataInicioFat,self.dataFinalFat,True)
 
+        sku = sku.drop(columns=['StatusSugestao', 'codTipoNota','dataEmissao',"dataPrevFat","codItemPai","codCor"])
 
         produto = Produtos.Produtos(self.empresa)
 
         # 5.1 - Considerando somente a qtdePedida maior que 0
+
+
+
         pedidos = pd.merge(pedidos, sku, on='codPedido', how='left')
         pedidos = pd.merge(pedidos, produto.estruturaSku(), on='codProduto', how='left')
         pedidos['QtdSaldo'] = pedidos['qtdePedida'] - pedidos['qtdeFaturada'] - pedidos['qtdeSugerida']

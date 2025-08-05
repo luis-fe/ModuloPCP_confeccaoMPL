@@ -218,7 +218,6 @@ class Pedidos():
         choices = ["MPOLLO", "MPOLLO", "PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
-        df_loaded.to_csv('testeSku.csv')
 
         return df_loaded
 
