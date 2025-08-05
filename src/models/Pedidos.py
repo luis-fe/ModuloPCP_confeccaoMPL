@@ -116,7 +116,11 @@ class Pedidos():
         elif padrao_monitor ==True:
 
             self.iniVendas = iniVendas
+            self.iniVendas = pd.to_datetime(self.iniVendas)
+
             self.fimVendas = fimVendas
+            self.fimVendas = pd.to_datetime(self.fimVendas)
+
 
             if iniFat =='' and fimFat == '':
                 self.iniFat = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=0)
