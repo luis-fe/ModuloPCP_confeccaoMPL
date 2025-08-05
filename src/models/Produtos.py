@@ -147,7 +147,7 @@ class Produtos():
             from
                 pcp.itens_csw ic
             where
-                "codItemPai" not like '6%' 
+                "codItemPai" not like '6%%' 
         """
 
         conn = ConexaoPostgre.conexaoEngine()
