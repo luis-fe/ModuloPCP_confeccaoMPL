@@ -177,7 +177,6 @@ class Pedidos():
             columns={'codigo': 'codProduto'},
             inplace=True)
         df_loaded = pd.merge(df_loaded, produtos, on='codProduto', how='left')
-        df_loaded.to_csv('testeSku.csv')
 
         df_loaded['codItemPai'] = df_loaded['codItemPai'].astype(str)
         df_loaded['codItemPai'].fillna('-', inplace=True)
@@ -198,8 +197,9 @@ class Pedidos():
 
 
         # 7 - Filtrando os Tipo de Notas desejados
-        tiponotas = self.pesquisarTipoNotasPlano()
-        df_loaded = pd.merge(df_loaded, tiponotas, on='codTipoNota')
+        if self.codPlano != '':
+            tiponotas = self.pesquisarTipoNotasPlano()
+            df_loaded = pd.merge(df_loaded, tiponotas, on='codTipoNota')
 
         if self.consideraPedidosBloqueados == 'nao':
             pedidosBloqueados = self.pedidosBloqueados()
@@ -218,6 +218,8 @@ class Pedidos():
         choices = ["MPOLLO", "MPOLLO", "PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
+        df_loaded.to_csv('testeSku.csv')
+
         return df_loaded
 
 
