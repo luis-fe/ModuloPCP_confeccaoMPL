@@ -39,7 +39,7 @@ class MonitorPedidosOP():
         self.arrayOPSimuladas = arrayOPSimuladas
 
         self.pedidos_CSW = Pedidos_CSW(self.empresa, '', self.filtroDataEmissaoIni, self.filtroDataEmissaoFim, self.dataInicioVendas, self.dataFinalVendas, self.dataInicioFat, self.dataFinalFat, self.arrayTipoNota)
-        self.faturamento = Pedidos(self.empresa)
+        self.faturamento = Pedidos(self.empresa,'')
         self.produto_csw = Produtos_CSW.Produtos_CSW(self.empresa)
 
     def __preparacaoPedidosParaMonitor(self):
