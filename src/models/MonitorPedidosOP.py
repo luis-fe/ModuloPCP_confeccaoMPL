@@ -863,7 +863,7 @@ class MonitorPedidosOP():
 
         # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
         try:
-            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitorempresa{self.descricaoArquivo}.parquet')
+            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor{self.descricaoArquivo}.parquet')
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
