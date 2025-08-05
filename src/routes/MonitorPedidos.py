@@ -115,3 +115,36 @@ def POST_ProdutosSemOP():
     OP_data = dados.to_dict(orient='records')
 
     return jsonify(OP_data)
+
+@MonitorPedidos_routes.route('/pcp/api/Op_tam_cor', methods=['POST'])
+@token_required
+def post_Op_tam_cor():
+    data = request.get_json()
+
+    dataInico = data.get('dataInico')
+    dataFim = data.get('dataFim')
+
+    empresa = 1
+    monitor = MonitorPedidosOP.MonitorPedidosOP(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
+                                                       None, None, None, None, None)
+    dados = monitor.ops_tamanho_cor()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+
+    # Retorna os dados JSON para o cliente
+    response = jsonify(OP_data)
+
+    # Após retornar a resposta, reiniciar o app em uma nova thread
+    #porta_atual = 8000  # Substitua pela porta correta que você está utilizando
+    #thread = threading.Thread(target=monitor.reiniciandoAPP(), args=(porta_atual,))
+    #thread.start()
+    return response

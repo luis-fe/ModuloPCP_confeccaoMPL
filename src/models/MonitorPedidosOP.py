@@ -1287,8 +1287,105 @@ class MonitorPedidosOP():
 
         return monitorDetalhadoOps
 
+    def ops_tamanho_cor(self):
+        '''Metodo para explodir por tam e cor o monitor'''
+        monitor = pd.read_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
 
 
+        data = monitor[
+            (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (
+                        monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
+        # Contar a quantidade de pedidos distintos para cada 'numeroop'
+
+        data['numeroOP||codProduto'] = data['numeroop'] + data['codProduto'].astype(str)
+        unique_counts = data.drop_duplicates(subset=['numeroop','numeroOP||codProduto', 'codPedido']).groupby('numeroOP||codProduto')['codPedido'].count()
+
+        # Adicionar essa contagem ao DataFrame original
+        monitor['Ocorrencia Pedidos'] = monitor['numeroOP||codProduto'].map(unique_counts)
+
+        # Contar a quantidade de pedidos distintos para cada 'numeroop'
+
+        monitor1 = monitor[
+            ['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "Ocorrencia Pedidos",
+             'nomeSKU', 'codCor','codProduto']]
+
+        monitor2 = monitor[['numeroop', 'dataPrevAtualizada2', 'codFaseAtual', "codItemPai", "QtdSaldo", "codProduto"]]
+
+        # Converter a coluna 'dataPrevAtualizada2' para string no formato desejado
+        monitor1['dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce')
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = pd.to_datetime(monitor1['dataPrevAtualizada2'], errors='coerce',
+                                                                infer_datetime_format=True)
+
+        monitor1.loc[:, 'dataPrevAtualizada2'] = monitor1['dataPrevAtualizada2'].dt.strftime('%Y-%m-%d')
+
+        monitor1['numeroop'].fillna('-', inplace=True)
+
+        monitor1 = monitor1[monitor1['numeroop'] != '-']
+
+        monitor1 = monitor1.groupby(['numeroop', 'nomeSKU']).agg(
+            {'codFaseAtual': 'first', 'Ocorrencia Pedidos': 'first', "codItemPai": "first",
+             "QtdSaldo": "sum", 'codCor': 'first','codProduto':'first'}).reset_index()
+
+        monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
+
+        monitorDetalhadoOps.to_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/detalhadoops{self.descricaoArquivo}.csv')
+
+        monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
+                                        ascending=[False]).reset_index()
+        monitor1.rename(columns={'QtdSaldo': 'AtendePçs'}, inplace=True)
+
+        ordemProdcsw = OrdemProd_Csw(self.empresa)
+
+        get1, get2 = ordemProdcsw.informacoesMonitor()
+        monitor1['codFaseAtual'] = monitor1['codFaseAtual'].astype(str)
+        monitor1['codFaseAtual'] = monitor1['codFaseAtual'].str.replace('.0', '', regex=False)
+
+
+        monitor1 = monitor1.rename(columns={'codProduto': 'codreduzido'})
+        monitor1['codreduzido'] = monitor1['codreduzido'].astype(str)
+
+
+
+        monitor1 = pd.merge(monitor1, self.consultaOPReduzido(),on=['numeroop','codreduzido'],how='left')
+        monitor1['qtdOP'].fillna(0,inplace=True)
+
+        monitor1 = pd.merge(monitor1, get1, on='codFaseAtual', how='left')
+        monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
+        monitor1.fillna('-', inplace=True)
+
+        dados = {
+            '0-Status': True,
+            '1-Mensagem': f'Atencao!! Calculado segundo o ultimo monitor emitido',
+            '6 -Detalhamento': monitor1.to_dict(orient='records')
+
+        }
+        return pd.DataFrame([dados])
+
+
+
+
+    def consultaOPReduzido(self):
+        '''Metodo utilizado para consultar as op a nivel de reduzido '''
+
+        sql = """
+        select
+            numeroop,
+            codreduzido,
+            "seqTamanho", 
+            "qtdAcumulada" as "qtdOP"
+        from
+            "PCP".pcp.ordemprod o
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(sql,conn)
+
+        return consulta
 
 
 
