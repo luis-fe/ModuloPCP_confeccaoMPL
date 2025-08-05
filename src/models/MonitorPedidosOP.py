@@ -116,7 +116,6 @@ class MonitorPedidosOP():
 
         elif self.filtroDataEmissaoFim != '' and self.filtroDataEmissaoIni != '' and self.tipoDataEscolhida  != 'DataEmissao':
             sku = self.faturamento.listagemPedidosSku('',self.filtroDataEmissaoIni, self.filtroDataEmissaoFim,self.dataInicioFat,self.dataFinalFat,True)
-            sku.to_csv('testeSku.csv')
 
         else:
             sku = self.faturamento.listagemPedidosSku('',self.filtroDataEmissaoIni, self.filtroDataEmissaoFim,self.dataInicioFat,self.dataFinalFat,True)
