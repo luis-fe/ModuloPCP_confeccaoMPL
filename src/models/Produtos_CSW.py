@@ -519,6 +519,31 @@ class Produtos_CSW():
 
 
 
+    def estoqueReduzido(self):
+
+        consultasqlCsw = f"""
+            select 
+                dt.reduzido as codProduto, 
+                SUM(dt.estoqueAtual) as estoqueAtual, 
+                sum(estReservPedido) as estReservPedido 
+            from
+                (
+                    select codItem as reduzido, 
+                            estoqueAtual,estReservPedido  
+                    from est.DadosEstoque where codEmpresa = {self.codEmpresa} and codNatureza = 5 and estoqueAtual > 0)dt
+        group by dt.reduzido
+         """
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(consultasqlCsw)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+
+        return consulta
+
+
 
 
 

@@ -353,6 +353,20 @@ class Produtos():
 
         return consumo
 
+    def estruturaSku(self):
+        conn = ConexaoPostgre.conexaoEngine()
+        consultar = pd.read_sql(
+            """
+                Select 
+                    "codSKU" as "codProduto", 
+                    "codItemPai", 
+                    "codCor", 
+                    "nomeSKU" 
+                from 
+                    pcp."SKU" """, conn)
+
+        return consultar
+
 
 
 

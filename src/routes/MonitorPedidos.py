@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from functools import wraps
+from src.models import MonitorPedidosOP
 
 
 MonitorPedidos_routes = Blueprint('MonitorPedidos_routes', __name__)
@@ -15,21 +16,48 @@ def token_required(f):
     return decorated_function
 
 
-@MonitorPedidos_routes.route('/pcp/api/monitorPreFaturamentoSimulaOP', methods=['GET'])
+@MonitorPedidos_routes.route('/pcp/api/monitorPreFaturamento', methods=['POST'])
 @token_required
-def get_monitorPreFaturamentoSimulaOP():
-    empresa = request.args.get('empresa')
-    iniVenda = request.args.get('iniVenda','-')
-    finalVenda = request.args.get('finalVenda')
-    tiponota = request.args.get('tiponota')
-    parametroClassificacao = request.args.get('parametroClassificacao', 'DataPrevisao')  # Faturamento ou DataPrevisao
-    tipoData = request.args.get('tipoData','DataEmissao') #DataEmissao x DataPrevOri
-    arrayRepres_excluir = request.args.get('arrayRepres_excluir','')
-    arrayRepre_Incluir = request.args.get('arrayRepre_Incluir','')
-    ops = request.args.get('ops','')
+def POST_MonitorPedidos():
+    data = request.get_json()
+    empresa = data.get('empresa', '-')
+    # Parametros obrigatorios no POST
+    iniVenda = data.get('iniVenda','-')
+    finalVenda = data.get('finalVenda')
+    FiltrodataEmissaoInicial = data.get('FiltrodataEmissaoInicial','')
+    FiltrodataEmissaoFinal = data.get('FiltrodataEmissaoFinal','')
+
+
+    parametroClassificacao = data.get('parametroClassificacao', 'DataPrevisao')  # Faturamento ou DataPrevisao
+
+    tipoData = data.args.get('tipoData','DataEmissao') #DataEmissao x DataPrevOri
+
+    # Parametros NAO OBRIGATORIOS NO POST (ESPECIAIS)
+    # Array de tipo de nota
+    tiponota = data.get('tiponota')
+    # Array excluir codigo representante
+    ArrayCodRepresExcluir = data.get('ArrayCodRepresExcluir','')
+    # Array codrepresentante
+    ArrayCodRepres = data.get('ArrayCodRepres','')
+    # ARRAY NOME CLIENTE
+    ArrayNomeCliente = data.get('ArrayNomeCliente','')
+    #ARRAY CODIGO CLIENTE
+    ArrayCodigoCliente= data.get('ArrayCodigoCliente','')
+
+    #ARRAY CONCEITO CLIENTE
+    ArrayConceitoCliente= data.get('ArrayConceitoCliente','')
+
+    #ARRA REGIAO
+    ArrayRegiao= data.get('ArrayRegiao','')
+
 
     #controle.InserindoStatus(rotina, ip, datainicio)
-    dados = MonitorSimulacaoEncerrOP.API(empresa, iniVenda, finalVenda, tiponota,'rotina', 'ip', 'datainicio',parametroClassificacao, tipoData, arrayRepres_excluir, arrayRepre_Incluir,ops)
+
+    monitorPedidosOP = MonitorPedidosOP.MonitorPedidosOP(empresa, iniVenda, finalVenda, tipoData, iniVenda, finalVenda, ArrayCodRepresExcluir,
+                                                         ArrayCodRepres,ArrayNomeCliente, parametroClassificacao,
+                                                         FiltrodataEmissaoInicial,FiltrodataEmissaoFinal)
+
+    dados = monitorPedidosOP.gatinlho_de_disparo_monitor()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

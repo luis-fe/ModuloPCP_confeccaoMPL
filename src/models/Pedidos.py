@@ -86,7 +86,7 @@ class Pedidos():
             return pd.DataFrame([{'Status': True, 'Mensagem': 'TipoNotas adicionados ao Plano com sucesso !'}])
 
 
-    def listagemPedidosSku(self, detalhaSku = '', iniVendas = '', fimVendas = '', iniFat = '' , fimFat = ''):
+    def listagemPedidosSku(self, detalhaSku = '', iniVendas = '', fimVendas = '', iniFat = '' , fimFat = '', padrao_monitor = False):
 
 
         caminho_arquivo = f"{configApp.localArquivoParquet}/pedidos.parquet"
@@ -112,6 +112,18 @@ class Pedidos():
         if self.codPlano != '':
             self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
             self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
+
+        elif padrao_monitor ==True:
+
+            self.iniVendas = iniVendas
+            self.fimVendas = fimVendas
+
+            if iniFat =='' and fimFat == '':
+                self.iniFat = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=0)
+                self.fimVendas = pd.to_datetime(self.iniVendas) + pd.Timedelta(days=120)
+
+
+
         else:
             self.iniVendas = iniVendas
             self.fimVendas = fimVendas
