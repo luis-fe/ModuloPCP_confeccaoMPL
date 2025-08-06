@@ -75,5 +75,3 @@ class Componentes_CSW():
 
             servicoAutomacao.data_hora = servicoAutomacao.obterHoraAtual()
             servicoAutomacao.inserindo_automacao()
-
-        return compVar
