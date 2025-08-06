@@ -121,7 +121,7 @@ class MonitorPedidosOP():
         else:
             sku = self.faturamento.listagemPedidosSku('',self.filtroDataEmissaoIni, self.filtroDataEmissaoFim,self.dataInicioFat,self.dataFinalFat,True)
 
-        sku = sku.drop(columns=['StatusSugestao', 'codTipoNota','dataEmissao',"dataPrevFat","codItemPai","codCor"])
+        sku = sku.drop(columns=['StatusSugestao', 'codTipoNota','dataEmissao',"dataPrevFat"])
 
         produto = Produtos.Produtos(self.empresa)
 

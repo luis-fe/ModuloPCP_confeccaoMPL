@@ -359,8 +359,6 @@ class Produtos():
             """
                 Select 
                     "codSKU" as "codProduto", 
-                    "codItemPai", 
-                    "codCor", 
                     "nomeSKU" 
                 from 
                     pcp."SKU" """, conn)
