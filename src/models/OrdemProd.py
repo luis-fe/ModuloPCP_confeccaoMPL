@@ -13,15 +13,16 @@ class OrdemProd ():
         '''Metodo que busca as ordem de producao de um determinado sku ao nivel de tamanho e cor '''
 
 
-        sql = """
+        sql = f"""
         select
             numeroop,
             "codFaseAtual",
             "total_pcs"
         from
-            "PCP".pcp.ordemprod o
+            pcp.ordemprod o
         where
             o.codreduzido = %s
+            and "codEmpresa" = {self.codEmpresa}
         order by 
         "total_pcs"::int desc 
         """

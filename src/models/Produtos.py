@@ -177,7 +177,7 @@ class Produtos():
         '''Metodo que consulta o estoque em processo a nivel sku '''
 
 
-        sql = """
+        sql = f"""
         select
             ic.codigo as "codReduzido",
             sum(total_pcs) as "emProcesso"
@@ -188,7 +188,7 @@ class Produtos():
             on substring(o."codProduto",2,8) = "codItemPai"
             and o."codSortimento" = ic."codSortimento"::varchar
             and o."seqTamanho" = "codSeqTamanho"::varchar
-        where o."codProduto" not like  '6%'
+        where o."codProduto" not like  '6%' and o."codEmpresa" = {self.codEmpresa}
         group by 
             ic.codigo 
         """

@@ -162,9 +162,14 @@ class MonitorPedidosOP():
 
             # Combinar as partes de volta em uma única string
             ops = ", ".join(ops)
-            query = """
-               select "codreduzido" as "codProduto","total_pcs" as "estoqueAtual", 0 as "estReservPedido" from pcp.ordemprod
-                where numeroop in ( """ + ops + """)"""
+            query = f"""
+               select 
+                    "codreduzido" as "codProduto","total_pcs" as "estoqueAtual", 0 as "estReservPedido" 
+                from 
+                    pcp.ordemprod
+                where 
+                    "codEmpresa" = {self.empresa}
+                    and numeroop in ( """ + ops + """)"""
 
             simulacao = pd.read_sql(query, conn2)
             print('minha simulacao')
@@ -511,9 +516,11 @@ class MonitorPedidosOP():
 
             # Combinar as partes de volta em uma única string
             ops = ", ".join(ops)
-            query = """
+            query = f"""
                       select "codreduzido" as "codProduto","total_pcs" as "estoqueAtual", 0 as "estReservPedido" from pcp.ordemprod
-                       where numeroop in ( """ + ops + """)"""
+                       where 
+                       "codEmpresa" = {self.empresa} and
+                       numeroop in ( """ + ops + """)"""
 
             simulacao = pd.read_sql(query, conn2)
             print('minha simulacao')
@@ -836,7 +843,7 @@ class MonitorPedidosOP():
                     "pcp".ordemprod o 
                 where 
                     "qtdAcumulada" > 0 
-                    and "codEmpresa" = '{self.empresa}'
+                    and "codEmpresa" = {self.empresa}
             """
         else:
             consultaSql = f"""
@@ -849,7 +856,7 @@ class MonitorPedidosOP():
                 "pcp".ordemprod o 
             where 
                 "qtdAcumulada" > 0 
-                and "codEmpresa" = '{self.empresa}'
+                and "codEmpresa" = {self.empresa}
             """
         conn = ConexaoPostgre.conexaoEngine()
         consulta = pd.read_sql(consultaSql, conn)
@@ -1226,7 +1233,7 @@ class MonitorPedidosOP():
                                     from 
                                         "pcp".ordemprod o   
                                     where 
-                                        "codEmpresa" = '{self.empresa}'    
+                                        "codEmpresa" = {self.empresa} 
                                         """,
                                 conn)
 
@@ -1237,14 +1244,15 @@ class MonitorPedidosOP():
     def produtosSemOP_(self):
 
         # Ler o estoque atual a nivel de sku, retornando o merge com o monitor
-        sql = """
+        sql = f"""
                     select
             	        o.codreduzido::int AS "codProduto",
             	        sum(o.total_pcs) as total_pc
                     from
             	        "PCP".pcp.ordemprod o
                     where
-            	        codreduzido::int > 0
+                        "codEmpresa" = {self.empresa}
+            	        and codreduzido::int > 0
                     group by
             	        codreduzido"""
         conn = ConexaoPostgre.conexaoEngine()
@@ -1386,7 +1394,7 @@ class MonitorPedidosOP():
     def consultaOPReduzido(self):
         '''Metodo utilizado para consultar as op a nivel de reduzido '''
 
-        sql = """
+        sql = f"""
         select
             numeroop,
             codreduzido,
@@ -1394,6 +1402,8 @@ class MonitorPedidosOP():
             "qtdAcumulada" as "qtdOP"
         from
             "PCP".pcp.ordemprod o
+        where 
+            "codEmpresa" = {self.empresa}
         """
 
         conn = ConexaoPostgre.conexaoEngine()
