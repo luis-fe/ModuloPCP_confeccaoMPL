@@ -79,7 +79,7 @@ def get_monitorOPs():
     dataInico = request.args.get('dataInico', '-')
     dataFim = request.args.get('dataFim')
 
-    empresa = '1'
+    empresa = request.args.get('empresa','1')
     monitor = MonitorPedidosOP.MonitorPedidosOP(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
                                                        None, None, None, None, None)
     dados = monitor.geracao_monitor_op()

@@ -826,24 +826,30 @@ class MonitorPedidosOP():
     def consultaSQLOrdemProd(self, apelodoColqtdAcumulado='qtdAcumulada' ):
 
         if apelodoColqtdAcumulado == "qtdAcumulada2":
-            consultaSql = """
+            consultaSql = f"""
                 select 
                     o.codreduzido as "codProduto", 
                     id, 
                     "qtdAcumulada" as "qtdAcumulada2", 
                     "ocorrencia_sku" 
                 from 
-                    "pcp".ordemprod o where "qtdAcumulada" > 0
+                    "pcp".ordemprod o 
+                where 
+                    "qtdAcumulada" > 0 
+                    and "codEmpresa" = '{self.empresa}'
             """
         else:
-            consultaSql = """
+            consultaSql = f"""
             select 
                 o.codreduzido as "codProduto", 
                 id, 
                 "qtdAcumulada", 
                 "ocorrencia_sku" 
             from 
-                "pcp".ordemprod o where "qtdAcumulada" > 0
+                "pcp".ordemprod o 
+            where 
+                "qtdAcumulada" > 0 
+                and "codEmpresa" = '{self.empresa}'
             """
         conn = ConexaoPostgre.conexaoEngine()
         consulta = pd.read_sql(consultaSql, conn)
@@ -1212,7 +1218,16 @@ class MonitorPedidosOP():
     def consultaIdOPReservada(self):
 
         conn = ConexaoPostgre.conexaoEngine()
-        consulta3 = pd.read_sql("""select id as "Op Reservada2" , numeroop, "codFaseAtual" from "pcp".ordemprod o   """,
+        consulta3 = pd.read_sql(f"""
+                                    select 
+                                        id as "Op Reservada2" , 
+                                        numeroop, 
+                                        "codFaseAtual" 
+                                    from 
+                                        "pcp".ordemprod o   
+                                    where 
+                                        "codEmpresa" = '{self.empresa}'    
+                                        """,
                                 conn)
 
         return consulta3
