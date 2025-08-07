@@ -788,11 +788,11 @@ class MonitorPedidosOP():
 
         sql = """
             create table 
-                "PCP".pcp."ordemprod_monitor_"""+nome+""" "
+                "PCP".pcp."ordemprod_monitor_"""+nome+f""" "
                        as 
                        select 
                             *, 0::int as reservado
-                    from "PCP".pcp.ordemprod o 
+                    from "PCP".pcp.ordemprod o where "codEmpresa" = {self.empresa}
             """
 
         dataHoje_dt = datetime.strptime(self.obterDiaAtual(), "%Y-%m-%d")
@@ -800,7 +800,6 @@ class MonitorPedidosOP():
         dataAnterior3 = dataHoje_dt - timedelta(days=3)
         # Converter de volta para string no formato desejado
         dataAnterior3_str = dataAnterior3.strftime("%Y-%m-%d")
-        print(dataAnterior3_str)
 
         sqlExclusao = """
         DO $$ 
@@ -880,9 +879,9 @@ class MonitorPedidosOP():
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet', monitor)
+            fp.write(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro_{self.empresa}.parquet', monitor)
         except:
-            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro.parquet')
+            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro_{self.empresa}.parquet')
             monitor = parquet_file.to_pandas()
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
