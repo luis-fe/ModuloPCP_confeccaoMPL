@@ -1370,6 +1370,7 @@ class MonitorPedidosOP():
         monitor1 = pd.merge(monitor1, get1, on='codFaseAtual', how='left')
         monitor1 = pd.merge(monitor1, get2, on='numeroop', how='left')
         monitor1.fillna('-', inplace=True)
+        monitor1 = monitor1.rename(columns={"qtdOP_x":"qtdOP"})
 
         dados = {
             '0-Status': True,
