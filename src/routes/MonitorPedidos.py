@@ -108,7 +108,9 @@ def POST_ProdutosSemOP():
     data = request.get_json()
     dataInico = data.get('dataInico', '-')
     dataFim = data.get('dataFim', '-')
-    dados = MonitorPedidosOP.MonitorPedidosOP('1' , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None).produtosSemOP_()
+    empresa = data.get('empresa','1')
+
+    dados = MonitorPedidosOP.MonitorPedidosOP(empresa , dataInico, dataFim,None, dataInico, dataFim,None,None,None,None,None, None).produtosSemOP_()
 
     # Converte o DataFrame em uma lista de dicionários
     OP_data = dados.to_dict(orient='records')
@@ -122,8 +124,8 @@ def post_Op_tam_cor():
 
     dataInico = data.get('dataInico')
     dataFim = data.get('dataFim')
+    empresa = data.get('empresa','1')
 
-    empresa = 1
     monitor = MonitorPedidosOP.MonitorPedidosOP(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
                                                        None, None, None, None, None)
     dados = monitor.ops_tamanho_cor()
