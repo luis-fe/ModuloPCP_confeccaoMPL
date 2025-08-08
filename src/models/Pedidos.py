@@ -211,11 +211,13 @@ class Pedidos():
         # 8 - Incluindo a informacao de Marca no data Frame
         conditions = [
             df_loaded['codItemPai'].str.startswith("102"),
+            df_loaded['codItemPai'].str.startswith("302"),
             df_loaded['codItemPai'].str.startswith("202"),
             df_loaded['codItemPai'].str.startswith("104"),
+            df_loaded['codItemPai'].str.startswith("304"),
             df_loaded['codItemPai'].str.startswith("204")
         ]
-        choices = ["MPOLLO", "MPOLLO", "PACO", "PACO"]
+        choices = ["MPOLLO", "MPOLLO","MPOLLO", "PACO","PACO", "PACO"]
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
 

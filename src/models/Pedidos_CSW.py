@@ -11,7 +11,7 @@ class Pedidos_CSW():
                  filtroDataEmissaoFim = '', dataIniVendas = '', dataFinalVendas = '', dataInicioFat = '', dataFmFat = '',arrayTipoNota = ''):
         '''Construtor da classe '''
 
-        self.codEmpresa = codEmpresa # codEmpresa
+        self.codEmpresa = str(codEmpresa) # codEmpresa
         self.codTipoNota = codTipoNota
         self.filtroDataEmissaoFim = filtroDataEmissaoFim
         self.filtroDataEmissaoIni = filtroDataEmissaoIni
@@ -209,8 +209,8 @@ class Pedidos_CSW():
 
     def obtendoEntregas_Enviados(self):
 
-        if self.codEmpresa == 4 or self.codEmpresa == '4' :
-            consultasqlCsw = """
+
+        consultasqlCsw = f"""
                 select  
                     top 300000 codPedido, 
                     count(codNumNota) as entregas_enviadas, 
@@ -218,27 +218,7 @@ class Pedidos_CSW():
                 from 
                     fat.NotaFiscal  
                 where 
-                    codEmpresa = 4 
-                    and codRepresentante
-                    not in ('200','800','300','600','700','511') 
-                    and situacao = 2 
-                    and codpedido> 0 
-                    and dataFaturamento > '2020-01-01' 
-                group by 
-                    codPedido 
-                order by 
-                    codPedido desc
-            """
-        else:
-            consultasqlCsw = """
-                select  
-                    top 300000 codPedido, 
-                    count(codNumNota) as entregas_enviadas, 
-                    max(dataFaturamento) as ultimo_fat 
-                from 
-                    fat.NotaFiscal  
-                where 
-                    codEmpresa = 1 
+                    codEmpresa = {self.codEmpresa} 
                     and codRepresentante
                     not in ('200','800','300','600','700','511') 
                     and situacao = 2 
@@ -262,29 +242,14 @@ class Pedidos_CSW():
 
     def obtendoEntregasSolicitadas(self):
 
-        if self.codEmpresa == 4 or self.codEmpresa == '4':
-
-            consultasqlCsw = """
-            select 
-                top 100000 CAST(codPedido as varchar) as codPedido, 
-                numeroEntrega as entregas_Solicitadas 
-            from 
-                asgo_ped.Entregas 
-            where 
-                codEmpresa = 4 
-            order by 
-                codPedido desc
-            """
-
-        else:
-            consultasqlCsw = """
+        consultasqlCsw = f"""
             select 
                 top 150000 CAST(codPedido as varchar) as codPedido, 
                 numeroEntrega as entregas_Solicitadas 
             from 
                 asgo_ped.Entregas 
             where 
-                codEmpresa = 1  
+                codEmpresa = {self.codEmpresa}  
             order by 
                 codPedido desc
             """
