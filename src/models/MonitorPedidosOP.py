@@ -1299,7 +1299,7 @@ class MonitorPedidosOP():
         try:
             monitorDetalhadoOps['tamanho'] = monitorDetalhadoOps['nomeSKU'].apply(lambda x: x.split()[-2])
         except:
-            print('segue o baile')
+            monitorDetalhadoOps['tamanho'] = '-'
         monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
         monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido'}, inplace=True)
 

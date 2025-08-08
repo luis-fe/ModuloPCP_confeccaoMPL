@@ -358,10 +358,10 @@ class Produtos():
         consultar = pd.read_sql(
             """
                 Select 
-                    "codSKU" as "codProduto", 
-                    "nomeSKU" 
+                    "codigo" as "codProduto", 
+                    nome as "nomeSKU" 
                 from 
-                    pcp."SKU" """, conn)
+                    pcp.itens_csw  """, conn)
 
         return consultar
 
