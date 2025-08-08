@@ -371,7 +371,7 @@ class Produtos():
         consultar['codSeqTamanho2'] = consultar['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
         tamanhos['codSeqTamanho2'] = tamanhos['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
 
-        consultar = pd.merge(consultar, tamanhos, on= 'codSeqTamanho',how='left')
+        consultar = pd.merge(consultar, tamanhos, on= 'codSeqTamanho2',how='left')
         consultar.fillna('-',inplace=True)
 
 
