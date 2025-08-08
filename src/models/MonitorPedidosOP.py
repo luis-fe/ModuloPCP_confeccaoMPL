@@ -1297,7 +1297,7 @@ class MonitorPedidosOP():
         monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index()
 
         monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
-        monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido',"tam":"tamanho"}, inplace=True)
+        monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido',"tamanho":"tam"}, inplace=True)
 
         return monitorDetalhadoOps
 
