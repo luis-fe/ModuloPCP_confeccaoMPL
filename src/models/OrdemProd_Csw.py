@@ -51,7 +51,8 @@ class OrdemProd_Csw():
                                 op.numeroOP as numeroop, 
                                 p.descricao as prioridade, 
                                 op.dataPrevisaoTermino, 
-                                e.descricao,t.qtdOP, 
+                                e.descricao,
+                                t.qtdOP, 
                                 (select descricao from tcl.lote l where l.codempresa = {self.codEmpresa} and l.codlote = op.codlote) as descricaoLote  
                             FROM 
                                 TCO.OrdemProd OP 

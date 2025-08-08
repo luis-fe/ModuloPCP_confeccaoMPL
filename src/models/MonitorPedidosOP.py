@@ -1359,7 +1359,7 @@ class MonitorPedidosOP():
         monitor1['codFaseAtual'] = monitor1['codFaseAtual'].str.replace('.0', '', regex=False)
 
 
-        monitor1 = monitor1.rename(columns={'codProduto': 'codreduzido'})
+        monitor1 = monitor1.rename(columns={'codProduto': 'codreduzido',"qtdOP_x":"qtdOP"})
         monitor1['codreduzido'] = monitor1['codreduzido'].astype(str)
 
 
