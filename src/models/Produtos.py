@@ -359,9 +359,18 @@ class Produtos():
             """
                 Select 
                     "codigo" as "codProduto", 
-                    nome as "nomeSKU" 
+                    nome as "nomeSKU",
+                    "codSeqTamanho" as "codSeqTamanho"
                 from 
                     pcp.itens_csw  """, conn)
+
+
+        tamanhos = self.get_tamanhos()
+
+        consultar = pd.merge(consultar, tamanhos, on= 'codSeqTamanho')
+
+
+
 
         return consultar
 

@@ -1296,12 +1296,8 @@ class MonitorPedidosOP():
         monitorDetalhadoOps['QtdSaldo'] = monitorDetalhadoOps['QtdSaldo'] - monitorDetalhadoOps['QtdComprometido']
         monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0].reset_index()
 
-        try:
-            monitorDetalhadoOps['tamanho'] = monitorDetalhadoOps['nomeSKU'].apply(lambda x: x.split()[-2])
-        except:
-            monitorDetalhadoOps['tamanho'] = '-'
         monitorDetalhadoOps['codProduto'] = monitorDetalhadoOps['codProduto'].astype(str)
-        monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido'}, inplace=True)
+        monitorDetalhadoOps.rename(columns={'codProduto': 'codReduzido',"tam":"tamanho"}, inplace=True)
 
         return monitorDetalhadoOps
 
