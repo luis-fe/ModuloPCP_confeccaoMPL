@@ -366,8 +366,7 @@ class Produtos():
 
 
         tamanhos = self.get_tamanhos()
-        consultar.rename(columns={"codSeqTamanho2":"codSeqTamanho"}, inplace=True)
-        tamanhos.rename(columns={"codSeqTamanho2":"codSeqTamanho"}, inplace=True)
+        tamanhos.rename(columns={"codSeqTamanho":"codSeqTamanho2"}, inplace=True)
 
         consultar['codSeqTamanho2'] = consultar['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
         tamanhos['codSeqTamanho2'] = tamanhos['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
