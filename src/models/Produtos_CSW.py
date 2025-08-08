@@ -137,7 +137,8 @@ class Produtos_CSW():
 
         sql = """
         	SELECT
-                t.sequencia as codSeqTamanho, t.descricao as tam
+                t.sequencia as codSeqTamanho, 
+                t.descricao as tam
             FROM
                 tcp.Tamanhos t
             WHERE

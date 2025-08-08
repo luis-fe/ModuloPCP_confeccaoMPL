@@ -360,14 +360,17 @@ class Produtos():
                 Select 
                     "codigo" as "codProduto", 
                     nome as "nomeSKU",
-                    "codSeqTamanho" as "codSeqTamanho"
+                    "codSeqTamanho" as "codSeqTamanho2"
                 from 
                     pcp.itens_csw  """, conn)
 
 
         tamanhos = self.get_tamanhos()
-        consultar['codSeqTamanho'] = consultar['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
-        tamanhos['codSeqTamanho'] = tamanhos['codSeqTamanho'].astype(str).str.replace('.0', '', regex=False)
+        consultar.rename(columns={"codSeqTamanho2":"codSeqTamanho"}, inplace=True)
+        tamanhos.rename(columns={"codSeqTamanho2":"codSeqTamanho"}, inplace=True)
+
+        consultar['codSeqTamanho2'] = consultar['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
+        tamanhos['codSeqTamanho2'] = tamanhos['codSeqTamanho2'].astype(str).str.replace('.0', '', regex=False)
 
         consultar = pd.merge(consultar, tamanhos, on= 'codSeqTamanho',how='left')
         consultar.fillna('-',inplace=True)
