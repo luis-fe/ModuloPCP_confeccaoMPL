@@ -83,7 +83,6 @@ def get_monitorOPs():
     monitor = MonitorPedidosOP.MonitorPedidosOP(empresa, dataInico, dataFim, None, dataInico, dataFim, None,
                                                        None, None, None, None, None)
     dados = monitor.geracao_monitor_op()
-    print(dados)
     # Obtém os nomes das colunas
     column_names = dados.columns
 

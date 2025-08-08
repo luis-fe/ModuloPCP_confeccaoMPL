@@ -37,16 +37,35 @@ class OrdemProd_Csw():
 
 
     def informacoesMonitor(self):
-        sqlCsw = """Select f.codFase as codFaseAtual , f.nome  from tcp.FasesProducao f WHERE f.codEmpresa = 1"""
-        sqlCswPrioridade = """
-                           SELECT op.numeroOP as numeroop, p.descricao as prioridade, op.dataPrevisaoTermino, e.descricao,t.qtdOP, (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  FROM TCO.OrdemProd OP 
-                       left JOIN tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
-                       join tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
-                       left join (
-                       SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
-                       where codempresa = 1 group by numeroop
-                       ) t on t.numeroop =op.numeroop
-                       WHERE op.situacao = 3 and op.codEmpresa = 1
+        sqlCsw = """
+                Select 
+                    f.codFase as codFaseAtual , 
+                    f.nome  
+                from 
+                    tcp.FasesProducao f 
+                WHERE 
+                    f.codEmpresa = 1
+                    """
+        sqlCswPrioridade = f"""
+                           SELECT 
+                                op.numeroOP as numeroop, 
+                                p.descricao as prioridade, 
+                                op.dataPrevisaoTermino, 
+                                e.descricao,t.qtdOP, 
+                                (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  
+                            FROM 
+                                TCO.OrdemProd OP 
+                            left JOIN 
+                                tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
+                            join 
+                                tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
+                            left join 
+                                (
+                                SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
+                                where codempresa = 1 group by numeroop
+                                ) t on t.numeroop =op.numeroop
+                            WHERE 
+                                op.situacao = 3 and op.codEmpresa = {self.codEmpresa}
                            """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
