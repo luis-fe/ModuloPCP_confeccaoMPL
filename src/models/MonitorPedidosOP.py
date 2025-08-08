@@ -1281,7 +1281,7 @@ class MonitorPedidosOP():
         monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['QtdSaldo'] > 0]
         monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['id_op2'] == 'nao atendeu']
         monitorDetalhadoOps = monitorDetalhadoOps.groupby(['nomeSKU']).agg(
-            {'QtdSaldo': 'sum', 'codItemPai': 'first', 'codProduto': 'first', 'codCor': 'first'}).reset_index()
+            {'QtdSaldo': 'sum', 'codItemPai': 'first', 'codProduto': 'first', 'codCor': 'first',"tam":'first'}).reset_index()
         monitorDetalhadoOps.fillna('-', inplace=True)
         monitorDetalhadoOps = monitorDetalhadoOps[monitorDetalhadoOps['codItemPai'] != '-']
         monitorDetalhadoOps = monitorDetalhadoOps.sort_values(by=['QtdSaldo'],
