@@ -366,6 +366,8 @@ class Produtos():
 
 
         tamanhos = self.get_tamanhos()
+        tamanhos['codSeqTamanho'] = tamanhos['codSeqTamanho'].astype(str)
+        consultar['codSeqTamanho'] = consultar['codSeqTamanho'].astype(str)
 
         consultar = pd.merge(consultar, tamanhos, on= 'codSeqTamanho')
 
