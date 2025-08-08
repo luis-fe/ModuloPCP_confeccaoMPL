@@ -52,17 +52,17 @@ class OrdemProd_Csw():
                                 p.descricao as prioridade, 
                                 op.dataPrevisaoTermino, 
                                 e.descricao,t.qtdOP, 
-                                (select descricao from tcl.lote l where l.codempresa = 1 and l.codlote = op.codlote) as descricaoLote  
+                                (select descricao from tcl.lote l where l.codempresa = {self.codEmpresa} and l.codlote = op.codlote) as descricaoLote  
                             FROM 
                                 TCO.OrdemProd OP 
                             left JOIN 
                                 tcp.PrioridadeOP p on p.codPrioridadeOP = op.codPrioridadeOP and op.codEmpresa = p.Empresa 
                             join 
-                                tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
+                                tcp.engenharia e on e.codempresa = {self.codEmpresa} and e.codEngenharia = op.codProduto
                             left join 
                                 (
                                 SELECT numeroop, sum(qtdePecas1Qualidade) as qtdOP FROM tco.OrdemProdTamanhos  
-                                where codempresa = 1 group by numeroop
+                                where codempresa = {self.codEmpresa} group by numeroop
                                 ) t on t.numeroop =op.numeroop
                             WHERE 
                                 op.situacao = 3 and op.codEmpresa = {self.codEmpresa}
