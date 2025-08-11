@@ -1,0 +1,198 @@
+:root {
+    --cor1: rgb(211, 211, 211);
+    --cor2: rgb(17, 45, 126);
+    --cor3: rgb(93, 140, 233);
+    --cor4: #fff;
+    --cor5: rgb(153, 0, 153);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    
+}
+
+.Titulo{
+    background-color: var(--cor5);
+    color: white;
+    font-size: 40px;
+    text-align: center;
+  
+
+}
+
+.Opcoes{
+    background-color: black;
+}
+
+#on-off,
+#Outros,
+#Matriz,
+#Filial,
+#Varejo,
+#Geral{
+    border: 2px solid rgb(129, 129, 129);
+    background-color: rgb(129, 129, 129);
+    color: black;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+
+
+
+.Informacoes {
+    display: flex;
+    background-color: black;
+    min-height: 95vh;
+}
+
+.Dados{
+    width: 50%;
+    flex-direction: column;
+    display: block;
+    align-items: center;
+    text-align: center;
+}
+
+
+
+.Dados .TabelaFaturamento th {
+    background-color: var(--cor5);
+    max-height: 20px;
+  }
+          
+  .Dados .TabelaFaturamento tdd {
+    height: 40px; /* Defina a altura desejada em pixels */
+    vertical-align: middle; /* Centraliza o conteúdo verticalmente */
+    overflow: hidden; /* Oculta o conteúdo extra que ultrapassar a altura definida */
+  }
+          
+  
+  .Dados .TabelaFaturamento thead{
+    position: sticky;
+    top: 0;
+    background-color: var(--cor5);
+    z-index: 0;
+    border: 2px solid var(--cor5);
+    color: white;
+  }
+
+.grafico{
+    width: 70%;
+    margin-top: 150px;
+    height: 1300px;
+}
+
+
+
+    .labels{
+        margin-top: 50px;
+    }
+
+
+    /* Media query para telas menores */
+@media (max-width: 768px) {
+    .Informacoes {
+        flex-direction: column; /* Empilhar elementos em telas menores */
+        align-items: center; /* Centralizar elementos verticalmente */
+    }
+
+    .Dados {
+        width: 100%;
+        text-align: center;
+    }
+
+    .grafico {
+        width: 100%;
+        text-align: center;
+    }
+
+    #TabelaFaturamento{
+        width: 80%;
+        max-width: 80%;
+        font-size: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 50px;
+        height: 50vh;
+        max-height: 50vh;
+    }
+
+    #Retorna{
+        margin-top: 100px;
+            color: white;
+            font-size: 30px;
+        
+        }
+        
+        #FaturadoDia{
+            margin-top: 100px;
+                color: white;
+                font-size: 30px;
+            
+            }
+}
+
+
+
+@media (min-width: 769px) and (max-width: 2000px) {
+    #TabelaFaturamento{
+        width: 100%;
+        max-width: 100%;
+        font-size: 38px;
+        text-align: center;
+        color: white;
+        margin-top: 50px;
+        height: 50vh;
+        max-height: 50vh;
+    }
+
+    #Retorna{
+        margin-top: 100px;
+        background-color: var(--cor5);
+            color: white;
+            font-size: 50px;/* aqui é para tv */
+            font-weight: bold;
+
+        }
+
+        #FaturadoDia{
+            margin-top: 100px;
+            background-color: var(--cor5);
+                color: white;
+                font-size: 50px;/* aqui é para tv */
+            font-weight: bold;
+            }
+}
+
+@media (min-width: 2000px) {
+    #TabelaFaturamento{
+        width: 80%;
+        max-width: 80%;
+        font-size: 20px;
+        text-align: center;
+        color: white;
+        margin-top: 50px;
+        height: 50vh;
+        max-height: 50vh;
+    }
+
+    #Retorna{
+        margin-top: 100px;
+            color: white;
+            font-size: 45px;
+        
+        }
+        
+        #FaturadoDia{
+            margin-top: 100px;
+                color: white;
+                font-size: 45px;
+            
+            }
+}
+
+

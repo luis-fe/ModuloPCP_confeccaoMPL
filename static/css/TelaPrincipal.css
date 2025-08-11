@@ -1,0 +1,108 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+@media screen and (min-width: 1px) and (max-width: 870px) {
+    
+    .Titulo h1{
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .Titulo img{
+        width: 20px;
+    }
+    
+}
+
+:root{
+    --cor1 : rgb(211,211,211);
+    --cor2 : rgb(17, 45, 126);
+    --cor3 : rgb(93, 140, 233);
+    --cor4 : #fff
+}
+
+body{
+    background-color: var(--cor1);
+    font-family: Arial, Helvetica, sans-serif;
+    
+}
+
+.Titulo{
+    display: flex;
+    background-color: var(--cor4);
+    justify-content: center;
+    font-size: 15px;
+}
+
+.Titulo img{
+    width: 90px;
+}
+.Titulo h1{
+    margin-top: 25px;
+}
+
+.Menu ul{
+    font-size: 15px;
+}
+
+.Menu ul{
+    background-color: var(--cor2);
+    margin-top: 0;
+}
+
+.Menu ul li {
+    display: inline;
+    position: relative;
+}
+
+.Menu ul li a{
+    color: var(--cor4);
+    text-decoration: none;
+    padding: 10px;
+    display: inline-block;
+}
+
+.Menu ul li a:hover{
+    background-color: var(--cor3);
+}   
+
+
+
+/* SUB MENU*/
+
+.Menu ul ul {
+    display: none;
+    left: 0;
+    position: absolute;
+    background-color: var(--cor3);
+
+}
+
+.Menu ul li:hover ul {
+    display: block;
+    background-color: var(--cor2);
+    z-index: 9999;
+    
+}
+
+.Menu ul ul {
+    width: 250px;
+
+}
+
+
+.Menu ul ul li a {
+    display: flex;
+    color: var(--cor4);
+    justify-content: left;
+}
+
+.Rodape {
+    width: 100%;
+    background-color: var(--cor1); /* Cor de fundo do footer, ajuste conforme necessário */
+    text-align: center;
+  }
+
+

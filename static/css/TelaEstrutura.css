@@ -1,0 +1,332 @@
+.TituloPrograma {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: var(--cor2);
+  width: 80%;
+  margin-top: 30px;
+  border: 2px solid var(--cor2);
+  border-radius: 10px;
+  max-height: 45px;
+}
+
+
+h2 {
+  margin-top: 5px;
+  color: white;
+  font-size: 25px;
+  font-family: Cambria;
+}
+
+.CampoPesquisaEstrutura {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  text-align: center;
+  font-size: 20px;
+  margin-top: 20px;
+  width: 80%;
+  margin-left: 10%;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  height: 50px;
+
+}
+
+#LabelPesquisaEstrutura {
+  margin-left: 10px;
+}
+
+.InputContainerEstrutura {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.InputContainerEstrutura input {
+  padding-right: 40px;
+  color: black;
+  background-color: white;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+
+}
+
+.InputContainerEstrutura button {
+  position: absolute;
+  right: 0;
+  padding: 5px 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.TabelaContainerEstrutura {
+  border-collapse: collapse;
+  border: 2px solid darkgray;
+  margin-left: 10%;
+  width: 80%;
+  max-width: 1550px;
+  min-height: 600px;
+  max-height: 620px;
+  text-align: center;
+  overflow: auto;
+
+}
+
+.TabelaContainerEstrutura .TabelaEstrutura {
+  font-size: 15px;
+  border-collapse: collapse;
+  border: 2px solid darkgray;
+  min-width: 2500px;
+  overflow: auto;
+
+}
+
+.TabelaContainerEstrutura .TabelaEstrutura th {
+  background-color: lightgray;
+  max-height: 20px;
+}
+
+.TabelaContainerEstrutura .TabelaEstrutura td {
+  height: 40px;
+  /* Defina a altura desejada em pixels */
+  vertical-align: middle;
+  /* Centraliza o conteúdo verticalmente */
+  overflow: hidden;
+  /* Oculta o conteúdo extra que ultrapassar a altura definida */
+}
+
+.TabelaContainerEstrutura .TabelaEstrutura thead {
+  position: sticky;
+  top: 0;
+  background-color: lightgray;
+  z-index: 0;
+  border: 2px solid darkgray;
+}
+
+#TabelaEstrutura thead input {
+  max-height: 20px;
+  width: 80%;
+  padding: 5px;
+  border: black solid 2px;
+  border-radius: 10px;
+}
+
+#ContainerOcultoEstrutura Label {
+  display: none;
+  color: black;
+}
+
+.PaginamentoEstrutura {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: rgb(17, 45, 126);
+  width: 80%;
+  border: 2px solid rgb(17, 45, 126);
+  border-radius: 10px;
+  min-height: 35px;
+  max-height: 35px;
+}
+
+
+.PaginamentoEstrutura botao-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.PaginamentoEstrutura button {
+
+  width: 40px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid darkgray;
+  color: rgb(17, 45, 126);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#ButtonPaginaAnteriorEstrutura {
+  margin-right: 5px;
+}
+
+#ButtonProximaPaginaEstrutura {
+  margin-left: 5px;
+}
+
+#ButtonExportarExcelEstrutura {
+  margin-left: 10px;
+}
+
+#LabelContagemEstrutura {
+  color: white;
+}
+
+.ModalLoadingEstrutura {
+  display: none;
+  /* Oculta o modal por padrão */
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Fundo escuro semi-transparente */
+}
+
+#loaderEstrutura {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none;
+}
+
+
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 3;
+  margin-left: 95%;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 870px) {
+
+  .modalSelecionarPlanoEstrutura-content{
+  min-width: 80%;
+  max-width: 80%;
+  min-height: 80%;
+  max-height: 80%;
+}
+}
+
+
+@media screen and (min-width: 871px) {
+
+  .modalSelecionarPlanoEstrutura-content{
+      min-width: 40%;
+      max-width: 40%;
+      min-height: 50%;
+      max-height: 50%;
+  }
+
+
+  }
+
+.modalSelecionarPlanoEstrutura {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+}
+
+.modalSelecionarPlanoEstrutura-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  margin: 10% auto;
+  border-radius: 5px;
+  position: relative;
+  z-index: 1;
+
+  overflow-y: auto;
+
+}
+
+.modalSelecionarPlanoEstrutura-content h3 {
+  padding: 20px;
+  background-color: var(--cor2);
+  text-align: center;
+  font-size: 20px;
+  font-family: Arial;
+  border: 5px;
+  margin: 0;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: var(--cor4);
+}
+
+
+#botaoSelecionarPlanoEstrutura {
+  font-weight: bold;
+  background-color: var(--cor2);
+  color: white;
+  width: 100%;
+  margin-top: 20px;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+#PesquisarPlanoEstrutura{
+  font-weight: bold;
+  background-color: var(--cor4);
+  color: black;
+  width: 100%;
+  margin-top: 20px;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  margin-top: 40px;
+  padding: 10px;
+}
+
+.TabelaPlanosEstrutura {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  margin-top: 20px;
+  width: 100%;
+  height: 75%;
+  overflow-y: auto;
+  border: 2px solid black;
+}
+
+#TabelaPlanosEstrutura {
+  border: none;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#TabelaPlanosEstrutura thead {
+  position: sticky;
+  top: 0;
+  background-color: lightgray;
+  z-index: 1;
+  border: 2px solid darkgray;
+  height: 20px;
+  max-height: 20px;
+}
+
+#TabelaPlanosEstrutura td {
+  text-align: center;
+}
