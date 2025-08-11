@@ -19,8 +19,10 @@ from src.routes.Produtos import produtos_routes
 from src.routes.OrdemProd import OrdemProd_routes
 from src.routes.CronogramaAtividade import CronogramaAtividades_routes
 from src.routes.MonitorPedidos import MonitorPedidos_routes
-
+from  src.routes.PortalWeb.rotasPlataformaWeb import rotasPlataformaWeb
 # Importacao das rotas para o blueprint:
+routes_blueprint.register_blueprint(rotasPlataformaWeb)
+
 routes_blueprint.register_blueprint(plano_routes)
 routes_blueprint.register_blueprint(planoLote_routes)
 routes_blueprint.register_blueprint(pedidosPlano_routes)
