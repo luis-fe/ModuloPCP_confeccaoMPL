@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL PCP</title>
+    <link rel="stylesheet" href="/static/css/TelaPrincipal.css"/>
+    <link rel="stylesheet" href="/static/css/TelaEstrutura.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="Titulo">
+        <a href="TelaPrincipal.html">
+        <img src="/static/imagens/iconeMpl.jpg" alt="" >
+        </a>
+        <h1>PPCP - Planejamento, Programação e Controle da Produção</h1>
+    </div>
+   </div>
+    <div class="Corpo">
+        <nav class="Menu">
+            <ul>
+                <li><a href="/TelaPrincipal">Home</a></li>
+                <li><a href="#">Configurações</a>
+                    <ul>
+                        <li><a href="/TelaUsuarios">Gerenciamento de Usuários</a></li>
+                        <li><a href="/TelaControleFase">Gerenciamento de Fase</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Plano de Produção</a>
+                    <ul>
+                        <li><a href="/TelaPlano">Gerenciamento de Plano de Produção</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Relatórios</a>
+                    <ul>
+                        <li><a href="/TelaEstrutura">Estrutura De Produtos</a></li>
+                        <li><a href="/TelaCurva">Curva ABC</a></li>
+                        <li><a href="/TelaCurvaVendas">Curva de Vendas</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" id="NomeUsuario"></a>
+                    <ul>
+                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a id="BotaoSair" href="/Home">Sair </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            
+        </nav>
+    </div>  
+    <div class="TituloPrograma">
+        <h2>Estrutura de Produtos</h2></div>
+
+        <div class="CampoPesquisaEstrutura">
+            <label id="LabelPesquisaEstrutura" for="InputCodPlanoEstrutura">Código Plano:</label>
+            <div class="InputContainerEstrutura">
+                <input type="text" id="InputCodPlanoEstrutura">
+                <button id="ButtonPesquisaPlanoEstrutura"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+
+    <div class="TabelaContainerEstrutura">
+    <table border="2" class="TabelaEstrutura" id="TabelaEstrutura">
+    </table>
+    </div>
+
+    <div class="PaginamentoEstrutura">
+        <button type="button" class="ButtonPrimeiraPaginaEstrutura" id="ButtonPrimeiraPaginaEstrutura" title="Primeira Página" >
+            <i class="bi bi-rewind-btn-fill botao-icon"></i>
+        </button>
+
+        <button type="button" class="ButtonPaginaAnteriorEstrutura" id="ButtonPaginaAnteriorEstrutura" title="Página Anterior">
+            <i class="bi bi-caret-left-square-fill"></i>
+            
+        </button>
+
+        <label for="LabelContagemPaginaEstrutura" class="LabelContagemPaginaEstrutura" id="LabelContagemPaginaEstrutura"></label>
+
+        <button type="button" class="ButtonProximaPaginaEstrutura" id="ButtonProximaPaginaEstrutura" title="Próxima Página">
+            <i class="bi bi-caret-right-square-fill"></i>
+        </button>
+
+        <button type="button" class="ButtonUltimaPaginaEstrutura" id="ButtonUltimaPaginaEstrutura" title="Última Página">
+            <i class="bi bi-fast-forward-btn-fill"></i>
+        </button>
+
+        <button type="button" class="ButtonExportarExcelEstrutura" id="ButtonExportarExcelEstrutura" title="Exportar para Excel" >
+            <i id="ImagemExcel" class="bi bi-file-earmark-spreadsheet-fill"></i>
+        </button>
+        </div>
+
+    <div id="ModalLoadingEstrutura" class="ModalLoadingEstrutura">
+          <span id="loaderEstrutura"><img src="IconeLoading.gif" style="width: 80px; height: 80px;" id="ImagemLoading">
+        </span>
+        </div>
+
+
+      <div id="modalSelecionarPlanoEstrutura" class="modalSelecionarPlanoEstrutura">
+        <div class="modalSelecionarPlanoEstrutura-content">>
+            <span id="fecharModalSelecaoPlanosEstrutura" class="fechar">&times;</span>
+            <h3>Seleção de Planos</h3>
+            <input id="PesquisarPlanoEstrutura" type="search" placeholder="Digite sua Busca!">
+            <div class="TabelaPlanosEstrutura" div>
+                <table border="2" id="TabelaPlanosEstrutura"></table>
+            </div>
+            <button id="botaoSelecionarPlanoEstrutura">Selecionar</button>
+        </div>
+    </div>
+
+    <footer class="Rodape">
+    <p>Grupo Mpl</p>
+    </footer>
+
+    <div id="ContainerOcultoEstrutura" class="ContainerOcultoEstrutura">
+        <label for="text" id="LabelProdutos"></label>
+        <label for="text" id="LabelTamanhos"></label>
+        <label for="text" id="LabelMP"></label>
+        <label for="text" id="LabelNomeMp"></label>
+        <label for="text" id="LabelFornecedor"></label>
+        <label for="text" id="LabelDescProduto"></label>
+    </div>
+</div>
+
+<script>
+    const nomeUsuario = localStorage.getItem('nomeUsuario');
+   document.getElementById("NomeUsuario").textContent = nomeUsuario
+</script>
+
+</body>
+<script src="/static/js/FuncoesEstrutura.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL PCP</title>
+    <link rel="stylesheet" href="./static/css/TelaLoginEstilo.css"/>
+</head>
+<body>
+    <div class="TelaPrincipal">
+        <img src="/static/imagens/ImagemPrincipal.jpg" alt="Imagem Mpl" id="imgPrincipal" quality="high">
+        <section id="login">
+            <div id="formulario">
+                <h1>Login</h1>
+                <form action="" method="post" onsubmit="event.preventDefault(); Usuarios();">
+                    <div class="campo">
+                        <input type="text" name="login" id="InputLogin" placeholder="Usuário/Login" required minlength="1">
+                    </div>
+                    <div class="campo">
+                        <input type="password" name="senha" id="InputSenha" placeholder="Senha" required minlength="1">
+                    </div>
+                    <input type="submit" value="Entrar" id="BotaoLogin">
+                    <label for="text" id="UsuarioInválido">Usuário ou Senha Inválidos!</label>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script src="./static/js/FuncoesUsuarios.js"></script>
+</body>
+</html>

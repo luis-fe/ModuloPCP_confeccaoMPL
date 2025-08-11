@@ -1,0 +1,336 @@
+.TituloPrograma {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: var(--cor2);
+  width: 80%;
+  margin-top: 30px;
+  border: 2px solid var(--cor2);
+  border-radius: 10px;
+  max-height: 45px;
+}
+
+
+h2 {
+  margin-top: 5px;
+  color: white;
+  font-size: 25px;
+  font-family: Cambria;
+}
+
+
+.CampoPesquisaCurva{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 20px;
+    width: 80%;
+    margin-left: 10%;
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    height: 50px;
+
+}
+
+#LabelPesquisaCurva{
+    margin-left: 10px;
+}
+
+.InputContainerCurva {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.InputContainerCurva input {
+  padding-right: 40px;
+  color: black;
+  background-color: white;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  height: 30px;
+  text-align: center;
+
+}
+
+.InputContainerCurva button {
+    position: absolute;
+    right: 0;
+    padding: 5px 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.TabelaContainerCurva {
+    border-collapse: collapse;
+    border: 2px solid darkgray;
+    margin-left: 10%;
+    width: 80%;
+    max-width: 1550px;
+    min-height: 600px;
+    max-height: 620px;
+    text-align: center;
+    overflow: auto;
+
+  }
+  
+  .TabelaContainerCurva .TabelaCurva {
+    font-size: 15px;
+    border-collapse: collapse;
+    border: 2px solid darkgray;
+    min-width: 1500px;
+    overflow: auto;
+
+  }
+  
+  .TabelaContainerCurva .TabelaCurva th {
+    background-color: lightgray;
+    max-height: 20px;
+  }
+  
+  .TabelaContainerCurva .TabelaCurva td {
+    height: 40px;
+    /* Defina a altura desejada em pixels */
+    vertical-align: middle;
+    /* Centraliza o conteúdo verticalmente */
+    overflow: hidden;
+    /* Oculta o conteúdo extra que ultrapassar a altura definida */
+  }
+  
+  .TabelaContainerCurva .TabelaCurva thead {
+    position: sticky;
+    top: 0;
+    background-color: lightgray;
+    z-index: 0;
+    border: 2px solid darkgray;
+  }
+
+  #TabelaCurva thead input {
+    max-height: 20px;
+    width: 80%;
+    padding: 5px;
+    border: black solid 2px;
+    border-radius: 10px;
+  }
+  
+  #ContainerOcultoCurva Label {
+
+    color: black;
+  }
+
+  .PaginamentoCurva {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    background-color: rgb(17, 73, 126);
+    width: 80%;
+    border: 2px solid rgb(17, 45, 126);
+    border-radius: 10px;
+    min-height: 35px;
+    max-height: 35px;
+  }
+  
+
+  .PaginamentoCurva botao-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.PaginamentoCurva button {
+    
+    width: 40px;
+    height: 30px;
+    background-color: white;
+    border: 2px solid darkgray;
+    color: rgb(17, 45, 126);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#ButtonPaginaAnteriorCurva{
+    margin-right: 5px;
+}
+
+#ButtonProximaPaginaCurva{
+    margin-left: 5px;
+}
+
+#ButtonExportarExcelCurva{
+    margin-left: 10px;
+}
+
+#LabelContagemCurva{
+    color: white;
+}
+
+.ModalLoadingCurva {
+    display: none;
+  /* Oculta o modal por padrão */
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Fundo escuro semi-transparente */
+  }
+  
+  #loaderCurva {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    display: none;
+  }
+
+
+  .fecharmodalCurva {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 3;
+    margin-left: 95%;
+  }
+  
+  .fecharmodalCurva:hover,
+  .fecharmodalCurva:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 870px) {
+
+    .modalSelecionarPlanoCurva-content{
+    min-width: 80%;
+    max-width: 80%;
+    min-height: 80%;
+    max-height: 80%;
+  }
+  }
+  
+  
+  @media screen and (min-width: 871px) {
+  
+    .modalSelecionarPlanoCurva-content{
+        min-width: 40%;
+        max-width: 40%;
+        min-height: 50%;
+        max-height: 50%;
+    }
+  
+  
+    }
+  
+  .modalSelecionarPlanoCurva {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 0;
+  }
+  
+  .modalSelecionarPlanoCurva-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #fff;
+    margin: 10% auto;
+    border-radius: 5px;
+    position: relative;
+    z-index: 1;
+  
+    overflow-y: auto;
+  
+  }
+  
+  .modalSelecionarPlanoCurva-content h3 {
+    padding: 20px;
+    background-color: var(--cor2);
+    text-align: center;
+    font-size: 20px;
+    font-family: Arial;
+    border: 5px;
+    margin: 0;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: var(--cor4);
+  }
+  
+  
+  #botaoSelecionarPlanoCurva {
+    font-weight: bold;
+    background-color: var(--cor2);
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px;
+  }
+  
+  #PesquisarPlanoCurva{
+    font-weight: bold;
+    background-color: var(--cor4);
+    color: black;
+    width: 100%;
+    margin-top: 20px;
+    border: 2px solid darkgray;
+    border-radius: 10px;
+    margin-top: 40px;
+    padding: 10px;
+  }
+  
+  .TabelaPlanosCurva {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin-top: 20px;
+    width: 100%;
+    height: 75%;
+    overflow-y: auto;
+    border: 2px solid black;
+  }
+  
+  #TabelaPlanosCurva {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #TabelaPlanosCurva thead {
+    position: sticky;
+    top: 0;
+    background-color: lightgray;
+    z-index: 1;
+    border: 2px solid darkgray;
+    height: 20px;
+    max-height: 20px;
+  }
+  
+  #TabelaPlanosCurva td {
+    text-align: center;
+  }
+  
+  
+  

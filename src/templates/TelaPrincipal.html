@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL PCP</title>
+    <link rel="stylesheet" href="./static/css/TelaPrincipal.css"/>
+</head>
+<body>
+    <div class="Titulo">
+        <a href="TelaPrincipal.html">
+        <img src="/static/imagens/iconeMpl.jpg" alt="" >
+        </a>
+        <h1>PPCP - Planejamento, Programação e Controle da Produção</h1>
+    </div>
+    <div class="Corpo">
+        <nav class="Menu">
+            <ul>
+                <li><a href="/TelaPrincipal">Home</a></li>
+                <li><a href="#">Configurações</a>
+                    <ul>
+                        <li><a href="/TelaUsuarios">Gerenciamento de Usuários</a></li>
+                        <li><a href="/TelaControleFase">Gerenciamento de Fase</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Plano de Produção</a>
+                    <ul>
+                        <li><a href="/TelaPlano">Gerenciamento de Plano de Produção</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Relatórios</a>
+                    <ul>
+                        <li><a href="/TelaEstrutura">Estrutura De Produtos</a></li>
+                        <li><a href="/TelaCurva">Curva ABC</a></li>
+                        <li><a href="/TelaCurvaVendas">Curva de Vendas</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" id="NomeUsuario"></a>
+                    <ul>
+                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a id="BotaoSair" href="/Home">Sair </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            
+        </nav>
+    </div>   
+
+    <footer class="Rodape">
+        <p>Grupo Mpl</p>
+    </footer>
+
+    <script>
+        const nomeUsuario = localStorage.getItem('nomeUsuario');
+       document.getElementById("NomeUsuario").textContent = nomeUsuario
+    </script>
+    
+    
+</body>
+<script src="./static/js/FuncoesUsuarios.js"></script>
+</html>

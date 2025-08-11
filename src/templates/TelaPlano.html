@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL PCP</title>
+    <link rel="stylesheet" href="/static/css/TelaPlano.css"/>
+    <link rel="stylesheet" href="/static/css/TelaUsuarios.css"/>
+    <link rel="stylesheet" href="/static/css/TelaPrincipal.css"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="Titulo">
+        <a href="TelaPrincipal.html">
+        <img src="/static/imagens/iconeMpl.jpg" alt="" >
+        </a>
+        <h1>PPCP - Planejamento, Programação e Controle da Produção</h1>
+    </div>
+   <div class="Corpo">
+        <nav class="Menu">
+            <ul>
+                <li><a href="/TelaPrincipal">Home</a></li>
+                <li><a href="#">Configurações</a>
+                    <ul>
+                        <li><a href="/TelaUsuarios">Gerenciamento de Usuários</a></li>
+                        <li><a href="/TelaControleFase">Gerenciamento de Fase</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Plano de Produção</a>
+                    <ul>
+                        <li><a href="/TelaPlano">Gerenciamento de Plano de Produção</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Relatórios</a>
+                    <ul>
+                        <li><a href="/TelaEstrutura">Estrutura De Produtos</a></li>
+                        <li><a href="/TelaCurva">Curva ABC</a></li>
+                        <li><a href="/TelaCurvaVendas">Curva de Vendas</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" id="NomeUsuario"></a>
+                    <ul>
+                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a id="BotaoSair" href="/Home">Sair </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            
+        </nav>
+  </div>  
+    <div class="TituloPrograma">
+        <h2>Planos de Produção</h2></div>
+
+        <div class="CorpoGeral">
+            <div class="CorpoCodigo">
+                <label for="LabelPlano" id="LabelPlano">* Código Plano:</label>
+                <input type="text" id="InputPlano" class="InputPlano" maxlength="4">
+                <button id="BotaoPesquisar"> <i class="bi bi-search"></i></button>
+            </div>
+            <div class="CorpoDescricao">
+                <label for="LabelDescricao" id="LabelDescricao">* Descrição:</label>
+                <input type="text" id="InputDescricao" class="InputDescricao">
+            </div>
+            <div class="CorpoIntervaloVenda">
+                <label for="LabelIntervaloVenda" id="LabelIntervaloVenda">Intervalo de Venda:</label>
+                <input type="date" id="InputDatainicio">
+                <label for="LabelIntervaloVenda1" id="LabelIntervaloVenda1">á</label>
+                <input type="date" id="InputDataFim">
+            </div>
+            <div class="CorpoIntervaloFaturamento">
+                <label for="LabelIntervaloFaturamento" id="LabelIntervaloFaturamento">Intervalo de Faturamento:</label>
+                <input type="date" id="InputDatainicioFaturamento">
+                <label for="LabelIntervaloVendaFaturamento1" id="LabelIntervaloVendaFaturamento1">á</label>
+                <input type="date" id="InputDataFimFaturamento">
+            </div>
+            <div class="BotaoPlano">
+                <button id="ButtonCriarPlano"> Criar Plano </button>
+                <button id="ButtonEditarPlano">Editar Plano</button>
+                <button id="ButtonEditarCurvaAbc">Editar %Curva</button>
+                <button id="ButtonEditarCurvaDeVendas">Editar Curva de Vendas</button>
+            </div>
+            <div class="Linha"></div>
+        </div>
+
+        <div id="modalPlanos" class="modalPlanos">
+            <div class="modalPlanos-content">
+                <span id="fecharModalPlanos" class="fechar1">&times;</span>
+                <h3>Planos De Produção</h3>
+                <input id="BotaoPesquisarPlano" type="search" placeholder="Digite sua Busca!">
+                <div class="TesteTabela" div="TesteTabela">
+                    <table border="2" id="TabelaPlanos"></table>
+                </div>
+                <button id="botaoSelecionarPlano">Selecionar</button>
+
+            </div>
+        </div>
+
+
+        <div class="CampoTabelas">
+            <div class="CampoColecoes">
+            <label for="text" id="LabelColecoes">Coleções
+                 <i class="bi bi-trash-fill" id="LixeiraColecoes" title="Remover Coleção"></i>
+                 <i class="bi bi-plus-circle-fill" id="AdicionarColecao" title="Adicionar Coleção"></i>
+                </label>
+                <div class="DivColecoes">
+                    <Table border="2" id="TabelaColecoes"></Table>
+                </div>
+            </div>
+
+            <div class="CampoTipoNota">
+                <label id="LabelTipoDeNota" for="text">Tipos De Notas
+                    <i class="bi bi-trash-fill" id="LixeiraNotas" title="Remover Tipo de Nota"></i>
+                    <i class="bi bi-plus-circle-fill" id="AdicionarNotas" title="Adicionar Tipo de Nota"></i>
+                </label>
+                    <div class="DivNotas">
+                        <Table border="2" id="TabelaTipoNota"></Table>
+                    </div>
+                </div>
+  
+
+        <div class="CampoLoteProducao">
+            <label id="LabelLote" for="text">Lotes de Produção
+                    <i class="bi bi-trash-fill" id="LixeiraLotes" title="Remover Lote de Produção"></i>
+                    <i class="bi bi-plus-circle-fill" id="AdicionarLotes" title="Adicionar Lote de Produção"></i>
+            </label>
+                <div class="DivLotes">
+                    <Table border="2" id="TabelaLote"></Table>
+                </div>
+            </div>
+    </div>
+
+    <div id="modalColecoesCsw" class="modalColecoesCsw">
+        <div class="modalColecoesCsw-content">
+            <span id="fecharmodalColecoesCsw" class="fechar1">&times;</span>
+            <h3>Coleções</h3>
+            <input id="PesquisarColecoes" type="text" placeholder="Digite sua Busca!">
+            <div class="TabelaColecoes1" div>
+                <table border="2" id="TabelaColecoesCsw"></table>
+            </div>
+            <div>
+            <button id="botaoSelecionarColecao">Selecionar</button>
+        </div>
+        </div>
+    </div>
+
+    <div id="modalNotaCws" class="modalNotaCws">
+        <div class="modalNotaCws-content">
+            <span id="fecharmodalNotasCsw" class="fechar1">&times;</span>
+            <h3>Tipos de Notas</h3>
+            <input id="PesquisarNota" type="text" placeholder="Digite sua Busca!">
+            <div class="TabelaNotas1" div>
+                <table border="2" id="TabelaNotasCSW"></table>
+            </div>
+            <div>
+            <button id="botaoSelecionarNota">Selecionar</button>
+        </div>
+        </div>
+    </div>
+
+    <div id="modalLoteProdCws" class="modalLoteProdCws">
+        <div class="modalLoteProdCws-content">
+            <span id="fecharmodalLoteProdsCsw" class="fechar1">&times;</span>
+            <h3>Lotes de Produção</h3>
+            <input id="PesquisarLote" type="text" placeholder="Digite sua Busca!">
+            <div class="TabelasLotes1" div>
+                <table border="2" id="TabelaLotesCsw"></table>
+            </div>
+            <div>
+            <button id="botaoSelecionarLote">Selecionar</button>
+        </div>
+        </div>
+    </div>
+
+    <div id="modalCurva" class="modalCurva">
+        <div class="modalCurva-content">
+            <span id="fecharmodalCurva" class="fechar1">&times;</span>
+            <h3>% Curva ABC</h3>
+            <div class="curvaA">
+                <label for="text" id="LabelCurvaA">%A</label>
+                <input type="text" id="InputCurvaA">
+            </div>
+            <div class="curvaB">
+                <label for="text" id="LabelCurvaB">%B</label>
+                <input type="text" id="InputCurvaB">
+            </div>
+            <div class="curvaC">
+                <label for="text" id="LabelCurvaC">%C</label>
+                <input type="text" id="InputCurvaC">
+            </div>
+            <div class="linhadiv">
+            </div>
+            <div class="curvaC1">
+                <label for="text" id="LabelCurvaC1">%C1</label>
+                <input type="text" id="InputCurvaC1">
+            </div>
+            <div class="curvaC2">
+                <label for="text" id="LabelCurvaC2">%C2</label>
+                <input type="text" id="InputCurvaC2">
+            </div>
+            <div class="curvaC3">
+                <label for="text" id="LabelCurvaC">%C3</label>
+                <input type="text" id="InputCurvaC3">
+            </div>
+            <div class="BotãoAlterar">
+               <button id="SalvarPercentuais">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalConfigVendas" class="modalConfigVendas">
+        <div class="modalConfigVendas-content">
+          <span id="fecharModalConfigVendas" class="fechar1">&times;</span>
+          <h3>Configurações Metas</h3>
+          <div class="PlanosCurvaVenda">
+          <label for="InputPlano">Código Plano:</label>
+          <input type="number" id="InputPlanoMetas" class="InputPlano" maxlength="4">
+        </div>
+        <div class="tabelaMetas">
+          <table class="MetasTable">
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Meta Peças</th>
+                <th>Meta R$</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>PACO</td>
+                <td><input type="text" id="PecasPaco" onkeyup="mudarFoco(event, 'RSpaco')" oninput="Numerar('PecasPaco');"></td>
+                <td><input type="text" id="RSpaco" onkeyup="mudarFoco(event, 'PecasMpollo')" oninput="formatarValorInput(this);" ></td>
+              </tr>
+              <tr>
+                <td>M.POLLO</td>
+                <td><input type="text" id="PecasMpollo" onkeyup="mudarFoco(event, 'RSmpollo')" oninput="Numerar('PecasMpollo');"></td>
+                <td><input type="text" id="RSmpollo" oninput="formatarValorInput(this);" onkeyup="if (event.key === 'Enter') SomaTotais();"></td>
+              </tr>
+              <tr>
+                <td>TOTAL</td>
+                <td><input type="text" id="PecasTotal"></td>
+                <td><input type="text" id="RStotal"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+          <div class="BotaoMetas">
+            <button id="BotaoSalvarMetas" >Salvar</button>
+            <button id="MetasSemanais">Metas Semanais</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="modalMetasSemanais" class="modalMetasSemanais">
+        <div class="modalMetasSemanais-content">
+            <span id="fecharModalMetasSemanais" class="fechar1">&times;</span>
+            <h3>Configurações Metas</h3>
+            <div class="PlanosCurvaVenda">
+            <label for="InputPlano">Código Plano:</label>
+            <input type="text" id="InputPlanoMetasSemanais" class="InputPlano" maxlength="4">
+          </div>
+        <div class="TabelaSemanal">
+            <table class="TabelaMetasSemanais" id="TabelaMetasSemanais"></table>
+        </div>
+      </div>
+      
+
+        
+
+        <footer class="Rodape">
+            <p>Grupo Mpl</p>
+            </footer>
+    
+
+            <script>
+                const nomeUsuario = localStorage.getItem('nomeUsuario');
+               document.getElementById("NomeUsuario").textContent = nomeUsuario
+            </script>
+
+
+
+</body>
+
+<script src="/static/js/FuncoesPlano.js"></script>
+<script src="/static/js/FuncoesCurvaVenda.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Op's</title>
+    <!-- Link para o Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.7/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<style>
+    .row h2 {
+        width: 100%;
+        text-align: center;
+        background-color: rgb(17, 45, 126);
+        color: white;
+        font-size: 40px;
+        font-weight: 500;
+    }
+
+    .card {
+        border: none;
+        margin-bottom: 10px;
+        /* Ajuste a margem inferior para espaçamento entre os cards */
+    }
+
+    .card-body {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: none;
+        padding: 10px;
+        /* Adicione algum preenchimento para espaçamento interno */
+    }
+
+    #cardInfos1 p,
+    #cardInfos2 p,
+    #cardInfos3 p,
+    #cardInfos4 p,
+    #cardInfos5 p {
+        font-size: 18px;
+        /* Reduza o tamanho da fonte */
+        margin-bottom: 5px;
+        /* Ajuste o espaçamento entre os parágrafos */
+
+    }
+
+    #cardInfos1,
+    #cardInfos2,
+    #cardInfos3,
+    #cardInfos4,
+    #cardInfos5 {
+        max-width: 350px;
+        cursor: pointer;
+    }
+
+    #Corpo {
+        max-height: 85vh;
+        height: 85vh;
+        overflow-y: auto;
+        /* Adiciona uma barra de rolagem vertical quando o conteúdo excede a altura */
+    }
+
+
+    #ModalLoading {
+        width: 100%;
+        height: 100vh;
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .loader {
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+        margin-top: 20%;
+    }
+
+    #legenda {
+        cursor: pointer;
+        border: 1px solid black;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        margin-right: 10px;
+        justify-content: center;
+    }
+
+    @keyframes blink {
+        0% {
+            background-color: initial;
+        }
+
+        50% {
+            background-color: red;
+        }
+
+        100% {
+            background-color: initial;
+        }
+    }
+
+    .blink {
+        animation: blink 1s infinite;
+    }
+
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+
+
+    #Maior,
+    #justificativa {
+        font-size: 18px;
+        /* Ajuste o tamanho da fonte para os textos maiores */
+        margin-bottom: -1px;
+
+    }
+
+    #Menor {
+        font-size: 15px;
+        /* Ajuste o tamanho da fonte para os textos menores */
+        margin-bottom: -1px;
+
+    }
+
+    .btn {
+        height: 50px;
+        /* Defina a altura desejada para os botões */
+        line-height: 50px;
+        /* Mantém o texto centralizado verticalmente */
+    }
+
+    #Teste {
+        text-align: left;
+        max-width: 500px;
+    }
+
+    #BotaoFiltros,
+    #BotaoExcel {
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .ModalPendencia {
+        display: none;
+        position: absolute;
+        background-color: rgb(166, 166, 166);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        margin-left: 50px;
+        z-index: 999;
+    }
+
+    .ModalJustificativa {
+        display: none;
+        position: absolute;
+        background-color: rgb(184, 184, 184);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        margin-left: 50px;
+        z-index: 999;
+    }
+
+    .close {
+        cursor: pointer;
+    }
+</style>
+
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row text-align-center">
+            <h2>Gestão De Op's</h2>
+            <!-- Card: Qtd. Op's Abertas -->
+            <div class="col-sm-6 col-md-2">
+                <div class="card">
+                    <div class="card-body" id="cardInfos1" style="background-color: #2498db;">
+                        <h5 class="card-title">Qtd. Op's Abertas:</h5>
+                        <p class="card-text" id="text1"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Qtd. Peças -->
+            <div class="col-sm-6 col-md-2">
+                <div class="card">
+                    <div class="card-body" id="cardInfos2" style="background-color: #2498db;">
+                        <h5 class="card-title">Qtd. Peças:</h5>
+                        <p class="card-text" id="text2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Qtd. Op's no Prazo -->
+            <div class="col-sm-6 col-md-2">
+                <div class="card">
+                    <div class="card-body" id="cardInfos3" style="background-color: rgb(40, 167, 69)">
+                        <h5 class="card-title">Qtd. Op's no Prazo:</h5>
+                        <p class="card-text" id="text3"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Qtd. Op's em Atenção -->
+            <div class="col-sm-6 col-md-2">
+                <div class="card">
+                    <div class="card-body" id="cardInfos4" style="background-color: rgb(255, 193, 7)">
+                        <h5 class="card-title">Qtd. Op's em Atenção:</h5>
+                        <p class="card-text" id="text4"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Qtd. Op's Atrasadas -->
+            <div class="col-sm-6 col-md-2">
+                <div class="card">
+                    <div class="card-body" id="cardInfos5" style="background-color: rgb(220, 53, 69)">
+                        <h5 class="card-title">Qtd. Op's Atrasadas:</h5>
+                        <p class="card-text" id="text5"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Qtd. Op's Atrasadas -->
+        <div class="row col-6 col-md-12">
+            <i class="bi bi-funnel-fill col-1" id="BotaoFiltros" title="Filtros"></i>
+            <i class="bi bi-file-earmark-arrow-down-fill col-1" id="BotaoExcel" title="Exportar Excel"></i>
+            <div class="row legenda col-10">
+                <div class="card legenda blink col-1" id="legenda" onclick="aplicarFiltros('claudino')">
+                    <label for="" style="cursor:pointer">CLAUDINO</label>
+                </div>
+                <div class="card legenda blink col-1" id="legenda" onclick="aplicarFiltros('fatatrasado')">
+                    <label for="" style="cursor:pointer">FAT ATRASADO</label>
+                </div>
+                <div class="card legenda col-1" id="legenda" style="background-color: red">
+                    <label for="" style="cursor:pointer">P/ FAT.</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM1/QP1</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM2/QP2</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM3/QP3</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM4/QP4</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM5/QP5</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM6/QP6</label>
+                </div>
+                <div class="card legenda col-1" id="legenda">
+                    <label for="" style="cursor:pointer">QM7/QP7</label>
+                </div>
+            </div>
+        </div>
+        <h2>Lista Op's</h2>
+        <div class="row" id="Corpo">
+        </div>
+    </div>
+
+
+    <div id="modalLoading" class="modal">
+        <div class="modal-content" id="ModalLoading">
+            <div class="loader"></div>
+            <p>Aguarde, carregando...</p>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalFiltros" tabindex="-1" role="dialog" aria-labelledby="ModalFiltrosLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Cabeçalho da Modal -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalFiltrosLabel">Filtros</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Corpo da Modal -->
+                <div class="modal-body">
+                    <!-- Input para filtrar por Contém -->
+                    <div class="form-group">
+                        <label for="InputContem">Contém:</label>
+                        <input type="text" class="form-control" id="InputContem">
+                    </div>
+                    <!-- Botões de Ordenação -->
+                    <div class="form-group" style="align-items: center; text-align: center; justify-content: center;">
+                        <label>Ordenação:</label>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-outline-primary active">
+                                <input type="radio" name="opcoesOrdenacao" id="btnUrgente" data-valor="prioridade" autocomplete="off" checked> Prioridade
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="radio" name="opcoesOrdenacao" id="btnLeadTime" data-valor="tempo" autocomplete="off"> Lead Time
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="divOpcoes">
+
+                    </div>
+                </div>
+                <!-- Rodapé da Modal -->
+                <div class="modal-footer">
+                    <!-- Botão para fechar a modal -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <!-- Botão para confirmar os filtros -->
+                    <button type="button" class="btn btn-primary" id="ConfirmarFiltro">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ModalPendencia" id="ModalPendencia">
+        <span class="close" id="FecharPendencia">&times;</span>
+        <div style="margin-bottom: 20px; margin-right: 30px; justify-content: center; align-items: center; text-align: center;">
+            <label for="text" id="TituloModal" style="font-size: 25px;">Pendências</label>
+        </div>
+        <div style="display: flex; flex-direction: column;" class="DivPendencias" id="DivPendencias">
+        </div>
+    </div>
+
+    <div class="ModalJustificativa" id="ModalJustificativa">
+        <span class="close" id="FecharJustificativa">&times;</span>
+        <div style="margin-bottom: 20px; margin-right: 30px;">
+            <label for="text" id="NumeroOP" style="font-size: 25px;"></label>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+            <label for="text" style="font-size: 25px;">Justificativa:</label>
+            <textarea name="InputJustificativa" id="InputJustificativa" cols="30" rows="10" style="font-size: 20px;"></textarea>
+        </div>
+        <div style="justify-content: right; text-align: right;">
+            <i class="bi bi-check-circle-fill" id="SalvarObs" style="text-align: right; justify-content: right; font-size: 25px; color: green; cursor: pointer;" title="SALVAR"></i>
+        </div>
+
+    </div>
+
+    <!-- Link para o Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.core.min.js"></script>
+    <script src="/static/js/LeadTime.js"></script>
+
+</body>
+
+</html>

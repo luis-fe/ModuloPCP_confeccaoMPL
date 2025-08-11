@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PORTAL PCP</title>
+  <link rel="stylesheet" href="/static/css/TelaPlano.css" />
+  <link rel="stylesheet" href="/static/css/TelaPrincipal.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    #InputCodPlano {
+      border: 2px solid black;
+      border-radius: 20px;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .Pesquisa {
+      display: flex;
+      margin: 0 auto;
+      width: 80%;
+      margin-top: 5px;
+    }
+
+    .Pesquisa i {
+      margin-left: -23px;
+      font-size: 15px;
+      margin-right: 20px;
+      cursor: pointer;
+      margin-top: 3px;
+    }
+
+    .Filtros {
+      display: none;
+      margin: 0 auto;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      width: 80%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .Filtros label {
+      margin-right: 5px;
+    }
+
+    .Filtros select {
+      margin-right: 50px;
+      border-radius: 10px;
+    }
+
+    #chart {
+  width: 80%;
+  min-height: 58vh;
+  margin: 0 auto;
+
+}
+
+  </style>
+</head>
+
+<body>
+
+  <div class="Corpo">
+     <nav class="Menu">
+            <ul>
+                <li><a href="/TelaPrincipal">Home</a></li>
+                <li><a href="#">Configurações</a>
+                    <ul>
+                        <li><a href="/TelaUsuarios">Gerenciamento de Usuários</a></li>
+                        <li><a href="/TelaControleFase">Gerenciamento de Fase</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Plano de Produção</a>
+                    <ul>
+                        <li><a href="/TelaPlano">Gerenciamento de Plano de Produção</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Relatórios</a>
+                    <ul>
+                        <li><a href="/TelaEstrutura">Estrutura De Produtos</a></li>
+                        <li><a href="/TelaCurva">Curva ABC</a></li>
+                        <li><a href="/TelaCurvaVendas">Curva de Vendas</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" id="NomeUsuario"></a>
+                    <ul>
+                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a id="BotaoSair" href="/Home">Sair </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            
+        </nav>
+  </div>
+  <div class="TituloPrograma">
+    <h2>CURVA DE VENDAS</h2>
+  </div>
+  <div class="Pesquisa">
+    <input id="InputCodPlano" type="text" placeholder="Plano">
+    <i class="bi bi-search"></i>
+    <button id="teste" style="cursor: pointer; border-radius: 20px; background-color: rgb(17, 45, 126); color: white;">Consultar</button>
+  </div>
+
+  <div class="Filtros">
+    <label for="text">Aprovados?</label>
+    <select id="SelecaoAprovados">
+      <option value="">AMBOS</option>
+      <option value="True">SIM</option>
+      <option value="False">NÃO</option>
+    </select>
+
+    <label for="text">Marca</label>
+    <select id="SelecaoMarca">
+      <option value="">TODOS</option>
+      <option value="PACO">PACO</option>
+      <option value="M.POLLO">M.POLLO</option>
+    </select>
+
+    <button id="teste2" style="cursor: pointer; background-color: rgb(17, 45, 126); color: white; border-radius: 10px;">Aplicar Filtros</button>
+    <button id="teste3" style="cursor: pointer; margin-left: 10px; background-color: rgb(17, 45, 126); color: white; border-radius: 10px;">Limpar</button>
+    <i  id="IconeExcel" class="bi bi-file-earmark-excel-fill" style="color: green; margin-left: 10px; cursor: pointer;"></i>
+  </div>
+  <div id="chart"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+  <script>
+    document.getElementById('teste').addEventListener('click', async () => {
+      const inputCodPlano = document.getElementById('InputCodPlano').value;
+
+      if (inputCodPlano === '') {
+        alert('Campo Plano não deve ser vazio!');
+      } else if (isNaN(inputCodPlano)) {
+        alert('Campo Plano deve ser um número válido!');
+      } else {
+        await ChamadaApi(Api, inputCodPlano, '', 1, "", "");
+        CriarGrafico();
+        document.querySelector('.Filtros').style.display = 'flex';
+        document.getElementById('teste').style.display = 'none';
+        document.getElementById('InputCodPlano').disabled = true;
+        document.getElementById('chart').style.border = '5px solid black';
+        document.getElementById('chart').style.borderRadius = '10px';
+
+      }
+    });
+
+    document.getElementById('teste2').addEventListener('click', async () => {
+      const inputCodPlano = document.getElementById('InputCodPlano').value;
+      console.log(document.getElementById('SelecaoAprovados').value);
+      console.log(document.getElementById('SelecaoMarca').value);
+      await ChamadaApi(Api, inputCodPlano, document.getElementById('SelecaoAprovados').value, 1, document.getElementById('SelecaoMarca').value, "True");
+      CriarGrafico();
+    })
+
+    var ResultadoApi = "";
+    var ResultadoApi2 = '';
+    const Api = 'http://192.168.0.183:8000/pcp/api/AcompVendas?';
+    const ApiExcel1 = 'http://192.168.0.183:8000/pcp/api/RelatorioVendas?'
+    const token = 'a44pcp22';
+
+    async function ChamadaApi(api, codigo, Aprovados, Empresa, marca, congelado) {
+      try {
+        const response = await fetch(`${api}plano=${codigo}&somenteAprovados=${Aprovados}&empresa=${Empresa}&marca=${marca}&congelado=${congelado}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          ResultadoApi = data;
+          console.log(ResultadoApi);
+          ResultadoApi2 = ResultadoApi[0]['2- Detalhamento mensal ']
+        } else {
+          throw new Error('Erro No Retorno');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function CriarGrafico() {
+      document.getElementById('chart').innerHTML = '';
+
+      const Semanas = ResultadoApi2.map(detalhamento => parseFloat(detalhamento['semana']));
+      const MetaPc = ResultadoApi2.map(detalhamento => parseFloat(detalhamento['metaPçAcumulada']));
+      const RealizadoPc = ResultadoApi2.map(detalhamento => parseFloat(detalhamento['qtdPecasPedidoAcumulada']));
+      const MaxValor = parseFloat(ResultadoApi[0]['1 - ValorMaxAcumulado'].toString().substring(0, 3));
+
+      console.log(MaxValor);
+      console.log(RealizadoPc);
+      console.log(MetaPc);
+      console.log(Semanas);
+
+      var options = {
+        series: [{
+          name: "Meta Peças",
+          data: MetaPc
+        },
+        {
+          name: "Realizado Peças",
+          data: RealizadoPc
+        },
+        ],
+        chart: {
+          height: '100%', // Alteração aqui para 70%
+          width: '99%',  // Mantenha 90% para a largura
+          type: 'line',
+          dropShadow: {
+            enabled: true,
+            color: '#000',
+            top: 18,
+            left: 7,
+            blur: 10,
+            opacity: 0.2
+          },
+          toolbar: {
+            show: false
+          },
+          parentHeightOffset: 0,
+          responsive: true,
+          // Mantenha a proporção do gráfico
+          maintainAspectRatio: false,
+        },
+        colors: ['#77B6EA', '#545454'],
+        dataLabels: {
+          enabled: true,
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        title: {
+          text: 'Curva de Vendas',
+          align: 'left'
+        },
+        grid: {
+          borderColor: '#e7e7e7',
+          row: {
+            colors: ['#f3f3f3', 'transparent'],
+            opacity: 0.5
+          },
+        },
+        markers: {
+          size: 1
+        },
+        xaxis: {
+          categories: Semanas, // Adicione [0] para selecionar o primeiro array de semanas
+          title: {
+            text: 'Semanas'
+          },
+        },
+        yaxis: {
+          title: {
+            text: 'Volume'
+          },
+          tickAmount: 15,
+          min: 0,
+          max: MaxValor
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right',
+          floating: true,
+          offsetY: -25,
+          offsetX: -5
+        }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
+    }
+
+
+    document.getElementById('IconeExcel').addEventListener('click', async () => {
+      const Plano = document.getElementById('InputCodPlano').value;
+      ApiExcel(ApiExcel1, Plano);
+
+    })
+
+    async function ApiExcel(api, plano) {
+      try {
+        const response = await fetch(`${api}plano=${plano}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          exportToExcel(data, 'Vendas.xlsx', 'Vendas')
+        } else {
+          throw new Error('Erro No Retorno');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function exportToExcel(data, fileName, sheetName) {
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      await XLSX.utils.book_append_sheet(wb, ws, sheetName || 'Sheet 1');
+
+      XLSX.writeFile(wb, fileName || 'exportedData.xlsx');
+}
+
+  </script>
+</body>
+
+</html>

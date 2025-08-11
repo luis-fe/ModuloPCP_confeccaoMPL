@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTAL PCP</title>
+    <link rel="stylesheet" href="/static/css/TelaPrincipal.css"/>
+    <link rel="stylesheet" href="/static/css/TelaUsuarios.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="Titulo">
+        <a href="TelaPrincipal.html">
+        <img src="/static/imagens/iconeMpl.jpg" alt="" >
+        </a>
+        <h1>PPCP - Planejamento, Programação e Controle da Produção</h1>
+    </div>
+     <div class="Corpo">
+        <nav class="Menu">
+            <ul>
+                <li><a href="/TelaPrincipal">Home</a></li>
+                <li><a href="#">Configurações</a>
+                    <ul>
+                        <li><a href="/TelaUsuarios">Gerenciamento de Usuários</a></li>
+                        <li><a href="/TelaControleFase">Gerenciamento de Fase</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Plano de Produção</a>
+                    <ul>
+                        <li><a href="/TelaPlano">Gerenciamento de Plano de Produção</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Relatórios</a>
+                    <ul>
+                        <li><a href="/TelaEstrutura">Estrutura De Produtos</a></li>
+                        <li><a href="/TelaCurva">Curva ABC</a></li>
+                        <li><a href="/TelaCurvaVendas">Curva de Vendas</a></li>
+                    </ul>
+                </li>
+                <li><a href="#" id="NomeUsuario"></a>
+                    <ul>
+                        <li><a href="#">Alterar Senha</a></li>
+                        <li><a id="BotaoSair" href="/Home">Sair </a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            
+        </nav>
+    </div>   
+    <div class="TituloPrograma">
+        <h2>Manutenção de Usuários</h2></div>
+
+    <div class="Menu2">
+        <button type="button" class="ButtonNovo" id="BotaoCadUsuario" title="Cadastrar Novo Usuário">
+            <img src="/static/imagens/IconeMais.jpg" alt="">
+        Novo</button>
+
+        <button type="button" class="ButtonEditar" id="ButtonEditar" title="Editar Usuário">
+            <img src="/static/imagens/IconeEditar.jpg" alt="">
+        Editar</button>
+
+        <button type="button" class="ButtonRemover" id="ButtonRemover" title="Remover Usuário">
+            <img src="/static/imagens/IconeLixeira.jpg" alt="">
+        Remover</button>
+    </div>
+
+
+
+    <div id="modalNovo" class="modalNovo">
+        <div class="modalNovo-content">
+            <span id="fecharModal" class="fechar">&times;</span>
+            <h3>Novo Usuário</h3>
+            <label for="Usuario" id="Usuario" class="LabelUsuario">Nome Usuário:</label>
+            <input type="text" id="InputUsuario" class="InputUsuario">
+            <label for="Login" id="Login" class="LabelLogin">Login:</label>
+            <input type="text" id="InputLogin" class="InputLogin" >
+            <label for="Senha" id="Senha" class="LabelSenha">Senha:</label>
+            <input type="password" id="InputSenha" class="InputSenha">
+            <button type="button" id="salvarNovoUsuário" >Salvar</button>
+        </div>
+    </div>
+
+    
+
+    <div id="ModalEditar" class="ModalEditar">
+        <div class="ModalEditar-content">
+            <span id="FecharModalEditar" class="fechar">&times;</span>
+            <h3>Editar Usuário</h3>
+            <label for="Usuario" id="Usuario" class="LabelUsuario">Nome Usuário:</label>
+            <input type="text" id="InputUsuarioEditar" class="InputUsuarioEditar">
+            <label for="SenhaEdicao" id="SenhaEdicao" class="SenhaEdicao">Senha:</label>
+            <input type="password" id="InputSenhaEditar" class="InputSenhaEditar">
+            <label for="LabelConfirmarEdicaoSenha" id="LabelConfirmarEdicaoSenha" class="LabelConfirmarEdicaoSenha">Confirmar Senha:</label>
+            <input type="password" id="InputConfirmarSenha" class="InputConfirmarSenha">
+            <button type="button" id="salvarEdicao">Salvar</button>
+            <label id="LabelSenhasConferidas" for="Senhas não Conferem!">Senhas não Conferem!</label>
+            
+        </div>
+    </div>
+
+    <div id="ModalExcluir" class="ModalExcluir">
+        <div class="ModalExcluir-content">
+          <span id="FecharModalExcluir" class="fechar">&times;</span>
+          <h3>Excluir Usuário</h3>
+          <label for="Usuario" id="Usuario" class="LabelUsuario">Realmente deseja Excluir o Usuário?</label>
+          <div class="button-container">
+            <button type="button" id="UsuarioSim" class="UsuarioSim">Sim</button>
+            <button type="button" id="UsuarioNão" class="UsuarioNão">Não</button>
+          </div>
+        </div>
+      </div>
+
+I
+      <div id="ModalLoadingUsuarios" class="ModalLoadingUsuarios">
+        <span id="loaderUsuarios"><img src="/static/imagens/IconeLoading.gif" style="width: 80px; height: 80px;" id="ImagemLoading1">
+      </span>
+      </div>
+    </div>
+
+
+    <div class="Tabelausuarios" >
+        <table border="2"class="TabelaUsuarios" id="TabelaUsuarios"></table>
+      </div>
+
+      <div class="PaginamentoUsuarios">
+        <button type="button" class="ButtonPrimeiraPaginaUsuarios" id="ButtonPrimeiraPaginaUsuarios" title="Primeira Página" >
+            <i class="bi bi-rewind-btn-fill botao-icon"></i>
+        </button>
+
+        <button type="button" class="ButtonPaginaAnteriorUsuarios" id="ButtonPaginaAnteriorUsuarios" title="Página Anterior">
+            <i class="bi bi-caret-left-square-fill"></i>
+            
+        </button>
+
+        <label for="LabelContagemUsuarios" class="LabelContagemUsuarios" id="LabelContagemUsuarios"></label>
+
+        <button type="button" class="ButtonProximaPaginaUsuarios" id="ButtonProximaPaginaUsuarios" title="Próxima Página">
+            <i class="bi bi-caret-right-square-fill"></i>
+        </button>
+
+        <button type="button" class="ButtonUltimaPaginaUsuarios" id="ButtonUltimaPaginaUsuarios" title="Última Página">
+            <i class="bi bi-fast-forward-btn-fill"></i>
+        </button>
+        </div>
+
+    <footer class="Rodape">
+    <p>Grupo Mpl</p>
+    </footer>
+
+    <script>
+        const nomeUsuario = localStorage.getItem('nomeUsuario');
+       document.getElementById("NomeUsuario").textContent = nomeUsuario
+    </script>
+
+</body>
+<script src="/static/js/FuncoesUsuarios.js"></script>
+</html>

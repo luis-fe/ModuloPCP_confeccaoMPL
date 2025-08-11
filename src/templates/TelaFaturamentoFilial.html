@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Faturamento</title>
+    <link rel="stylesheet" href="/static/css/TelaFaturamentoFilial.css">
+</head>
+<body>
+    <div class="Titulo">
+        <h3>FATURAMENTO FILIAL</h3>
+    </div>
+    <div class="Opcoes">
+        <button id="Matriz">Matriz</button>
+        <button id="Filial">Filial</button>
+        <button id="Varejo">Varejo</button>
+        <button id="Geral">Geral</button>
+        <button id="Outros">Outros</button>
+        <label for="on-off">Status:</label>
+        <input type="checkbox" id="on-off" checked style="width: 56px; height: 24px;"> <!-- Ajuste largura e altura conforme necessário -->
+        <span id="status" style="color: white;">MENSAL</span>
+    </div>
+
+    <div class="Informacoes">
+        <div class="Dados">
+            <table border="2" class="TabelaFaturamento" id="TabelaFaturamento"></table>
+            <div class= 'labels'>
+                <label for="text" id="FaturadoDia"></label>
+            </div>
+            <label for="text" id="Retorna"></label>
+        </div>
+        <div class="grafico">
+            <canvas id="meuGraficoDeBarras"></canvas>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/TelaFaturamentoFilial.js"></script>
+<script>
+    const onOffSwitch = document.getElementById("on-off");
+const statusText = document.getElementById("status");
+// Verifique o valor armazenado no localStorage
+
+
+onOffSwitch.addEventListener("change", () => {
+    if (onOffSwitch.checked) {
+        statusText.innerText = "MENSAL";
+        statusText.style.fontSize = "18px"; // Tamanho de fonte desejado para "MENSAL"
+        criarTabelaEmbalagens(DadosFaturamento, 'Faturado', 'meta');
+        createBarChart('Faturado', 'meta');
+        localStorage.setItem("dashboardStatus", "MENSAL");
+        
+    } else {
+        statusText.innerText = "ACUMULADO";
+        statusText.style.fontSize = "18px"; // Tamanho de fonte desejado para "MENSAL"
+        criarTabelaEmbalagens(DadosFaturamento, 'Fat.Acumulado', 'meta acum.');
+        createBarChart('Fat.Acumulado', 'meta acum.');
+        localStorage.setItem("dashboardStatus", "ACUMULADO");
+    }
+});
+
+const localStorageStatus = localStorage.getItem("dashboardStatus");
+
+if (localStorageStatus === "ACUMULADO") {
+    // Se o valor estiver definido como "ACUMULADO", configure o botão para "ACUMULADO"
+    onOffSwitch.checked = false;
+    statusText.innerText = "ACUMULADO";
+    statusText.style.fontSize = "18px"; // Tamanho de fonte desejado para "MENSAL"
+    window.addEventListener('load', async () => {
+    await Faturamento();
+    criarTabelaEmbalagens(DadosFaturamento, 'Fat.Acumulado', 'meta acum.');
+    createBarChart('Fat.Acumulado', 'meta acum.'); 
+    // Use uma função anônima para realizar o redirecionamento após 30 segundos.
+    setTimeout(() => {
+        window.location.href = "TelaFaturamentoVarejo.html";
+    }, 20000);
+});
+
+} else {
+    // Caso contrário, configure o botão para "MENSAL"
+    onOffSwitch.checked = true;
+    statusText.innerText = "MENSAL";
+    statusText.style.fontSize = "18px"; // Tamanho de fonte desejado para "MENSAL"
+    window.addEventListener('load', async () => {
+    await Faturamento();
+    criarTabelaEmbalagens(DadosFaturamento, 'Faturado', 'meta');
+    createBarChart('Faturado', 'meta');
+    // Use uma função anônima para realizar o redirecionamento após 30 segundos.
+    setTimeout(() => {
+        window.location.href = "TelaFaturamentoVarejo.html";
+    }, 20000);
+    
+});}
+</script>
+</html>

@@ -1,0 +1,472 @@
+:root {
+  --cor1: rgb(211, 211, 211);
+  --cor2: rgb(17, 45, 126);
+  --cor3: rgb(93, 140, 233);
+  --cor4: #fff
+}
+
+.TituloPrograma {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: var(--cor2);
+  width: 80%;
+  margin-top: 30px;
+  border: 2px solid var(--cor2);
+  border-radius: 10px;
+  max-height: 45px;
+}
+
+h2 {
+  margin-top: 5px;
+  color: white;
+  font-size: 25px;
+  font-family: Cambria;
+}
+
+.Menu2 {
+  display: flex;
+  justify-content: left;
+  align-items: start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: var(--cor2);
+  width: 80%;
+  margin-top: 20px;
+  border: 2px solid var(--cor2);
+  border-radius: 10px;
+  min-height: 50px;
+}
+
+.Menu2 button {
+  background-color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  font-family: Arial;
+  color: var(--cor2);
+  margin-top: 9px;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.Menu2 button:hover {
+  background-color: lightgray;
+  font-weight: bolder;
+  font-size: 20px;
+  font-family: Arial;
+  color: var(--cor2);
+  margin-top: 9px;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ButtonNovo {
+  margin-left: 20px;
+}
+
+.ButtonEditar {
+  margin-left: 2px;
+}
+
+.ButtonRemover {
+  margin-left: 2px;
+}
+
+.PaginamentoUsuarios {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  background-color: rgb(17, 45, 126);
+  width: 80%;
+  border: 2px solid rgb(17, 45, 126);
+  border-radius: 10px;
+  min-height: 35px;
+  max-height: 35px;
+}
+
+
+.PaginamentoUsuarios botao-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.PaginamentoUsuarios button {
+  
+  width: 40px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid darkgray;
+  color: rgb(17, 45, 126);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#ButtonPaginaAnteriorUsuarios{
+  margin-right: 5px;
+}
+
+#ButtonProximaPaginaUsuarios{
+  margin-left: 5px;
+}
+
+#ButtonExportarExcelUsuarios{
+  margin-left: 10px;
+}
+
+
+.modalNovo {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+}
+
+
+#Usuário {
+  margin-top: 25px;
+}
+
+.modalNovo-content Input {
+  width: 100%;
+  font-size: 25px;
+  font-family: Arial;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  text-align: center;
+  color: black;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.modalNovo-content button {
+  font-size: 25px;
+  font-family: Arial;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  text-align: center;
+  background-color: var(--cor2);
+  color: var(--cor4);
+  margin-top: 20px;
+  cursor: pointer;
+  margin-left: 40%;
+  margin-right: 40%;
+}
+
+
+
+.modalNovo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 25%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  align-items: center;
+  height: 30vh;
+
+}
+
+.modalNovo-content h3 {
+  padding: 20px;
+  background-color: var(--cor2);
+  text-align: center;
+  font-size: px;
+  font-family: Arial;
+  border: 5px;
+  margin: 0;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: var(--cor4);
+}
+
+#Usuario {
+  margin-top: 25px;
+}
+
+.fechar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 3;
+  margin-left: 95%;
+}
+
+.fechar:hover,
+.fechar:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.TabelaUsuarios {
+  border-collapse: collapse;
+  border: 2px solid darkgray;
+  margin-left: 10%;
+  width: 80%;
+  font-size: 25px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.TabelaUsuarios th {
+  background-color: lightgray;
+}
+
+.TabelaUsuarios td {
+  background-color: var(--cor4);
+}
+
+.ModalEditar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+}
+
+.ModalEditar-content Input {
+  position: relative;
+  width: 100%;
+  font-size: 25px;
+  font-family: Arial;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  text-align: center;
+  color: black;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.ModalEditar-content button {
+  font-size: 25px;
+  font-family: Arial;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  text-align: center;
+  background-color: var(--cor2);
+  color: var(--cor4);
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+
+.ModalEditar-content label {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-weight: bold
+}
+
+#LabelSenhasConferidas{
+  display: none;
+  color: red;
+  align-items: center;
+  font-size: 25px;
+}
+
+
+.ModalEditar-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 25%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  align-items: center;
+  height: 35vh;
+}
+
+.ModalEditar-content h3 {
+  padding: 20px;
+  background-color: var(--cor2);
+  text-align: center;
+  font-size: px;
+  font-family: Arial;
+  border: 5px;
+  margin: 0;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: var(--cor4);
+}
+
+
+.ModalExcluir {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+}
+
+#Usuário {
+  margin-top: 25px;
+}
+
+.ModalExcluir-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 25%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  align-items: center;
+}
+
+.ModalExcluir-content h3 {
+  padding: 20px;
+  background-color: var(--cor2);
+  text-align: center;
+  font-size: px;
+  font-family: Arial;
+  border: 5px;
+  margin: 0;
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: var(--cor4);
+}
+
+.ModalExcluir-content label {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ModalExcluir-content button {
+  font-size: 25px;
+  font-family: Arial;
+  border: 2px solid lightgray;
+  border-radius: 5px;
+  background-color: var(--cor2);
+  color: var(--cor4);
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+
+
+.TabelaContainer {
+  border-collapse: collapse;
+  border: 2px solid darkgray;
+  margin-left: 10%;
+  width: 80%;
+  max-width: 1550px;
+  min-height: 600px;
+  max-height: 650px;
+  text-align: center;
+  overflow: auto;
+}
+
+.TabelaContainer .TabelaUsuarios {
+  font-size: 15px;
+  border-collapse: collapse;
+  border: 2px solid darkgray;
+  min-width: 2100px;
+  overflow: auto;
+}
+
+.TabelaContainer .TabelaUsuarios th {
+  background-color: lightgray;
+  max-height: 20px;
+}
+
+.TabelaContainer .TabelaUsuarios td {
+  height: 40px;
+  /* Defina a altura desejada em pixels */
+  vertical-align: middle;
+  /* Centraliza o conteúdo verticalmente */
+  overflow: hidden;
+  /* Oculta o conteúdo extra que ultrapassar a altura definida */
+}
+
+.TabelaContainer .TabelaUsuarios thead {
+  position: sticky;
+    top: 0;
+    background-color: lightgray;
+    z-index: 0;
+    border: 2px solid darkgray;
+}
+
+
+#loaderUsuarios {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+
+.ModalLoadingUsuarios {
+  display: none;
+  /* Oculta o modal por padrão */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Fundo escuro semi-transparente */
+}
+
+
+
+#TabelaUsuarios thead input {
+  max-height: 20px;
+  width: 80%;
+  padding: 5px;
+  border: black solid 2px;
+  border-radius: 10px;
+}
