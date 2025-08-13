@@ -14,6 +14,8 @@
 - Adição do recurso de **Monitor de Pré-Faturamento** no backend (classe `MonitorPedidosOP`)
 - Inclusao de codEmpresa no Plano e no "lote_plano"
 - inserindo api de ordem de producao
+- Incluindo controle de empresa no Monitor Pré Faturamento
+- Incluindo rotas web de frontEnd Visao Metas x Realizado Faturamento
 ---
 ## 1 Objetivo do Projeto
 
