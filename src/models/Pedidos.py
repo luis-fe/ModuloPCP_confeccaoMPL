@@ -113,6 +113,8 @@ class Pedidos():
             self.iniVendas, self.fimVendas = plano.pesquisarInicioFimVendas()
             self.iniFat, self.fimFat = plano.pesquisarInicioFimFat()
 
+
+
         elif padrao_monitor ==True:
 
             self.iniVendas = iniVendas
@@ -207,17 +209,41 @@ class Pedidos():
             df_loaded['situacaobloq'].fillna('Liberado', inplace=True)
             df_loaded = df_loaded[df_loaded['situacaobloq'] == 'Liberado']
 
+        if padrao_monitor == True:
+            # 8 - Incluindo a informacao de Marca no data Frame
+            conditions = [
+                df_loaded['codItemPai'].str.startswith("102"),
+                df_loaded['codItemPai'].str.startswith("302"),
+                df_loaded['codItemPai'].str.startswith("202"),
+                df_loaded['codItemPai'].str.startswith("104"),
+                df_loaded['codItemPai'].str.startswith("304"),
+                df_loaded['codItemPai'].str.startswith("204")
+            ]
+            choices = ["MPOLLO", "MPOLLO","MPOLLO", "PACO","PACO", "PACO"]
+        elif self.codEmpresa == '1':
+            # 8 - Incluindo a informacao de Marca no data Frame
+            conditions = [
+                df_loaded['codItemPai'].str.startswith("102"),
+                df_loaded['codItemPai'].str.startswith("202"),
+                df_loaded['codItemPai'].str.startswith("104"),
+                df_loaded['codItemPai'].str.startswith("204")
+            ]
+            choices = ["MPOLLO", "MPOLLO", "PACO","PACO"]
+        elif self.codEmpresa == '4':
+            # 8 - Incluindo a informacao de Marca no data Frame
+            conditions = [
+                df_loaded['codItemPai'].str.startswith("302"),
+                df_loaded['codItemPai'].str.startswith("402"),
+                df_loaded['codItemPai'].str.startswith("304"),
+                df_loaded['codItemPai'].str.startswith("404")
+            ]
+            choices = ["MPOLLO", "MPOLLO", "PACO","PACO"]
 
-        # 8 - Incluindo a informacao de Marca no data Frame
-        conditions = [
-            df_loaded['codItemPai'].str.startswith("102"),
-            df_loaded['codItemPai'].str.startswith("302"),
-            df_loaded['codItemPai'].str.startswith("202"),
-            df_loaded['codItemPai'].str.startswith("104"),
-            df_loaded['codItemPai'].str.startswith("304"),
-            df_loaded['codItemPai'].str.startswith("204")
-        ]
-        choices = ["MPOLLO", "MPOLLO","MPOLLO", "PACO","PACO", "PACO"]
+
+
+
+
+
         df_loaded['marca'] = np.select(conditions, choices, default="OUTROS")
         df_loaded = df_loaded[df_loaded['marca'] != 'OUTROS']
 
