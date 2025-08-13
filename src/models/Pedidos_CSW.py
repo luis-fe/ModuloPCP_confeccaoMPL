@@ -264,4 +264,150 @@ class Pedidos_CSW():
 
 
 
+    def faturamento_periodo_empresa(self):
+        '''Metodo que busca o faturamento de um determinado periodo no CSW'''
+
+        queryPorEmpresa = f"""
+            SELECT 
+                 n.codTipoDeNota as tiponota, 
+                 n.dataEmissao, 
+                 n.vlrTotal as faturado 
+            FROM
+                 Fat.NotaFiscal n 
+            WHERE
+                n.codPedido >= 0 
+                and n.dataEmissao >= '{self.dataInicioFat}'
+                and n.dataEmissao <= '{self.dataFmFat}'
+                and situacao = 2
+                and codEmpresa = {self.codEmpresa}
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(queryPorEmpresa)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
+
+
+    def faturamento_nota_semPedidos_empresa(self):
+
+        queryPorEmpresa = f"""
+            SELECT 
+                 n.codTipoDeNota as tiponota, 
+                 n.dataEmissao, 
+                 n.vlrTotal as faturado 
+            FROM
+                 Fat.NotaFiscal n 
+            WHERE
+                n.codTipoDeNota in (30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998) 
+                and codPedido is null
+                and n.dataEmissao >= '{self.dataInicioFat}'
+                and n.dataEmissao <= '{self.dataFmFat}'
+                and situacao = 2
+                and codEmpresa = {self.codEmpresa}
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(queryPorEmpresa)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
+
+    def faturamento_periodo_global(self):
+        '''Metodo que busca o faturamento de um determinado periodo no CSW'''
+
+        queryPorEmpresa = f"""
+            SELECT 
+                 n.codTipoDeNota as tiponota, 
+                 n.dataEmissao, 
+                 n.vlrTotal as faturado 
+            FROM
+                 Fat.NotaFiscal n 
+            WHERE
+                n.codPedido >= 0 
+                and n.dataEmissao >= '{self.dataInicioFat}'
+                and n.dataEmissao <= '{self.dataFmFat}'
+                and situacao = 2
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(queryPorEmpresa)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
+
+    def faturamento_nota_semPedidos_global(self):
+
+        queryPorEmpresa = f"""
+            SELECT 
+                 n.codTipoDeNota as tiponota, 
+                 n.dataEmissao, 
+                 n.vlrTotal as faturado 
+            FROM
+                 Fat.NotaFiscal n 
+            WHERE
+                n.codTipoDeNota in (30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998) 
+                and codPedido is null
+                and n.dataEmissao >= '{self.dataInicioFat}'
+                and n.dataEmissao <= '{self.dataFmFat}'
+                and situacao = 2
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(queryPorEmpresa)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
+
+
+
+    def retorna_csw_empresa(self):
+
+        retornaCsw = f"""
+                SELECT  
+                    i.codPedido, 
+                    e.vlrSugestao, 
+                    sum(i.qtdePecasConf) as conf , 
+                    sum(i.qtdeSugerida) as qtde,  
+                    i.codSequencia,  
+                    (SELECT codTipoNota  FROM ped.Pedido p WHERE p.codEmpresa = i.codEmpresa and p.codpedido = i.codPedido) as codigo 
+                FROM 
+                    ped.SugestaoPed e 
+                inner join 
+                    ped.SugestaoPedItem i 
+                    on 
+                        i.codEmpresa = e.codEmpresa 
+                        and i.codPedido = e.codPedido 
+                        and i.codsequencia = e.codsequencia 
+                WHERE 
+                    e.codEmpresa = {self.codEmpresa} 
+                    and e.dataGeracao > '2023-01-01' 
+                    and situacaoSugestao = 2
+                group by 
+                    i.codPedido, e.vlrSugestao,  i.codSequencia 
+                """
+
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(retornaCsw)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+            return consulta
 
