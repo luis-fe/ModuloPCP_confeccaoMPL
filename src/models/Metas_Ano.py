@@ -173,3 +173,25 @@ class Metas_ano():
 
 
         return hora_str
+
+    def GetMetas(self):
+        conn = ConexaoPostgre.conexaoEngine()
+        if self.codEmpresa != 'Todas':
+            consulta = pd.read_sql('select mes as "Mês", meta from "PCP"."DashbordTV".metas '
+                                   "where empresa = %s and ano = %s   order by mes ", conn, params=(self.codEmpresa, self.ano))
+        else:
+            consulta = pd.read_sql('select mes as "Mês", meta from "PCP"."DashbordTV".metas '
+                                   "where ano = %s  order by mes", conn, params=(self.ano ,))
+            consulta = consulta.groupby('Mês').agg({
+                'Mês': 'first',
+                'meta': 'sum'
+
+            })
+
+        consulta['meta acum.'] = consulta['meta'].cumsum()
+
+        consulta.fillna('-', inplace=True)
+        metaTotal = consulta['meta'].sum()
+        consulta['meses'] = consulta['Mês']
+
+        return consulta, metaTotal

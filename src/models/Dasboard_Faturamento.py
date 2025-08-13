@@ -1,11 +1,13 @@
 import os
 import pytz
 from dotenv import load_dotenv, dotenv_values
+import locale
 
 import pandas as pd
 import datetime
 import calendar
 from src.models.Pedidos_CSW import Pedidos_CSW
+from src.models.Metas_Ano import Metas_ano
 
 ''''  Classe responsavel pelo modelo de geraracao de relatorios de faturamento para os dashboards  '''
 class Dashboard_Faturamento():
@@ -89,7 +91,7 @@ class Dashboard_Faturamento():
 
         return pedidos_csw_retorna
 
-    def __obterHoraAtual():
+    def __obterHoraAtual(self):
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.datetime.now(fuso_horario)
         hora_str = agora.strftime('%Y-%m-%d %H:%M:%S')
@@ -187,6 +189,80 @@ class Dashboard_Faturamento():
         df_dia = df_dia.replace('.', ";")
         df_dia = df_dia.replace(',', ".")
         df_dia = df_dia.replace(';', ",")
+
+
+        get_metas_ano = Metas_ano(self.codEmpresa, self.ano)
+        metaMes, metaTotal = get_metas_ano.get_metas()
+
+        metaTotal = "{:,.2f}".format(metaTotal)
+        metaTotal = 'R$ ' + str(metaTotal)
+        metaTotal = metaTotal.replace('.', ";")
+        metaTotal = metaTotal.replace(',', ".")
+        metaTotal = metaTotal.replace(';', ",")
+
+        df_faturamento['meses'] = df_faturamento['Mês']
+
+        df_faturamento = pd.merge(df_faturamento, metaMes, on="meses", how='left')
+        df_faturamento.drop('meses', axis=1, inplace=True)
+        df_faturamento.drop('Mês_x', axis=1, inplace=True)
+        df_faturamento['Mês'] = df_faturamento['Mês_y']
+        df_faturamento.drop('Mês_y', axis=1, inplace=True)
+
+        def format_with_separator(value):
+            return locale.format('%0.2f', value, grouping=True)
+
+        df_faturamento['meta'] = df_faturamento['meta'].apply(format_with_separator)
+
+        df_faturamento['meta acum.'] = df_faturamento['meta acum.'].apply(format_with_separator)
+        df_faturamento['meta'] = df_faturamento['meta'].astype(str)
+        df_faturamento['meta acum.'] = df_faturamento['meta acum.'].astype(str)
+
+        df_faturamento['meta'] = df_faturamento['meta'].str.replace(',', ';')
+        df_faturamento['meta acum.'] = df_faturamento['meta acum.'].str.replace(',', ';')
+
+        df_faturamento['meta'] = df_faturamento['meta'].str.replace('.', ',')
+        df_faturamento['meta acum.'] = df_faturamento['meta acum.'].str.replace('.', ',')
+
+        df_faturamento['meta'] = 'R$ ' + df_faturamento['meta'].str.replace(';', '.')
+        df_faturamento['meta acum.'] = 'R$ ' + df_faturamento['meta acum.'].str.replace(';', '.')
+        df_faturamento['Mês'] = df_faturamento['Mês'].str.split('-', n=1).str[1]
+
+        # Dados que você deseja adicionar
+        new_row = {'Mês': '✈TOTAL', 'meta': metaTotal, 'Faturado': total, 'meta acum.': metaTotal,
+                   'Fat.Acumulado': total}
+
+        # Convertendo o dicionário em um DataFrame
+        new_row_df = pd.DataFrame([new_row])
+
+        # Concatenando o novo DataFrame com o original
+        df_faturamento = pd.concat([df_faturamento, new_row_df], ignore_index=True)
+
+        df_faturamento.fillna('-', inplace=True)
+
+        if self.codEmpresa == 'Todas':
+            data = {
+                '1- Ano:': f'{self.ano}',
+                '2- Empresa:': f'{self.codEmpresa}',
+                '3- No Retorna': f"{retorna}",
+                '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
+                '4- No Dia': f"{df_dia}",
+                '5- TOTAL': f"{total}",
+                '6- Atualizado as': f"{datahora}",
+                '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+            }
+        else:
+            data = {
+                '1- Ano:': f'{self.ano}',
+                '2- Empresa:': f'{self.codEmpresa}',
+                '3- No Retorna': f"{retorna}",
+                '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
+                '4- No Dia': f"{df_dia}",
+                '5- TOTAL': f"{total}",
+                '6- Atualizado as': f"{datahora}",
+                '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+            }
+        return [data]
+
 
 
 

@@ -21,11 +21,11 @@ from src.routes.CronogramaAtividade import CronogramaAtividades_routes
 from src.routes.MonitorPedidos import MonitorPedidos_routes
 from  src.routes.PortalWeb.rotasPlataformaWeb import rotasPlataformaWeb
 from src.routes.Meta_ano import metaAno_routes
+from src.routes.Dashboard_faturamento import dashboard_fat_routes
 
 
 # Importacao das rotas para o blueprint:
 routes_blueprint.register_blueprint(rotasPlataformaWeb)
-
 routes_blueprint.register_blueprint(plano_routes)
 routes_blueprint.register_blueprint(planoLote_routes)
 routes_blueprint.register_blueprint(pedidosPlano_routes)
@@ -39,3 +39,4 @@ routes_blueprint.register_blueprint(OrdemProd_routes)
 routes_blueprint.register_blueprint(CronogramaAtividades_routes)
 routes_blueprint.register_blueprint(MonitorPedidos_routes)
 routes_blueprint.register_blueprint(metaAno_routes)
+routes_blueprint.register_blueprint(dashboard_fat_routes)
