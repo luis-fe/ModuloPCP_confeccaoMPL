@@ -273,7 +273,7 @@ class SimulacaoProg():
         where 
             pa."codEmpresa" = '{self.codEmpresa}'
         order by
-            "nomeABC" asc 
+            "class" asc 
         """
 
         consultaAbcSimulacao = """
