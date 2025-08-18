@@ -267,7 +267,7 @@ class SimulacaoProg():
 
         consultaParamentrosAbc = f"""
         select
-            distinct "nomeABC" as class
+            distinct "class" as class
         from
             pcp."SimulacaoAbc" pa
         where 
