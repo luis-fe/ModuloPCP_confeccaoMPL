@@ -269,7 +269,7 @@ class SimulacaoProg():
         select
             distinct "nomeABC" as class
         from
-            pcp."Plano_ABC" pa
+            pcp."SimulacaoAbc" pa
         where 
             pa."codEmpresa" = '{self.codEmpresa}'
         order by
