@@ -53,9 +53,16 @@ class SimulacaoProg():
         verfica = self.consultaSimulacaoAbc()
 
         if not verfica.empty:
-            update = """
-            update  pcp."SimulacaoAbc" set percentual = %s where "nomeSimulacao" =%s and "class" = %s
-            """
+            update = f"""
+                update  
+                    pcp."SimulacaoAbc" 
+                set 
+                    percentual = %s 
+                where 
+                    "nomeSimulacao" = %s 
+                    and "class" = %s
+                    and "codEmpresa" = '{self.codEmpresa}'
+                       """
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
@@ -65,13 +72,13 @@ class SimulacaoProg():
         else:
 
             insert = """
-            insert into pcp."SimulacaoAbc" ("nomeSimulacao", "class", percentual) values ( %s, %s, %s )
+            insert into pcp."SimulacaoAbc" ("nomeSimulacao", "class", percentual, "codEmpresa") values ( %s, %s, %s, %s )
             """
 
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
-                    curr.execute(insert,(self.nomeSimulacao,self.classAbc, self.perc_abc))
+                    curr.execute(insert,(self.nomeSimulacao,self.classAbc, self.perc_abc, self.codEmpresa))
                     conn.commit()
 
 
