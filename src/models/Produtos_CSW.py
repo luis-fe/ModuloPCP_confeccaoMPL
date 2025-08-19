@@ -162,6 +162,30 @@ class Produtos_CSW():
         return consulta
 
 
+    def obter_engeharia_descricaoPai(self):
+        '''Metodo que obtem os nomes das engenharias no csw '''
+
+
+        sql = f"""
+                Select codEngenharia, descricao from tcp.engenharia 
+                where codEmpresa = 1
+            """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
     def statusAFV(self):
         '''Metodo que consulta o status AFV dos skus '''
 

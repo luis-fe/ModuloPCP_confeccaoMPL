@@ -699,6 +699,12 @@ class Tendencia_Plano():
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
         tendencia = tendencia.groupby(['codItemPai']).agg({'marca':'first'}).reset_index()
 
+        produto = Produtos.Produtos().obter_engeharia_descricaoPai()
+
+        produto.rename(columns={'codEngenharia': 'codItemPai'}, inplace=True)
+
+        tendencia = pd.merge(tendencia, produto, on='codItemPai')
+
         return tendencia
 
 

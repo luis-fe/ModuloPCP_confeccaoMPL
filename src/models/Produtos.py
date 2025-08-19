@@ -214,6 +214,13 @@ class Produtos():
 
         return consulta
 
+    def obter_engeharia_descricaoPai(self):
+        '''Metodo que obtem os tamanhos cadastrados'''
+
+        produto_Csw = Produtos_CSW.Produtos_CSW(self.codEmpresa,None,None)
+        consulta = produto_Csw.obter_engeharia_descricaoPai()
+
+        return consulta
 
     def estMateriaPrima(self):
         '''Metodo que obtem os tamanhos cadastrados'''
