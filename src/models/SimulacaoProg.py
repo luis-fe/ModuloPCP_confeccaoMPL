@@ -267,16 +267,16 @@ class SimulacaoProg():
 
         consultaParamentrosAbc = f"""
         select
-            distinct "class" as class
+            distinct "nomeABC" as class
         from
-            pcp."SimulacaoAbc" pa
+            pcp."Plano_ABC" pa
         where 
             pa."codEmpresa" = '{self.codEmpresa}'
         order by
-            "class" asc 
+            "nomeABC" asc 
         """
 
-        consultaAbcSimulacao = """
+        consultaAbcSimulacao = f"""
         select 
             "class",
             percentual
@@ -284,6 +284,7 @@ class SimulacaoProg():
             pcp."SimulacaoAbc" s 
         Where 
             "nomeSimulacao" = %s 
+            and "codEmpresa" = '{self.codEmpresa}'
         """
 
         consultaCategoriaSimulacao = """
