@@ -702,6 +702,12 @@ class Tendencia_Plano():
         produto = Produtos.Produtos().obter_engeharia_descricaoPai()
 
         produto.rename(columns={'codEngenharia': 'codItemPai'}, inplace=True)
+        produto['codEngenharia'] = (
+            produto['codEngenharia']
+            .str.replace('-0', '', regex=False)  # Remove o sufixo "-0"
+            .str.lstrip('0')  # Remove os zeros à esquerda
+        )
+
 
         tendencia = pd.merge(tendencia, produto, on='codItemPai')
 
