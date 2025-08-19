@@ -695,7 +695,7 @@ class Tendencia_Plano():
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
 
         # Selecionar apenas as colunas 'nome' e 'cidade'
-        tendencia = tendencia[['codItemPai']]
+        tendencia = tendencia[['codItemPai','descricaoPlano']]
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
         tendencia = tendencia.loc[:, ~tendencia.columns.duplicated()]
 
