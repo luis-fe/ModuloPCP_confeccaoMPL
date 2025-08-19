@@ -696,7 +696,7 @@ class Tendencia_Plano():
 
         # Selecionar apenas as colunas 'nome' e 'cidade'
         tendencia = tendencia[['codItemPai']]
-
+        tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
         tendencia = tendencia.loc[:, ~tendencia.columns.duplicated()]
 
         return tendencia
