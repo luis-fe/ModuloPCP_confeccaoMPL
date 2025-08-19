@@ -695,9 +695,9 @@ class Tendencia_Plano():
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
 
         # Selecionar apenas as colunas 'nome' e 'cidade'
-        tendencia = tendencia[['codItemPai','descricaoPlano']]
+        tendencia = tendencia[['codItemPai','marca']]
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
-        tendencia = tendencia.groupby(['codItemPai']).agg({'descricaoPlano':'first'}).reset_index()
+        tendencia = tendencia.groupby(['codItemPai']).agg({'marca':'first'}).reset_index()
 
         return tendencia
 
