@@ -697,7 +697,7 @@ class Tendencia_Plano():
         # Selecionar apenas as colunas 'nome' e 'cidade'
         tendencia = tendencia[['codItemPai','descricaoPlano']]
         tendencia['codItemPai'] = tendencia['codItemPai'].astype(str)
-        tendencia = tendencia.groupby(['codItemPai']).reset_index()
+        tendencia = tendencia.groupby(['codItemPai'])
 
         return tendencia
 
