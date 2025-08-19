@@ -685,3 +685,20 @@ class Tendencia_Plano():
                     conn.commit()
 
 
+
+
+    def obter_produtos_tendencia(self):
+        '''Metodo publico que busca os produtos listados na tendencia'''
+
+        # 2 - Caregar a tendencia congelada
+        caminhoAbsoluto = configApp.localProjeto
+        tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
+
+        # Selecionar apenas as colunas 'nome' e 'cidade'
+        tendencia = tendencia[['codItemPai']]
+
+        tendencia = tendencia.loc[:, ~tendencia.columns.duplicated()]
+
+        return tendencia
+
+
