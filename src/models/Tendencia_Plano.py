@@ -711,6 +711,12 @@ class Tendencia_Plano():
 
         tendencia = pd.merge(tendencia, produto, on='codItemPai')
 
+
+        produtos_simulados = SimulacaoProg.SimulacaoProg(self.nomeSimulacao,',',',',',','',self.codEmpresa).consulta_produtos_simulacao_especifica()
+
+        tendencia =  pd.merge(tendencia,produtos_simulados,on='codItemPai',how='left')
+        tendencia['percentual'].fillna(0,inplace=True)
+
         return tendencia
 
 

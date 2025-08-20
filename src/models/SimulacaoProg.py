@@ -508,6 +508,25 @@ class SimulacaoProg():
 
         return resposta
 
+    def consulta_produtos_simulacao_especifica(self):
+        '''Metodo que busca os produtos de uma simulacao em especifico'''
+
+        consulta = f"""
+            select 
+                "codProduto" as "codItemPai",
+                "percentual"
+            from 
+                pcp."SimulacaoProdutos" sp
+            where
+                sp."codEmpresa" = '{self.codEmpresa}'
+                and  "codProduto" = %s 
+                and "nomeSimulacao" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn, params=(self.nomeSimulacao))
+
+        return consulta
 
 
 
