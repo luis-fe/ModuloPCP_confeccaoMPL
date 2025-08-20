@@ -519,12 +519,11 @@ class SimulacaoProg():
                 pcp."SimulacaoProdutos" sp
             where
                 sp."codEmpresa" = '{self.codEmpresa}'
-                and  "codProduto" = %s 
                 and "nomeSimulacao" = %s
         """
 
         conn = ConexaoPostgre.conexaoEngine()
-        consulta = pd.read_sql(consulta, conn, params=(self.nomeSimulacao))
+        consulta = pd.read_sql(consulta, conn, params=(self.nomeSimulacao,))
 
         return consulta
 
