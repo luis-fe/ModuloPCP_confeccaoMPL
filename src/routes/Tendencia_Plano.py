@@ -155,9 +155,10 @@ def obter_produtos_tendencia():
 
     codPlano = request.args.get('codPlano','-')
     codEmpresa = request.args.get('codEmpresa','1')
+    nomeSimulacao = request.args.get('nomeSimulacao','')
 
 
-    dados = Tendencia_Plano.Tendencia_Plano(codEmpresa,codPlano).obter_produtos_tendencia()
+    dados = Tendencia_Plano.Tendencia_Plano(codEmpresa,codPlano,'',nomeSimulacao).obter_produtos_tendencia()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
