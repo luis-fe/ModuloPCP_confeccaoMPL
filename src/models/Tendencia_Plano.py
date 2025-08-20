@@ -521,6 +521,9 @@ class Tendencia_Plano():
         dfSimulaCategoria = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoCategoria_s()
         dfSimulaMarca = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consultaSimulacaoMarca_s()
 
+        dfSimulacaoProdutos = SimulacaoProg.SimulacaoProg(self.nomeSimulacao).consulta_produtos_simulacao_especifica()
+
+
         # 2 - Caregar a tendencia congelada
         caminhoAbsoluto = configApp.localProjeto
         tendencia = pd.read_csv(f'{caminhoAbsoluto}/dados/tendenciaPlano-{self.codPlano}.csv')
@@ -556,6 +559,11 @@ class Tendencia_Plano():
         tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
 
+        if not dfSimulacaoProdutos.empty:
+            tendencia.rename(columns={'percentualProduto': 'percentual'}, inplace=True)
+            tendencia = pd.merge(tendencia, dfSimulacaoProdutos, on='codItemPai', how='left')
+            tendencia['percentualProduto'].fillna(0, inplace=True)
+            tendencia['percentual'] = tendencia['percentualProduto']
 
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
                 tendencia['previcaoVendas'] - tendencia['qtdeFaturada']+tendencia['SaldoColAnt'])
