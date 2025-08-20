@@ -4,7 +4,7 @@ from src.connection import ConexaoPostgre
 class SimulacaoProg():
     '''Classe utilizada para a simulacao da programacao '''
 
-    def __init__(self, nomeSimulacao = None, classAbc = None, perc_abc = None, categoria = None, marca = None, empresa = '1'):
+    def __init__(self, nomeSimulacao = None, classAbc = None, perc_abc = None, categoria = None, marca = None, empresa = '1', codProduto = ''):
 
         self.nomeSimulacao = nomeSimulacao
         self.classAbc = classAbc
@@ -12,6 +12,7 @@ class SimulacaoProg():
         self.categoria = categoria
         self.marca = marca
         self.codEmpresa = empresa
+        self.codProduto = codProduto
 
     def __inserirSimulacao(self):
         '''metodo que faz a insersao de uma nova simulacao'''
@@ -448,6 +449,79 @@ class SimulacaoProg():
                 conn.commit()
 
         return pd.DataFrame([{'status': True, "mensagem": "Simulacao deletada com sucesso"}])
+
+    def simulacaoProdutos_tendencia(self, arrayProduto, arrayPercentual):
+        '''método que registra os produtos a serem simulados em uma determinada simulacao de tendencia '''
+
+
+        for produto, percentual in zip(arrayProduto, arrayPercentual):
+            consulta = f"""
+                select 
+                    * 
+                from 
+                    pcp."SimulacaoProdutos" sp
+                where
+                    sp."codEmpresa" = '{self.codEmpresa}'
+                    and  "codProduto" = %s 
+                    and "nomeSimulacao" = %s
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+            consulta = pd.read_sql(consulta, conn, params=(produto,self.nomeSimulacao))
+
+
+            if consulta.empty:
+
+                insert = """
+                insert 
+                    into pcp."SimulacaoProdutos" ("codEmpresa", "nomeSimulacao","percentual", "codProduto" )
+                    values ( %s, %s, %s, %s )
+                """
+
+                with ConexaoPostgre.conexaoInsercao() as conn2:
+                    with conn2.cursor() as curr:
+
+                        curr.execute(insert,(self.codEmpresa, self.nomeSimulacao, percentual, produto))
+                        conn2.commit()
+
+            else:
+
+                update = f"""
+                update 
+                    pcp."SimulacaoProdutos"
+                set
+                    "percentual" = %s
+                where
+                    "codEmpresa" = '{self.codEmpresa}'
+                    and "nomeSimulacao" = %s
+                    and "codProduto" = %s
+                """
+
+
+                with ConexaoPostgre.conexaoInsercao() as conn2:
+                    with conn2.cursor() as curr:
+
+                        curr.execute(update,(percentual, self.nomeSimulacao, produto))
+                        conn2.commit()
+
+        resposta = pd.DataFrame([{'Mensagem':f'Produtos Inserirdos e Atualizados com sucessos na simulacao {self.nomeSimulacao}','Status':True}])
+
+        return resposta
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
