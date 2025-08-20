@@ -554,16 +554,18 @@ class Tendencia_Plano():
 
 
         tendencia["percentual"] = tendencia[["percentualABC", "percentualCategoria", "percentualMarca"]].min(axis=1)
-
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
-
-
         if not dfSimulacaoProdutos.empty:
             tendencia.rename(columns={'percentualProduto': 'percentual'}, inplace=True)
             tendencia = pd.merge(tendencia, dfSimulacaoProdutos, on='codItemPai', how='left')
             tendencia['percentualProduto'].fillna(0, inplace=True)
             tendencia['percentual'] = tendencia['percentualProduto']
+
+
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
+        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
+
+
+
 
         tendencia['Prev Sobra'] = (tendencia['emProcesso'] + tendencia['estoqueAtual']) - (
                 tendencia['previcaoVendas'] - tendencia['qtdeFaturada']+tendencia['SaldoColAnt'])
