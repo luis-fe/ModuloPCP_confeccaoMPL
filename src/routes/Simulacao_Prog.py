@@ -144,7 +144,7 @@ def limpar_produtos_simulacao_Especifica():
     empresa = data.get('empresa','1')
 
 
-    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao,'','','','',empresa).limpar_produtos_simulacao_Especifica()
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao,'','','','',empresa,'').limpar_produtos_simulacao_Especifica()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
