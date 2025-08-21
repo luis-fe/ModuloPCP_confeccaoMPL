@@ -537,7 +537,7 @@ class SimulacaoProg():
                 "codEmpresa" = '{self.codEmpresa}'
                 and "nomeSimulacao" = %s
         """
-        print(self.nomeSimulacao)
+        print(f'minha simulacao {self.nomeSimulacao}')
 
         with ConexaoPostgre.conexaoInsercao() as conn2:
             with conn2.cursor() as curr:
