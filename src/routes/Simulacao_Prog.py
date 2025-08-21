@@ -133,3 +133,27 @@ def delete_deletarSimulacao():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@Simulacao_prod_routes.route('/pcp/api/limpar_produtos_simulacao_Especifica', methods=['DELETE'])
+@token_required
+def limpar_produtos_simulacao_Especifica():
+
+    data = request.get_json()
+    nomeSimulacao = data.get('nomeSimulacao')
+    empresa = data.get('empresa','1')
+
+
+    dados = SimulacaoProg.SimulacaoProg(nomeSimulacao,'','','','',empresa).limpar_produtos_simulacao_Especifica()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)

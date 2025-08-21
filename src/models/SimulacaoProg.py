@@ -528,6 +528,25 @@ class SimulacaoProg():
         return consulta
 
 
+    def limpar_produtos_simulacao_Especifica(self):
+        '''Metodo que limpa todos os produtos de uma simulacao em especifico '''
+
+        delete = f"""
+        delete from pcp."SimulacaoProdutos" 
+        where 
+                "codEmpresa" = '{self.codEmpresa}'
+                and "nomeSimulacao" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn2:
+            with conn2.cursor() as curr:
+                curr.execute(delete, (self.nomeSimulacao,))
+                conn2.commit()
+
+
+        return pd.DataFrame([{'Mensagem':'Produtos removidos da simulacao','status':True}])
+
+
 
 
 
