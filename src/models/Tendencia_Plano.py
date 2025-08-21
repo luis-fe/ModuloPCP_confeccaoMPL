@@ -557,6 +557,7 @@ class Tendencia_Plano():
 
         if not dfSimulacaoProdutos.empty:
             dfSimulacaoProdutos.rename(columns={'percentual': 'percentualProduto'}, inplace=True)
+            dfSimulacaoProdutos['percentualProduto'] = dfSimulacaoProdutos['percentualProduto'].astype(int)
             tendencia = pd.merge(tendencia, dfSimulacaoProdutos, on='codItemPai', how='left')
             print(dfSimulacaoProdutos)
             tendencia['percentualProduto'].fillna(0, inplace=True)
