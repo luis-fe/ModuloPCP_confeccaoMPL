@@ -662,6 +662,7 @@ class MonitorPedidosOP():
         pedidos["situacaoPedido"] = pedidos["situacaoPedido"].astype(str)
 
         fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
+
         #except:
             #print(pedidos.columns.tolist())
             #pedidos.to_csv(f'{self.descricaoArquivo}_erro.csv')
