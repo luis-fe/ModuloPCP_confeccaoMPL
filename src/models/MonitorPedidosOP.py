@@ -659,6 +659,8 @@ class MonitorPedidosOP():
 
         #try:
         pedidos['tipoDesconto'] = pedidos['tipoDesconto'].astype('int64')
+        pedidos["situacaoPedido"] = pedidos["situacaoPedido"].astype(str)
+
         fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
         #except:
             #print(pedidos.columns.tolist())
