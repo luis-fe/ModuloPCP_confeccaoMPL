@@ -84,7 +84,7 @@ class ServicoAutomacao():
 
 
 
-    def inserindo_automacao(self):
+    def inserindo_automacao(self, dataHora):
 
         insert = """
         insert into pcp."ControleAutomacao" ("data_hora", "rotina" ) values ( %s , %s )
@@ -95,7 +95,7 @@ class ServicoAutomacao():
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(insert,(self.data_hora, self.rotina))
+                curr.execute(insert,(dataHora, self.rotina))
                 conn.commit()
 
     def obterHoraAtual(self):

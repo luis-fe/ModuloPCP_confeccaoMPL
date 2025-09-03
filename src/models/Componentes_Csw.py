@@ -72,6 +72,5 @@ class Componentes_CSW():
                     del rows, colunas
 
             fp.write('./dados/compVar.parquet', compVar)
-
-            servicoAutomacao.data_hora = servicoAutomacao.obterHoraAtual()
-            servicoAutomacao.inserindo_automacao()
+            dataHora = servicoAutomacao.obterHoraAtual()
+            servicoAutomacao.inserindo_automacao(dataHora)
