@@ -8,7 +8,7 @@ from src.models import Componentes_Csw
 if __name__ == '__main__':
     PID = os.getpid()
     print('inicio servico automacao')
-    tempo = 60*1*60
+    tempo = 60*6*60
     Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
 
 
