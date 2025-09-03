@@ -660,7 +660,8 @@ class MonitorPedidosOP():
         #try:
         pedidos['tipoDesconto'] = pedidos['tipoDesconto'].astype('int64')
         pedidos["situacaoPedido"] = pedidos["situacaoPedido"].astype(str)
-        pedidos["nomeCliente"] = pedidos["nomeCliente"].astype(str)
+        pedidos["nomeCliente"] = pedidos["nomeCliente"].astype(str)#nomeEstado
+        pedidos["nomeEstado"] = pedidos["nomeEstado"].astype(str)
 
         fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
 
