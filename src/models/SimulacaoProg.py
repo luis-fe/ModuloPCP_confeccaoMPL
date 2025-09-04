@@ -529,8 +529,8 @@ class SimulacaoProg():
 
         # Cria um DataFrame a partir do dicionário
         df = pd.DataFrame({
-            'produto': arrayProduto,
-            'NovoPercentual': arrayPercentual
+            'produto': arrayProdutoZerados,
+            'NovoPercentual': arrayPercentualZerados
         })
 
         consulta = pd.merge(consulta, df ,on='produto').reset_index()
@@ -553,9 +553,6 @@ class SimulacaoProg():
 
                         curr.execute(delete,(self.nomeSimulacao, row['produto']))
                         conn.commit()
-
-
-
 
         return consulta
 
