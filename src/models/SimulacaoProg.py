@@ -521,7 +521,6 @@ class SimulacaoProg():
                         where
                             sp."codEmpresa" = '{self.codEmpresa}'
                             and "nomeSimulacao" = %s
-                            and "percentual">0
                     """
 
         conn = ConexaoPostgre.conexaoEngine()
