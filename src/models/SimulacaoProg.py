@@ -573,7 +573,7 @@ class SimulacaoProg():
 
         else:
 
-            tam = consulta.size
+            tam = consulta['produto'].size
             consulta = consulta.loc[0:n]
             resultado = "||".join(consulta.apply(lambda x: f"{x['produto']}:{x['percentual']}%", axis=1))
 
