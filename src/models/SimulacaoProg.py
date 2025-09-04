@@ -508,6 +508,61 @@ class SimulacaoProg():
 
         return resposta
 
+
+
+    def exluindo_simulacao_Produtos_zerados(self, arrayProdutoZerados, arrayPercentualZerados):
+        '''método publico que limpa os produtos zerados da simulacao '''
+        consulta = f"""
+                        select 
+                            "produto", 
+                            "percentual"
+                        from 
+                            pcp."SimulacaoProdutos" sp
+                        where
+                            sp."codEmpresa" = '{self.codEmpresa}'
+                            and "nomeSimulacao" = %s
+                            and "percentual">0
+                    """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn, params=(self.nomeSimulacao,))
+
+        # Cria um DataFrame a partir do dicionário
+        df = pd.DataFrame({
+            'produto': arrayProduto,
+            'NovoPercentual': arrayPercentual
+        })
+
+        consulta = pd.merge(consulta, df ,on='produto').reset_index()
+
+        if not consulta.empty:
+
+            for index, row in consulta.iterrows():
+
+                delete = f"""
+                delete from 
+                    pcp."SimulacaoProdutos"
+                where
+                            sp."codEmpresa" = '{self.codEmpresa}'
+                            and "nomeSimulacao" = %s
+                            and "produto"= %s
+                """
+
+                with ConexaoPostgre.conexaoInsercao() as conn:
+                    with conn.cursor() as curr:
+
+                        curr.execute(delete,(self.nomeSimulacao, row['produto']))
+                        conn.commit()
+
+
+
+
+        return consulta
+
+
+
+
+
     def consulta_produtos_simulacao_especifica(self):
         '''Metodo que busca os produtos de uma simulacao em especifico'''
 
