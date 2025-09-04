@@ -548,7 +548,7 @@ class SimulacaoProg():
         return pd.DataFrame([{'Mensagem':'Produtos removidos da simulacao','status':True}])
 
 
-    def sql_selecacao_produtos_simulacao(self, n=10):
+    def sql_selecacao_produtos_simulacao(self, n=6):
         '''Metodo Publico que verifica os n primeiros numeros selecionados'''
 
 
@@ -573,10 +573,17 @@ class SimulacaoProg():
 
         else:
 
+            tam = consulta.size
             consulta = consulta.loc[0:n]
             resultado = "||".join(consulta.apply(lambda x: f"{x['produto']}:{x['percentual']}%", axis=1))
 
-            return pd.DataFrame([{'mensagem':f'{resultado}...','status':True}])
+            if tam < 6:
+
+                return pd.DataFrame([{'mensagem':f'{resultado}','status':True}])
+
+            else:
+                return pd.DataFrame([{'mensagem':f'{resultado}...','status':True}])
+
 
 
 
