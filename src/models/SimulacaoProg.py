@@ -542,7 +542,7 @@ class SimulacaoProg():
                 delete from 
                     pcp."SimulacaoProdutos"
                 where
-                            sp."codEmpresa" = '{self.codEmpresa}'
+                            "codEmpresa" = '{self.codEmpresa}'
                             and "nomeSimulacao" = %s
                             and "codProduto"= %s
                 """
