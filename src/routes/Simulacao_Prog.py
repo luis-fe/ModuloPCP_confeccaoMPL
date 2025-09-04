@@ -157,9 +157,9 @@ def limpar_produtos_simulacao_Especifica():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
-@Simulacao_prod_routes.route('/pcp/api/selecacao_produtos_simulacao', methods=['GET'])
+@Simulacao_prod_routes.route('/pcp/api/selecao_produtos_simulacao', methods=['GET'])
 @token_required
-def get_selecacao_produtos_simulacao():
+def get_selecao_produtos_simulacao():
 
     nomeSimulacao = request.args.get('nomeSimulacao')
     codEmpresa = request.args.get('codEmpresa','1')
