@@ -514,7 +514,7 @@ class SimulacaoProg():
         '''método publico que limpa os produtos zerados da simulacao '''
         consulta = f"""
                         select 
-                            "produto", 
+                            "codProduto", 
                             "percentual"
                         from 
                             pcp."SimulacaoProdutos" sp
@@ -529,11 +529,11 @@ class SimulacaoProg():
 
         # Cria um DataFrame a partir do dicionário
         df = pd.DataFrame({
-            'produto': arrayProdutoZerados,
+            'codProduto': arrayProdutoZerados,
             'NovoPercentual': arrayPercentualZerados
         })
 
-        consulta = pd.merge(consulta, df ,on='produto').reset_index()
+        consulta = pd.merge(consulta, df ,on='codProduto').reset_index()
 
         if not consulta.empty:
 
@@ -545,13 +545,13 @@ class SimulacaoProg():
                 where
                             sp."codEmpresa" = '{self.codEmpresa}'
                             and "nomeSimulacao" = %s
-                            and "produto"= %s
+                            and "codProduto"= %s
                 """
 
                 with ConexaoPostgre.conexaoInsercao() as conn:
                     with conn.cursor() as curr:
 
-                        curr.execute(delete,(self.nomeSimulacao, row['produto']))
+                        curr.execute(delete,(self.nomeSimulacao, row['codProduto']))
                         conn.commit()
 
         return consulta
