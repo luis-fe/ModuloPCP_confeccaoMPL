@@ -548,6 +548,39 @@ class SimulacaoProg():
         return pd.DataFrame([{'Mensagem':'Produtos removidos da simulacao','status':True}])
 
 
+    def sql_selecacao_produtos_simulacao(self, n=10):
+        '''Metodo Publico que verifica os n primeiros numeros selecionados'''
+
+
+        sql ="""
+        select
+            substring("codProduto",4,5) as produto,
+            percentual
+        from
+            "PCP".pcp."SimulacaoProdutos" sp
+        where 
+            sp."nomeSimulacao" = %s
+            and sp."codEmpresa" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(sql, conn, params=(self.nomeSimulacao, self.codEmpresa))
+
+        if consulta.empty:
+
+            return pd.DataFrame([{'mensagem':'Toodos os produtos Selecionados','status':False}])
+
+        else:
+
+            consulta = consulta.loc[0:n]
+            resultado = "||".join(consulta.apply(lambda x: f"{x['produto']}:{x['percentual']}%", axis=1))
+
+            return pd.DataFrame([{'mensagem':f'{resultado}...','status':True}])
+
+
+
+
 
 
 
