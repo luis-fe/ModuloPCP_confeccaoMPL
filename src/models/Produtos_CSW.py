@@ -218,6 +218,17 @@ class Produtos_CSW():
         del rows
         gc.collect()
 
+        # prioridade: Bloqueado > Acompanhamento
+        prioridade = {"Bloqueado": 1, "Acompanhamento": 2}
+
+        # ordena pela prioridade e pega o primeiro status de cada codReduzido
+        consulta = (
+            consulta
+            .sort_values(by="statusAFV", key=lambda x: x.map(prioridade))
+            .drop_duplicates(subset="codReduzido", keep="first")
+            .reset_index(drop=True)
+        )
+
         return consulta
 
     def sqlEstoqueMP_nomes(self):
