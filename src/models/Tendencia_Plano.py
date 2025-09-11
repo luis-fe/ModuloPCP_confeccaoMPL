@@ -1,4 +1,4 @@
-
+import numpy
 import numpy as np
 from dotenv import load_dotenv
 
@@ -12,7 +12,7 @@ import pytz
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
 
-    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' , DesejaFiltrarSku_semPrev = 'sim' ):
+    def __init__(self, codEmpresa = '1', codPlano = '', consideraPedBloq = '',nomeSimulacao='', codSku ='' , DesejaFiltrarSku_semPrev = 'sim' ,igualarDisponivel=True):
         '''Contrutor da classe '''
         self.codEmpresa = codEmpresa
         self.codPlano = codPlano
@@ -20,6 +20,7 @@ class Tendencia_Plano():
         self.nomeSimulacao = nomeSimulacao
         self.codSku = codSku
         self.DesejaFiltrarSku_semPrev = DesejaFiltrarSku_semPrev
+        self.igualarDisponivel = igualarDisponivel
 
 
     def consultaPlanejamentoABC(self):
@@ -563,9 +564,9 @@ class Tendencia_Plano():
             tendencia['percentualProduto'].fillna(0, inplace=True)
             tendencia['percentual'] = tendencia['percentualProduto']
 
+            tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
+            tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'] * (tendencia['percentual'] / 100)
-        tendencia['previcaoVendas'] = tendencia['previcaoVendas'].round().astype(int)
 
 
 
@@ -575,6 +576,15 @@ class Tendencia_Plano():
 
         tendencia['faltaProg (Tendencia)'] = tendencia['Prev Sobra'].where(
             tendencia['Prev Sobra'] < 0, 0)
+
+        if self.igualarDisponivel==True:
+            tendencia['faltaProg (Tendencia)'] = numpy.where(tendencia['faltaProg (Tendencia)'] < tendencia['disponivel'], tendencia['disponivel'], tendencia['faltaProg (Tendencia)'] )
+
+
+
+
+
+
 
         # 15 - Tratando o valor financeiro
         tendencia['valorVendido'] = tendencia['valorVendido'].apply(self.__formatar_financeiro)
