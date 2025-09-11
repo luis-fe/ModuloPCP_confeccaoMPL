@@ -578,7 +578,7 @@ class Tendencia_Plano():
             tendencia['Prev Sobra'] < 0, 0)
 
         if self.igualarDisponivel==True:
-            tendencia['faltaProg (Tendencia)'] = numpy.where(tendencia['faltaProg (Tendencia)'] < tendencia['disponivel'], tendencia['disponivel'], tendencia['faltaProg (Tendencia)'] )
+            tendencia['faltaProg (Tendencia)'] = numpy.where(tendencia['faltaProg (Tendencia)'] > tendencia['disponivel'], tendencia['disponivel'], tendencia['faltaProg (Tendencia)'] )
 
 
 
