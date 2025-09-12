@@ -186,7 +186,7 @@ def post_simulacaoProgramacao():
     igualarDisponivel = data.get('igualarDisponivel',True)
 
 
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao,'','',igualarDisponivel).simulacaoPeloNome()
+    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao,'','sim',igualarDisponivel).simulacaoPeloNome()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -213,8 +213,10 @@ def post_simulacaoDetalhadaPorSku():
     consideraPedBloq = data.get('consideraPedBloq','nao')
     nomeSimulacao = data.get('nomeSimulacao','')
     codSku = data.get('codSku')
+    igualarDisponivel = data.get('igualarDisponivel',True)
 
-    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao, codSku).detalhaCalculoPrev()
+
+    dados = Tendencia_Plano.Tendencia_Plano(empresa, codPlano,consideraPedBloq,nomeSimulacao, codSku,'sim',igualarDisponivel).detalhaCalculoPrev()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
