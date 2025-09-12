@@ -285,7 +285,9 @@ class Plano():
                 '08- Data Geracao': row['08- Data Geracao'],
                 '09- lotes': row['lote'],
                 '10- nomelote': row['nomelote'],
-                '11-TipoNotas': row['tipoNota']
+                '11-TipoNotas': row['tipoNota'],
+                '12-metaFinanceira': row['metaFinanceira']
+
             }
             result.append(entry)
 
