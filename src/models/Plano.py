@@ -244,13 +244,32 @@ class Plano():
         merged = pd.merge(planos, lotes, on='01- Codigo Plano', how='left')
         merged = pd.merge(merged, TipoNotas, on='01- Codigo Plano', how='left')
 
+        metaPlano = """        
+        select 
+            "codPlano" as "'01- Codigo Plano'",
+            sum("metaFinanceira"::float) as "metaFinanceira" ,
+            sum("metaPecas"::float) as "metaPecas"
+        from
+            "pcp"."Metas"
+        where
+            "codPlano" = '4'
+        group by "codPlano" """
+
+        metaPlano = pd.read_sql(metaPlano, conn, params=(self.codPlano,))
+
+        merged = pd.merge(merged, metaPlano, on='01- Codigo Plano', how='left')
+
+
+
         # Agrupa mantendo todas as colunas do DataFrame planos e transforma lotes e nomelote em arrays
         grouped = merged.groupby(['01- Codigo Plano', '02- Descricao do Plano', '03- Inicio Venda', '04- Final Venda',
                                   '05- Inicio Faturamento', '06- Final Faturamento', '07- Usuario Gerador',
                                   '08- Data Geracao']).agg({
             'lote': lambda x: list(x.dropna().astype(str).unique()),
             'nomelote': lambda x: list(x.dropna().astype(str).unique()),
-            'tipoNota': lambda x: list(x.dropna().astype(str).unique())
+            'tipoNota': lambda x: list(x.dropna().astype(str).unique()),
+            'metaFinanceira': lambda x: list(x.dropna().astype(str).unique())
+
         }).reset_index()
 
         result = []
