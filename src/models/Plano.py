@@ -246,7 +246,7 @@ class Plano():
 
         metaPlano = """        
         select 
-            "codPlano" as "'01- Codigo Plano'",
+            "codPlano" as "01- Codigo Plano",
             sum("metaFinanceira"::float) as "metaFinanceira" ,
             sum("metaPecas"::float) as "metaPecas"
         from
