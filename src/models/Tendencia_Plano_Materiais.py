@@ -784,7 +784,7 @@ class Tendencia_Plano_Materiais():
         agora_formatado = agora.strftime('%d/%m/%Y %H:%M')
         return agora_formatado
 
-    def estrutura_ItensCongelada(self, simula = 'nao'):
+    def estrutura_ItensCongelada(self, simula = 'nao',iguualrDisponivel=True):
         '''Metodo que extrai a analise de necessidades com congelamento '''
         caminho_absoluto2 = configApp.localProjeto
         produtos = Produtos.Produtos(self.codEmpresa)
@@ -799,7 +799,7 @@ class Tendencia_Plano_Materiais():
 
             #1.2 Calcula uma nova Simulacao e agrupa por codReduzido
             sqlMetas = Tendencia_Plano.Tendencia_Plano(self.codEmpresa, self.codPlano,
-                                                       self.consideraPedBloq, self.nomeSimulacao).simulacaoPeloNome()
+                                                       self.consideraPedBloq, self.nomeSimulacao,'','sim',iguualrDisponivel).simulacaoPeloNome()
             sqlMetas = sqlMetas.groupby(['codReduzido']).agg({
             "previcaoVendas":"first",
             "faltaProg (Tendencia)":"first",
