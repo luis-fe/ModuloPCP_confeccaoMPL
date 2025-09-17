@@ -667,6 +667,7 @@ class MonitorPedidosOP():
         pedidos["categoria"] = pedidos["categoria"].astype(str)
         pedidos["marca"] = pedidos["marca"].astype(str)
         pedidos["codSeqTamanho2"] = pedidos["codSeqTamanho2"].astype(str)
+        pedidos["tam"] = pedidos["tam"].astype(str)
 
 
 
