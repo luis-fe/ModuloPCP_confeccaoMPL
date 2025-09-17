@@ -268,7 +268,8 @@ class Plano():
             'lote': lambda x: list(x.dropna().astype(str).unique()),
             'nomelote': lambda x: list(x.dropna().astype(str).unique()),
             'tipoNota': lambda x: list(x.dropna().astype(str).unique()),
-            'metaFinanceira': lambda x: list(x.dropna().astype(str).unique())
+            'metaFinanceira': lambda x: list(x.dropna().astype(str).unique()),
+            'metaPecas': lambda x: list(x.dropna().astype(str).unique())
 
         }).reset_index()
 
@@ -286,7 +287,8 @@ class Plano():
                 '09- lotes': row['lote'],
                 '10- nomelote': row['nomelote'],
                 '11-TipoNotas': row['tipoNota'],
-                '12-metaFinanceira': row['metaFinanceira']
+                '12-metaFinanceira': row['metaFinanceira'],
+                '13-metaPecas': row['metaPecas']
 
             }
             result.append(entry)
