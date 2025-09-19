@@ -655,8 +655,12 @@ class Tendencia_Plano():
         caminho = Path(f"{caminhoAbsoluto}/dados/pedidos.parquet")
 
         # pega a data/hora do arquivo
-        data_horaPedidos = datetime.fromtimestamp(caminho.stat().st_mtime).strftime("%d/%m/%Y %H:%M:%S")
+        # timezone do Brasil
+        tz_brasil = pytz.timezone("America/Sao_Paulo")
 
+        data_horaPedidos = datetime.fromtimestamp(
+            caminho.stat().st_mtime, tz=tz_brasil
+        ).strftime("%d/%m/%Y %H:%M:%S")
         sql = """
         select 
             "DataHora", "codPlano" 
