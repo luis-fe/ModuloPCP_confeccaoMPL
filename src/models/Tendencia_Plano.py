@@ -684,7 +684,7 @@ class Tendencia_Plano():
             return pd.DataFrame([{
                 'Mensagem': f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',
                 'status': True,
-                'dataHora': sql["DataHora"][0].strftime("%d/%m/%Y %H:%M:%S"),
+                'dataHora': sql["DataHora"][0],
                 'dataHoraPedidos': data_horaPedidos
             }])
 
