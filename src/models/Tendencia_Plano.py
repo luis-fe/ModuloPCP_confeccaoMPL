@@ -666,11 +666,11 @@ class Tendencia_Plano():
 
             if sql.empty:
 
-                return pd.DataFrame([{'Mensagem':f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}','status':False}])
+                return pd.DataFrame([{'Mensagem':f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}','status':False,'dataHora':'-'}])
 
             else:
 
-                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',"status":True}])
+                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',"status":True,'dataHora':sql["DataHora"][0]}])
 
     def atualizando_InserindoTendencia(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
