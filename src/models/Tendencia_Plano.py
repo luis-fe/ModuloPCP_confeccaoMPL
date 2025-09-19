@@ -653,6 +653,7 @@ class Tendencia_Plano():
         '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
         caminhoAbsoluto = configApp.localProjeto
         caminho = Path(f"{caminhoAbsoluto}/dados/pedidos.parquet")
+        caminho2 = Path(f"{caminhoAbsoluto}/dados/compVar.parquet")
 
         # pega a data/hora do arquivo
         # timezone do Brasil
@@ -661,6 +662,15 @@ class Tendencia_Plano():
         data_horaPedidos = datetime.fromtimestamp(
             caminho.stat().st_mtime, tz=tz_brasil
         ).strftime("%d/%m/%Y %H:%M:%S")
+
+        data_horaEstruturaMP = datetime.fromtimestamp(
+            caminho2.stat().st_mtime, tz=tz_brasil
+        ).strftime("%d/%m/%Y %H:%M:%S")
+
+
+
+
+
         sql = """
         select 
             "DataHora", "codPlano" 
@@ -682,14 +692,17 @@ class Tendencia_Plano():
                 'Mensagem': f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}',
                 'status': False,
                 'dataHora': '-',
-                'dataHoraPedidos': data_horaPedidos
+                'dataHoraPedidos': data_horaPedidos,
+                'data_horaEstruturaMP': data_horaEstruturaMP
+
             }])
         else:
             return pd.DataFrame([{
                 'Mensagem': f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',
                 'status': True,
                 'dataHora': sql["DataHora"][0],
-                'dataHoraPedidos': data_horaPedidos
+                'dataHoraPedidos': data_horaPedidos,
+                'data_horaEstruturaMP': data_horaEstruturaMP
             }])
 
     def atualizando_InserindoTendencia(self):
