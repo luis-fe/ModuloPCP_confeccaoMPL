@@ -1,13 +1,14 @@
 import numpy
 import numpy as np
 from dotenv import load_dotenv
-
+from pathlib import Path
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
 from src.models import Pedidos, Produtos, Meta_Plano, SimulacaoProg
 from datetime import datetime, timedelta
 import pandas as pd
 import pytz
+
 
 class Tendencia_Plano():
     """Classe que gerencia o processo de Calculo de Tendencia de um plano """
@@ -647,6 +648,9 @@ class Tendencia_Plano():
 
     def obtendoUltimaTendencia(self):
             '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
+            caminhoAbsoluto = configApp.localProjeto
+            caminho = f"{caminhoAbsoluto}/dados/pedidos.parquet"
+            data_horaPedidos = datetime.fromtimestamp(caminho.stat().st_mtime)
 
             sql = """
             select 
@@ -666,11 +670,13 @@ class Tendencia_Plano():
 
             if sql.empty:
 
-                return pd.DataFrame([{'Mensagem':f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}','status':False,'dataHora':'-'}])
+                return pd.DataFrame([{'Mensagem':f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}','status':False,'dataHora':'-',
+                                      'dataHoraPedidos':data_horaPedidos}])
 
             else:
 
-                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',"status":True,'dataHora':sql["DataHora"][0]}])
+                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',"status":True,
+                                      'dataHora':sql["DataHora"][0],'dataHoraPedidos':data_horaPedidos}])
 
     def atualizando_InserindoTendencia(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
