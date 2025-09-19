@@ -645,38 +645,48 @@ class Tendencia_Plano():
 
             return tendencia
 
+    from pathlib import Path
+    from datetime import datetime
+    import pandas as pd
 
     def obtendoUltimaTendencia(self):
-            '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
-            caminhoAbsoluto = configApp.localProjeto
-            caminho = f"{caminhoAbsoluto}/dados/pedidos.parquet"
-            data_horaPedidos = datetime.fromtimestamp(caminho.stat().st_mtime)
+        '''Método que obtem a data e hora da ultima analise de acordo com o Plano escolhido'''
+        caminhoAbsoluto = configApp.localProjeto
+        caminho = Path(f"{caminhoAbsoluto}/dados/pedidos.parquet")
 
-            sql = """
-            select 
-                "DataHora", "codPlano" 
-            from 
-                pcp."controleServicos"
-            where 
-                "codPlano"  = %s
-                and "Servico" = 'Tendencia'
-            order by 
-                "DataHora" desc
-            """
+        # pega a data/hora do arquivo
+        data_horaPedidos = datetime.fromtimestamp(caminho.stat().st_mtime).strftime("%d/%m/%Y %H:%M:%S")
 
-            conn = ConexaoPostgre.conexaoEngine()
+        sql = """
+        select 
+            "DataHora", "codPlano" 
+        from 
+            pcp."controleServicos"
+        where 
+            "codPlano"  = %s
+            and "Servico" = 'Tendencia'
+        order by 
+            "DataHora" desc
+        """
 
-            sql = pd.read_sql(sql, conn, params=(self.codPlano,))
+        conn = ConexaoPostgre.conexaoEngine()
 
-            if sql.empty:
+        sql = pd.read_sql(sql, conn, params=(self.codPlano,))
 
-                return pd.DataFrame([{'Mensagem':f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}','status':False,'dataHora':'-',
-                                      'dataHoraPedidos':data_horaPedidos}])
-
-            else:
-
-                return pd.DataFrame([{'Mensagem':f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',"status":True,
-                                      'dataHora':sql["DataHora"][0],'dataHoraPedidos':data_horaPedidos}])
+        if sql.empty:
+            return pd.DataFrame([{
+                'Mensagem': f'Cálculo da Tendencia nunca foi calculado para o plano {self.codPlano}',
+                'status': False,
+                'dataHora': '-',
+                'dataHoraPedidos': data_horaPedidos
+            }])
+        else:
+            return pd.DataFrame([{
+                'Mensagem': f'Último cálculo feito em {sql["DataHora"][0]}, deseja recalcular a TENDÊNCIA ?',
+                'status': True,
+                'dataHora': sql["DataHora"][0].strftime("%d/%m/%Y %H:%M:%S"),
+                'dataHoraPedidos': data_horaPedidos
+            }])
 
     def atualizando_InserindoTendencia(self):
         '''Método que atualiza a dataHora do Cálculo da Analise de Materiais '''
