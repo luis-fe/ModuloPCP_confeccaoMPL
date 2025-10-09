@@ -13,6 +13,23 @@ class Tags_apontada_defeitos():
         self.n_dias_historico = n_dias_historico
 
 
+    def motivos_csw(self):
+        '''Metodo que busca os motivos cadastros no csw'''
+
+        motivos = f"""
+            SELECT 
+                codMotivo as motivo2Qualidade , 
+                nome, 
+                codOrigem,
+                (SELECT o.nome from tcp.OrgSegQualidade o WHERE o.empresa = {self.codEmpresa}  and o.codorigem = m.codorigem) as nomeOrigem
+            FROM 
+                tcp.Mot2Qualidade m 
+            WHERE 
+                m.Empresa = {self.codEmpresa} 
+                """
+
+        return motivos
+
     def tags_defeitos_n_dias_anteriores(self):
         '''metodo publico que busca no erp csw as tags dos ultimos n dias com defeito apontado'''
 
@@ -75,9 +92,12 @@ class Tags_apontada_defeitos():
                 dados_tags_defeito = dados_tags_defeito[dados_tags_defeito['excluir'] =='-']
                 dados_tags_defeito.drop('excluir', axis=1, inplace=True)
 
+                motivos = self.motivos_csw()
+                dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
+
                 dataHora = servicoAutomacao.obterHoraAtual()
                 servicoAutomacao.inserindo_automacao(dataHora)
-                ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
+                ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'replace')
 
     def __renovando_historico_Tags(self):
         '''Metodo privado que exclui as tags para realizar a RENOVACAO'''
