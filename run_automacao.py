@@ -9,7 +9,8 @@ if __name__ == '__main__':
     PID = os.getpid()
     print('inicio servico automacao')
     tempo = 60*6*60
-    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo).tags_defeitos_n_dias_anteriores()
+    tempo_tags = 60*10
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags).inserindo_informacoes_tag_postgre()
     Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
 
 
