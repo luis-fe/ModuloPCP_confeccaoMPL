@@ -27,8 +27,16 @@ class Tags_apontada_defeitos():
             WHERE 
                 m.Empresa = {self.codEmpresa} 
                 """
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(sql)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                motivos = pd.DataFrame(rows, columns=colunas)
+                del rows, colunas
 
-        return motivos
+            return motivos
 
     def tags_defeitos_n_dias_anteriores(self):
         '''metodo publico que busca no erp csw as tags dos ultimos n dias com defeito apontado'''
