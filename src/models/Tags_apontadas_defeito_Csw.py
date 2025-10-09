@@ -94,6 +94,7 @@ class Tags_apontada_defeitos():
 
                 motivos = self.motivos_csw()
                 dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
+                print(dados_tags_defeito)
 
                 dataHora = servicoAutomacao.obterHoraAtual()
                 servicoAutomacao.inserindo_automacao(dataHora)
