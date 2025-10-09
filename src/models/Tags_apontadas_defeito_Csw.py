@@ -30,7 +30,7 @@ class Tags_apontada_defeitos():
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor_csw:
                 # Executa a primeira consulta e armazena os resultados
-                cursor_csw.execute(sql)
+                cursor_csw.execute(motivos)
                 colunas = [desc[0] for desc in cursor_csw.description]
                 rows = cursor_csw.fetchall()
                 motivos = pd.DataFrame(rows, columns=colunas)
