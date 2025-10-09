@@ -73,6 +73,7 @@ class Tags_apontada_defeitos():
                 dados_tags_defeito = pd.merge(dados_tags_defeito,historico,on='numeroOP',how='left')
                 dados_tags_defeito.fillna('-',inplace=True)
                 dados_tags_defeito = dados_tags_defeito[dados_tags_defeito['excluir'] =='-'].reset_index()
+                dados_tags_defeito.drop('excluir', axis=1, inplace=True)
 
                 dataHora = servicoAutomacao.obterHoraAtual()
                 servicoAutomacao.inserindo_automacao(dataHora)
