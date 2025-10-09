@@ -1,7 +1,7 @@
 import os
 import sys
 import psutil
-from src.models import Componentes_Csw
+from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw
 
 
 
@@ -9,6 +9,7 @@ if __name__ == '__main__':
     PID = os.getpid()
     print('inicio servico automacao')
     tempo = 60*6*60
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo).tags_defeitos_n_dias_anteriores()
     Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
 
 

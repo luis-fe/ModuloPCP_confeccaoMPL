@@ -112,3 +112,20 @@ def Funcao_InserirBackup (df_tags, tamanho,tabela, metodo):
     for i in range(0, len(df_tags), chunksize):
         df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='backup')
 
+
+def Funcao_InserirPCPMatriz (df_tags, tamanho,tabela, metodo):
+    # Configurações de conexão ao banco de dados
+    database = "PCP"
+    user = "postgres"
+    password = os.getenv('POSTGRES_PASSWORD_SRV1')
+    host = os.getenv('POSTGRES_HOST_SRV1')
+    port = os.getenv('POSTGRES_PORT')
+
+# Cria conexão ao banco de dados usando SQLAlchemy
+    engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
+
+    # Inserir dados em lotes
+    chunksize = tamanho
+    for i in range(0, len(df_tags), chunksize):
+        df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')
+
