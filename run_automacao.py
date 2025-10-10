@@ -1,13 +1,25 @@
 import os
 import sys
+from datetime import datetime
+
 import psutil
+import pytz
+
 from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw
+
+
+def obterHoraAtual():
+    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+    agora = datetime.now(fuso_horario)
+    agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+    return agora
 
 
 
 if __name__ == '__main__':
     PID = os.getpid()
-    print('inicio servico automacao')
+    data = obterHoraAtual()
+    print(f'inicio servico automacao - {data}')
     tempo = 60*6*60
     tempo_tags = 60*10
     Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags).inserindo_informacoes_tag_postgre()

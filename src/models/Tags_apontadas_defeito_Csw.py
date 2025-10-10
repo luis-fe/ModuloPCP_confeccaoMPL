@@ -103,12 +103,11 @@ class Tags_apontada_defeitos():
                 motivos = self.motivos_csw()
 
                 dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
-                print(dados_tags_defeito)
 
                 if dados_tags_defeito['numeroOP'].size > 0:
                     dataHora = servicoAutomacao.obterHoraAtual()
                     servicoAutomacao.inserindo_automacao(dataHora)
-                    ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'replace')
+                    ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
 
     def __renovando_historico_Tags(self):
         '''Metodo privado que exclui as tags para realizar a RENOVACAO'''
