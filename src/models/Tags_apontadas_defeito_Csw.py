@@ -1,4 +1,8 @@
+from datetime import datetime
+
 import pandas as pd
+import pytz
+
 from src.connection import ConexaoERP, ConexaoPostgre
 from src.models import ServicoAutomacao
 
@@ -107,6 +111,8 @@ class Tags_apontada_defeitos():
                 if dados_tags_defeito['numeroOP'].size > 0:
                     dataHora = servicoAutomacao.obterHoraAtual()
                     servicoAutomacao.inserindo_automacao(dataHora)
+                    dados_tags_defeito['data_hora'] = self.obterHoraAtual()
+
                     ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
 
     def __renovando_historico_Tags(self):
@@ -124,6 +130,12 @@ class Tags_apontada_defeitos():
 
 
         return consulta
+
+    def obterHoraAtual(self):
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+        return agora
 
 
 

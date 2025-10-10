@@ -22,7 +22,7 @@ if __name__ == '__main__':
     print(f'inicio servico automacao - {data}')
     tempo = 60*6*60
     tempo_tags = 60*10
-    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags).inserindo_informacoes_tag_postgre()
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags, 20).inserindo_informacoes_tag_postgre()
     Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
 
 
