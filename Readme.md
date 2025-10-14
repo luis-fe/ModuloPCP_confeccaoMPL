@@ -4,18 +4,14 @@
 - **Tipo de Projeto:** Backend  
 - **Framework:** Flask (Python)  
 - **Criador:** Luís Fernando Gonçalves de Lima Machado  
-- **Versão Produção:** 1.2 (Homologado em 23/06/2025)
+- **Versão Produção:** 2.0 (Homologado em 23/10/2025)
 
 ---
 
 ## Path Atualizacao
 
-- Inclusão de novas categorias de matéria-prima no código
-- Adição do recurso de **Monitor de Pré-Faturamento** no backend (classe `MonitorPedidosOP`)
-- Inclusao de codEmpresa no Plano e no "lote_plano"
-- inserindo api de ordem de producao
-- Incluindo controle de empresa no Monitor Pré Faturamento
-- Incluindo rotas web de frontEnd Visao Metas x Realizado Faturamento
+- Inclusão do modulo de automação, onde é controlado os serviços de automacao entre o ERP CSW x Sistema PCP;
+
 ---
 ## 1 Objetivo do Projeto
 
@@ -79,5 +75,27 @@ Este projeto é um **microserviço backend** que conecta-se ao ERP da empresa e 
 | /dados/EstruturacaoPrevisao<br>{self.codPlano}.csv</br>                                                    | Congelada para a performance na rotina de Analise de Materiais . Reutilizado-a nas APIs de detalhamento e congelamento da Analise .                                     | POST<br>"{URL-BASE}/pcp/api<br>/DetalhaNecessidade"<br></br>POST<br>"{URL-BASE}/pcp/api<br>/AnaliseMateriaisPelaTendencia" (BODY: congelar:True) |
 | /dados/EstruturacaoPrevisao<br>{self.codPlano}</br>_Simulacao{self.nomeSimulacao}.csv</br>                 | Congelada para a performance na rotina de Analise de Materiais baseado em Simulação. Reutilizado-a nas APIs de detalhamento e congelamento da Analise (por Simulacao) . | POST<br>"{URL-BASE}/pcp/api<br>/DetalhaNecessidade" (BODY: nomeSimulacao: xxx)                                                                  |
 
+## 5 - SERVIÇO DE AUTOMACAO:
 
+### 5.1 - OBJETIVO:
+    O Objetivo do serviço de Automacao é buscar informacoes do ERP Csw a cada "n_minutos" (de acordo com a necessidade do serviço);
+
+### 5.2 - Serviços Ativos:
+| Serviço                            | Classe Intergradora com Csw    | Intervalo de Tempo         |
+|------------------------------------|--------------------------------|----------------------------|
+| Modulo de Dados Tags - 2 Qualidade | Aut_tags_apontadas_defeito_Csw.py | A cada 20 minutos          |
+| Modulo de Dados - Ordem Producao   | Aut_ordem_prod_Csw.py          | A cada 15 minutos          |
+| Modulo de Dados - MateriaPrima     | Aut_comp_var_Csw.py            | A cada (60 * 5) minutos    |
+| Modulo de Dados - Pedidos          | Aut_pedidos__Csw.py            | A cada 60 minutos          |
+
+### 5.3 - Iniciando o Serviço de Automacao: 
+
+    O Arquivo run_automacao.py - é o inicializador da aplicacao de Automacao. 
+    
+    Nele existe o serviço de agendados, inicia-se  um PID que a cada ciclo vai sendo renovado, sincroinizado com o Sistema 
+    Operacional LINUX_Ubuntu. 
+
+### 5.4 Gerenciamento das Atualizações:
+
+    O Gerenciamento das atualizacoes ocorre via SQL na tabela pcp."ControleAutomacao", que mostra o historico e controle dos serviços de automacao.
             
