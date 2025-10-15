@@ -98,4 +98,4 @@ Este projeto é um **microserviço backend** que conecta-se ao ERP da empresa e 
 ### 5.4 Gerenciamento das Atualizações:
 
     O Gerenciamento das atualizacoes ocorre via SQL na tabela pcp."ControleAutomacao", que mostra o historico e controle dos serviços de automacao.
-            
+##### ![Exemplo de Diretorio dados.png](docsProject%2FModeloBanco_Automacao.png)

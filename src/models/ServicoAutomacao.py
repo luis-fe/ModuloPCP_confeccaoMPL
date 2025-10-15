@@ -1,13 +1,11 @@
 from datetime import datetime
-
 import pytz
-
 from src.connection import ConexaoPostgre
 import pandas as pd
 
 
 class ServicoAutomacao():
-
+    '''Classe responsabel por gerenciar o serviço de Automacao '''
     def __init__(self, data_hora = '', rotina = ''):
 
         self.data_hora = data_hora
