@@ -88,9 +88,9 @@ class Tags_apontada_defeitos():
             return dados_tags_defeito
     def inserindo_informacoes_tag_postgre(self):
             '''Metodo publico que insere informacoes levantadas no postgre'''
-            servicoAutomacao = ServicoAutomacao.ServicoAutomacao('',
+            servicoAutomacao = ServicoAutomacao.ServicoAutomacao('1',
                                                                  f'Busca de tags dos ultimos {str(self.n_dias_historico)} dias')
-            self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_rotina()
+            self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
             print(f'ultima atualizacao {self.ultima_atualizacao}')
 
             if self.ultima_atualizacao > self.intervalo_automacao:

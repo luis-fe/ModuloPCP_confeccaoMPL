@@ -6,23 +6,34 @@ import pandas as pd
 
 class ServicoAutomacao():
     '''Classe responsabel por gerenciar o serviço de Automacao '''
-    def __init__(self, data_hora = '', rotina = ''):
+    def __init__(self, idServico ='', descricaoServico = '', periodoInicial = "",periodoFinal = ""):
 
-        self.data_hora = data_hora
+        # 1 - No processo de criacao verifica a dataHora Atual do Sistema Operacional
         self.data_hora_atual = self.obterHoraAtual()
-        self.rotina = rotina
+
+        self.idServico = idServico
+        self.descricaoServico = descricaoServico
+        self.periodoInicial = periodoInicial
+        self.periodoFinal = periodoFinal
 
 
 
 
     def obtendo_historico_automacao(self):
+        '''Metodo Publico para obter o historico dos serviços de automacao no periodo'''
 
         sql = """
                 select
-                    rotina,
-                    data_hora
+                    c."idServico",
+                    "dataAtualizacao",
+                    s."descricaoServico" 
                 from
-                    "PCP".pcp."ControleAutomacao"
+                    pcp."ControleAutomacao" c
+                inner join 
+                    pcp."ServicoAutomacao" s
+                on 
+                    s."idServico" = c."idServico"
+                order by "dataAtualizacao" desc
         """
 
 
@@ -32,16 +43,22 @@ class ServicoAutomacao():
 
         return consulta
 
-    def obtendo_historico_automacao_rotina(self):
+    def obtendo_historico_automacao_servico(self):
+        '''Metodo Publico que obtem o historico  de movimentacao serviço  especifico, em um determinado periodo'''
         sql = f"""
                 select
-                    rotina,
-                    data_hora
+                    c."idServico",
+                    "dataAtualizacao",
+                    s."descricaoServico" 
                 from
-                    "PCP".pcp."ControleAutomacao"
+                    pcp."ControleAutomacao" c
+                inner join 
+                    pcp."ServicoAutomacao" s
+                on 
+                    s."idServico" = c."idServico"
                 where 
-                    rotina = '{self.rotina}'
-                order by data_hora desc
+                    "descricaoServico" = '{self.descricaoServico}'
+                order by "dataAtualizacao" desc
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -52,8 +69,9 @@ class ServicoAutomacao():
 
 
     def obtendo_ultima_atualizacao_rotina(self):
+        """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
 
-        consulta = self.obtendo_historico_automacao_rotina()
+        consulta = self.obtendo_historico_automacao_servico()
 
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'
@@ -64,7 +82,11 @@ class ServicoAutomacao():
         return ultimo
 
 
-    def obtentendo_intervalo_atualizacao_rotina(self):
+    def obtentendo_intervalo_atualizacao_servico(self):
+        '''Metodo publico que obtem o Intervalo entre a data atual x ultima atualizacao de um Servuco especifico e
+        return: interval - minutos
+        '''
+
         # Converte as strings para objetos datetime
         data1_obj = datetime.strptime(self.obterHoraAtual(), "%Y-%m-%d %H:%M:%S")
 
@@ -83,27 +105,43 @@ class ServicoAutomacao():
 
 
     def inserindo_automacao(self, dataHora):
+        '''Metodo publico que inseri a automacao'''
 
         insert = """
-        insert into pcp."ControleAutomacao" ("data_hora", "rotina" ) values ( %s , %s )
+        insert into pcp."ControleAutomacao" 
+        (
+	        "idServico",
+	        "dataAtualizacao",
+	        "statusAutomacao",
+	        "mediaUsoRam"
+        ) values ( 
+            %s , 
+            %s ,
+            %s ,
+            %s  
+        )
         """
-
-
 
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(insert,(dataHora, self.rotina))
+                curr.execute(insert,(self.idServico, dataHora, 'Finalizado',''))
                 conn.commit()
 
     def obterHoraAtual(self):
-
+        """Metodo publico que obtem a data e hora da ultima atualizacao do sistema Operacional """
 
 
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d %H:%M:%S')
         return agora
+
+
+    def exluir_historico_antes_quarentena(self):
+        '''Metodo publico que exluir o historico dos serviços da data anterior a 40 dias do dia atual,
+        para economia de espaço no banco de dados do projeto
+        '''
 
 
 

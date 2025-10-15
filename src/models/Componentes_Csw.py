@@ -58,7 +58,7 @@ class Componentes_CSW():
         """
         servicoAutomacao = ServicoAutomacao.ServicoAutomacao('','insercao dos compontentes do csw no postgre')
 
-        self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_rotina()
+        self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
         print(f'ultima atualizacao {self.ultima_atualizacao}')
         if self.ultima_atualizacao > self.intervalo_automacao:
 
