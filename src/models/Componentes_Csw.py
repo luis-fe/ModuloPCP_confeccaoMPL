@@ -56,7 +56,7 @@ class Componentes_CSW():
                         where
                             l.Empresa  = 1
         """
-        servicoAutomacao = ServicoAutomacao.ServicoAutomacao('','insercao dos compontentes do csw no postgre')
+        servicoAutomacao = ServicoAutomacao.ServicoAutomacao('3','insercao dos compontentes do csw no postgre')
 
         self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
         print(f'ultima atualizacao {self.ultima_atualizacao}')
