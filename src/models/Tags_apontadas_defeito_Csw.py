@@ -126,7 +126,7 @@ class Tags_apontada_defeitos():
                 self.servicoAutomacao.inserindo_automacao(dataHora)
 
                 controleRecebimento = self.controle_recebimento_csw()
-                controleRecebimento['OPpai'] = controleRecebimento['OPpai'].astype(str)
+                controleRecebimento['numeroOp'] = controleRecebimento['numeroOp'].astype(str)
                 dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
                 dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='numeroOp',how='left')
 
