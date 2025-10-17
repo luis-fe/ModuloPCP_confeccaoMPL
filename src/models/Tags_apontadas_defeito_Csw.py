@@ -45,6 +45,31 @@ class Tags_apontada_defeitos():
 
             return motivos
 
+    def controle_recebimento_csw(self):
+        '''Metodo publico que busca a data e hora do controle de recebimento de uma OP Pai'''
+
+        select = f"""
+        SELECT
+            numeroOp as OPpai,
+            min(c.dataFimProcesso) as data_receb,
+            horaFimProcesso
+        FROM
+            tco.ControleReceb c
+        WHERE 
+            c.codEmpresa = {self.codEmpresa} 
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(select)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+                del rows, colunas
+
+            return consulta
+
     def tags_defeitos_n_dias_anteriores(self):
         '''metodo publico que busca no erp csw as tags dos ultimos n dias com defeito apontado'''
 
@@ -99,7 +124,9 @@ class Tags_apontada_defeitos():
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.inserindo_automacao(dataHora)
 
+                controleRecebimento = self.controle_recebimento_csw()
                 dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
+                dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='OPpai',how='left')
 
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
@@ -118,8 +145,11 @@ class Tags_apontada_defeitos():
                 if dados_tags_defeito['numeroOP'].size > 0:
                     dados_tags_defeito['data_hora'] = self.obterHoraAtual()
                     dataHora = self.servicoAutomacao.obterHoraAtual()
-                    self.servicoAutomacao.update_controle_automacao('Finalizado', dataHora)
+                    self.servicoAutomacao.update_controle_automacao(f'Finalizado tags inseridas {dados_tags_defeito["numeroOP"].size }', dataHora)
                     ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
+                else:
+                    self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
+
 
     def __renovando_historico_Tags(self):
         '''Metodo privado que exclui as tags para realizar a RENOVACAO'''

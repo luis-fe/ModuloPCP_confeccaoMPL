@@ -139,7 +139,7 @@ class ServicoAutomacao():
         set 
             "statusAutomacao" = %s, "dataAtualizacao" = %s
         where 
-            "statusAutomacao" <> 'Finalizado'
+            "statusAutomacao" not like 'Finalizado%'
             and "idServico" = %s
         
         """
