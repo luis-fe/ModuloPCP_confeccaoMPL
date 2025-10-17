@@ -50,14 +50,14 @@ class Tags_apontada_defeitos():
 
         select = f"""
         SELECT
-            SUBSTRING(numeroOp,1,6) as OPpai,
+            SUBSTRING(numeroOp,1,10) as numeroOp,
             min(c.dataFimProcesso) as data_receb,
             min(horaFimProcesso) as horaFimProcesso
         FROM
             tco.ControleReceb c
         WHERE 
             c.codEmpresa = {self.codEmpresa} 
-        group by SUBSTRING(numeroOp,1,6)
+        group by SUBSTRING(numeroOp,1,10)
         """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
@@ -128,7 +128,7 @@ class Tags_apontada_defeitos():
                 controleRecebimento = self.controle_recebimento_csw()
                 controleRecebimento['OPpai'] = controleRecebimento['OPpai'].astype(str)
                 dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
-                dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='OPpai',how='left')
+                dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='numeroOp',how='left')
 
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
