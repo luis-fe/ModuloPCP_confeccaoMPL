@@ -166,6 +166,18 @@ class ServicoAutomacao():
         '''Metodo publico que exluir o historico dos serviços da data anterior a 40 dias do dia atual,
         para economia de espaço no banco de dados do projeto
         '''
+        exclusao = """
+        delete FROM
+                 "PCP".pcp."ControleAutomacao"
+        WHERE
+        "dataAtualizacao"::Date < (NOW() - INTERVAL '40 days');
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(exclusao,)
+                conn.commit()
 
 
 

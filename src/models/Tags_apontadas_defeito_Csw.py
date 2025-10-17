@@ -125,10 +125,14 @@ class Tags_apontada_defeitos():
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.inserindo_automacao(dataHora)
 
+
                 controleRecebimento = self.controle_recebimento_csw()
                 controleRecebimento['numeroOP'] = controleRecebimento['numeroOP'].astype(str)
                 dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
                 dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='numeroOP',how='left')
+
+                conultaOpFinalizada = self.consulta_ops_finalizada_csw()
+                dados_tags_defeito = pd.merge(dados_tags_defeito, conultaOpFinalizada, on='numeroOP',how='left')
 
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
@@ -148,9 +152,11 @@ class Tags_apontada_defeitos():
                     dados_tags_defeito['data_hora'] = self.obterHoraAtual()
                     dataHora = self.servicoAutomacao.obterHoraAtual()
                     self.servicoAutomacao.update_controle_automacao(f'Finalizado tags inseridas {dados_tags_defeito["numeroOP"].size }', dataHora)
+                    self.servicoAutomacao.exluir_historico_antes_quarentena()
                     ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
                 else:
                     self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
+                    self.servicoAutomacao.exluir_historico_antes_quarentena()
 
 
     def __renovando_historico_Tags(self):
@@ -174,6 +180,32 @@ class Tags_apontada_defeitos():
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d %H:%M:%S')
         return agora
+
+
+    def consulta_ops_finalizada_csw(self):
+        '''Metdo que consulta as OPs finalizadas no csw '''
+
+        consulta = f"""
+        select
+            numeroOP,
+            dataFim as data_fim_op
+        FROM
+            tco.OrdemProd o
+        WHERE
+            o.codEmpresa = {self.codEmpresa}
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor_csw:
+                # Executa a primeira consulta e armazena os resultados
+                cursor_csw.execute(consulta)
+                colunas = [desc[0] for desc in cursor_csw.description]
+                rows = cursor_csw.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+                del rows, colunas
+
+            return consulta
 
 
 
