@@ -137,7 +137,7 @@ class ServicoAutomacao():
         update 
             pcp."ControleAutomacao" 
         set 
-            "statusAutomacao" = %s, dataAtualizacao = %s
+            "statusAutomacao" = %s, "dataAtualizacao" = %s
         where 
             "statusAutomacao" <> 'Finalizado'
             and "idServico" = %s
