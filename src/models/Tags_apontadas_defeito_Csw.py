@@ -50,14 +50,14 @@ class Tags_apontada_defeitos():
 
         select = f"""
         SELECT
-            numeroOp as OPpai,
+            SUBSTRING(numeroOp,1,6) as OPpai,
             min(c.dataFimProcesso) as data_receb,
             min(horaFimProcesso) as horaFimProcesso
         FROM
             tco.ControleReceb c
         WHERE 
             c.codEmpresa = {self.codEmpresa} 
-        group by numeroOp
+        group by SUBSTRING(numeroOp,1,6)
         """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
