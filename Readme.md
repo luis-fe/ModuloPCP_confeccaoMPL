@@ -11,7 +11,7 @@
 ## Path Atualizacao
 
 - Inclusão do modulo de automação, onde é controlado os serviços de automacao entre o ERP CSW x Sistema PCP;
-
+- Inclusao da Classe 2º Qualidade , para fornecer dados ao dashboard de 2 qualidade.
 ---
 ## 1 Objetivo do Projeto
 

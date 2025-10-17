@@ -88,4 +88,19 @@ class OrdemProd_Csw():
 
                 return  get, get2
 
+    def ops_baixadas_perido_csw(self, datainicial, datafinal):
+        opsBaixadas = """
+                SELECT 
+                    M.dataLcto , 
+                    m.numDocto, 
+                    m.qtdMovto, 
+                    codNatureza1, 
+                    m.codItem 
+                FROM est.Movimento m
+                WHERE 
+                    codEmpresa = 1 and m.dataLcto >= '""" + datainicial + """'and m.dataLcto <= '""" + datafinal + """'
+                    and operacao1 = '+' and numDocto like 'OP%'
+                    AND codNatureza1 IN (5,7)
+                    """
 
+        return opsBaixadas

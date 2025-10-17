@@ -3,10 +3,12 @@ from src.connection.ConexaoPostgre import conexaoEngine
 from src.models import OrdemProd_Csw
 class OrdemProd ():
 
-    def __init__(self, codEmpresa = '1' , codSku = ''):
+    def __init__(self, codEmpresa = '1' , codSku = '', dataInicio = '', dataFinal =''):
 
         self.codEmpresa = codEmpresa
         self.codSku = codSku
+        self.dataInicio = dataInicio
+        self.dataFinal = dataFinal
 
 
     def get_OrdemProdSku(self):
@@ -36,3 +38,11 @@ class OrdemProd ():
         consulta = pd.merge(consulta, fasesCsw, on='codFaseAtual', how='left')
 
         return consulta
+
+
+    def ops_baixas_csw(self):
+        '''Metodo que busca as ops baixadas no perido '''
+
+        ordemCsw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa).ops_baixadas_perido_csw(self.dataInicio, self.dataFinal)
+
+        return ordemCsw
