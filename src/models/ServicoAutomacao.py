@@ -125,8 +125,32 @@ class ServicoAutomacao():
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(insert,(self.idServico, dataHora, 'Finalizado',''))
+                curr.execute(insert,(self.idServico, dataHora, 'Iniciado',''))
                 conn.commit()
+
+
+    def update_controle_automacao(self, descricaoStatus,dataHora):
+        '''Metodo publico que atualiza o status do controle de automacao'''
+
+
+        update = """
+        update 
+            pcp."ControleAutomacao" 
+        set 
+            "statusAutomacao" = %s, dataAtualizacao = %s
+        where 
+            "statusAutomacao" <> 'Finalizado'
+            and "idServico" = %s
+        
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(update,(descricaoStatus, dataHora, self.idServico))
+                conn.commit()
+
+
 
     def obterHoraAtual(self):
         """Metodo publico que obtem a data e hora da ultima atualizacao do sistema Operacional """

@@ -16,6 +16,9 @@ class Tags_apontada_defeitos():
         self.intervalo_automacao = intervalo_automacao # Atrubuto para Controlar o intervalo de automacao em Segundos
         self.n_dias_historico = n_dias_historico
 
+        ''''Metodo publico que insere informacoes levantadas no postgre'''
+        self.servicoAutomacao = ServicoAutomacao.ServicoAutomacao('1',
+                                                         f'Busca de tags dos ultimos {str(self.n_dias_historico)} dias')
 
     def motivos_csw(self):
         '''Metodo que busca os motivos cadastros no csw'''
@@ -87,15 +90,19 @@ class Tags_apontada_defeitos():
 
             return dados_tags_defeito
     def inserindo_informacoes_tag_postgre(self):
-            '''Metodo publico que insere informacoes levantadas no postgre'''
-            servicoAutomacao = ServicoAutomacao.ServicoAutomacao('1',
-                                                                 f'Busca de tags dos ultimos {str(self.n_dias_historico)} dias')
-            self.ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
+
+            self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
             print(f'ultima atualizacao {self.ultima_atualizacao}')
 
             if self.ultima_atualizacao > self.intervalo_automacao:
 
+                dataHora = self.servicoAutomacao.obterHoraAtual()
+                self.servicoAutomacao.inserindo_automacao(dataHora)
+
                 dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
+
+                dataHora = self.servicoAutomacao.obterHoraAtual()
+                self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
                 historico = self.__renovando_historico_Tags()
                 historico['excluir'] = 'ok'
 
@@ -109,10 +116,9 @@ class Tags_apontada_defeitos():
                 dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
 
                 if dados_tags_defeito['numeroOP'].size > 0:
-                    dataHora = servicoAutomacao.obterHoraAtual()
-                    servicoAutomacao.inserindo_automacao(dataHora)
                     dados_tags_defeito['data_hora'] = self.obterHoraAtual()
-
+                    dataHora = self.servicoAutomacao.obterHoraAtual()
+                    self.servicoAutomacao.update_controle_automacao('Finalizado', dataHora)
                     ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
 
     def __renovando_historico_Tags(self):
