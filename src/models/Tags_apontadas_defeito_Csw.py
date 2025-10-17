@@ -52,11 +52,12 @@ class Tags_apontada_defeitos():
         SELECT
             numeroOp as OPpai,
             min(c.dataFimProcesso) as data_receb,
-            horaFimProcesso
+            min(horaFimProcesso) as horaFimProcesso
         FROM
             tco.ControleReceb c
         WHERE 
             c.codEmpresa = {self.codEmpresa} 
+        group by numeroOp
         """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
