@@ -14,7 +14,7 @@ class Analise_2_qualidade():
 
 
 
-    def dashboard_tags_2_qualidade_periodo(self):
+    def get_busca_defeitos_apontados(self):
         '''Metodo publico que contabiliza a 2 Qualidade no periodo '''
 
 
@@ -37,7 +37,7 @@ class Analise_2_qualidade():
     def dashboard_TOTAL_tags_2_qualidade_periodo(self):
         '''Metodo publico que retorna o total de tags de 2 qualidade '''
 
-        tags = self.dashboard_tags_2_qualidade_periodo()
+        tags = self.get_busca_defeitos_apontados()
 
         TotalPecas = tags['qtd'].sum()
 
