@@ -43,9 +43,14 @@ class Analise_2_qualidade():
 
         TotalPecas = tags['qtd'].sum()
 
-        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final).ops_baixas_csw()
+        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
+        ordemProd_baixadas = ordemProd.ops_baixas_csw()
 
-        TotalPCsBaixadas = ordemProd['qtdMovto'].astype(int).sum()
+        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
+        tags = pd.merge(ordemProd_baixadas, ordemProd_faccionistas, on='OPpai', how='left')
+        tags.fillna('-',inplace=True)
+
+        TotalPCsBaixadas = ordemProd_baixadas['qtdMovto'].astype(int).sum()
 
         data = {
             '1- Peças com Motivo de 2Qual.': TotalPecas,

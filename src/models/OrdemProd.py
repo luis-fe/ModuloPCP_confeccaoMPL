@@ -46,3 +46,12 @@ class OrdemProd ():
         ordemCsw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa).ops_baixadas_perido_csw(self.dataInicio, self.dataFinal)
 
         return ordemCsw
+
+
+
+    def ops_baixas_faccionista_csw(self):
+        '''Metodo que busca as ops baixadas no perido '''
+
+        faccionista_ordemCsw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa).ops_baixadas_faccionista_costura(self.dataInicio, self.dataFinal)
+
+        return faccionista_ordemCsw

@@ -113,3 +113,47 @@ class OrdemProd_Csw():
             del rows
 
         return opsBaixadas
+
+    def ops_baixadas_faccionista_costura(self, datainicial, datafinal):
+
+        sql = f"""  
+                    SELECT 
+                        CONVERT(VARCHAR(6), R.codOP) AS OPpai, 
+                        R.codFac,
+                        (SELECT nome  FROM tcg.Faccionista  f WHERE f.empresa = 1 and f.codfaccionista = r.codfac) as nomeFaccicionista
+                    FROM 
+                        TCT.RemessaOPsDistribuicao R
+                    INNER JOIN tco.OrdemProd op on
+                        op.codempresa = r.empresa and op.numeroop = CONVERT(VARCHAR(10), R.codOP)
+                    WHERE 
+                        R.Empresa = 1 
+                        and r.situac = 2 
+                        and r.codOP in
+                        (
+							select 
+								mf.numeroop 
+							FROM 
+								tco.MovimentacaoOPFase mf
+							WHERE 
+								mf.codempresa = 1 
+								and mf.codfase = 429
+								and mf.databaixa >= {datainicial}
+								and mf.databaixa <= {datafinal}
+                        )  
+                        and tiprem = 1 
+                        and r.codfase = 429
+                    """
+
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                opsBaixadas = pd.DataFrame(rows, columns=colunas)
+
+            del rows
+
+        return opsBaixadas
+
