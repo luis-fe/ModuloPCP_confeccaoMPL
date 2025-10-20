@@ -47,8 +47,9 @@ class Analise_2_qualidade():
         ordemProd_baixadas = ordemProd.ops_baixas_csw()
 
         ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
+        ordemProd_faccionistas['nomeOrigem'] = 'COSTURA'
 
-        tags = pd.merge(tags, ordemProd_faccionistas, on='OPpai', how='left')
+        tags = pd.merge(tags, ordemProd_faccionistas, on=['OPpai','nomeOrigem'], how='left')
 
         tags.fillna('-',inplace=True)
 
