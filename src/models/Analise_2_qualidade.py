@@ -39,6 +39,8 @@ class Analise_2_qualidade():
 
         tags = self.get_busca_defeitos_apontados()
 
+
+
         TotalPecas = tags['qtd'].sum()
 
         ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final).ops_baixas_csw()
