@@ -47,7 +47,8 @@ class Analise_2_qualidade():
         ordemProd_baixadas = ordemProd.ops_baixas_csw()
 
         ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
-        tags = pd.merge(ordemProd_baixadas, ordemProd_faccionistas, on='OPpai', how='left')
+
+        tags = pd.merge(tags, ordemProd_faccionistas, on='OPpai', how='left')
         tags.fillna('-',inplace=True)
 
         TotalPCsBaixadas = ordemProd_baixadas['qtdMovto'].astype(int).sum()
