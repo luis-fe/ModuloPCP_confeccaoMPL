@@ -89,7 +89,7 @@ class OrdemProd_Csw():
                 return  get, get2
 
     def ops_baixadas_perido_csw(self, datainicial, datafinal):
-        opsBaixadas = """
+        sql = """
                 SELECT 
                     M.dataLcto , 
                     m.numDocto, 
@@ -102,5 +102,14 @@ class OrdemProd_Csw():
                     and operacao1 = '+' and numDocto like 'OP%'
                     AND codNatureza1 IN (5,7)
                     """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                opsBaixadas = pd.DataFrame(rows, columns=colunas)
+
+            del rows
 
         return opsBaixadas
