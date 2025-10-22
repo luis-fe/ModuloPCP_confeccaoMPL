@@ -40,7 +40,7 @@ def get_Dashboar2Qualidade():
 
 @Analise_2_qualidade_routes.route('/api/MotivosAgrupado', methods=['GET'])
 @token_required
-def get_Dashboar2Qualidade():
+def get_MotivosAgrupado():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
