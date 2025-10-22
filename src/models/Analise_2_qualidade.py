@@ -66,10 +66,14 @@ class Analise_2_qualidade():
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
         data = self.get_busca_defeitos_apontados()
+        data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
+
         data = (
             data.groupby(['motivo2Qualidade'], as_index=False)
-            .agg({'qtd': 'sum'})
+            .agg({'qtd': 'sum','nome':'first'})
         )
+
+        data['motivo2Qualidade'] = data['motivo2Qualidade']+'-'+data['nome']
 
         return data
 
