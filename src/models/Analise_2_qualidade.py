@@ -97,7 +97,6 @@ class Analise_2_qualidade():
             .agg({'qtd': 'sum'})
         )
 
-        data['motivo2Qualidade'] = data['motivo2Qualidade']+'-'+data['nome']+' ('+data['nomeOrigem']+')'
 
         data = data.sort_values(by=['qtd'], ascending=False)
 
