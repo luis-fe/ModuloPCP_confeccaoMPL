@@ -14,7 +14,7 @@ def token_required(f):
 
     return decorated_function
 
-@Analise_2_qualidade_routes.route('/pcp/api/Dashboar2Qualidade', methods=['GET'])
+@Analise_2_qualidade_routes.route('/pcp/api/Dashboard2Qualidade', methods=['GET'])
 @token_required
 def get_Dashboar2Qualidade():
     codEmpresa = request.args.get('codEmpresa', '1')
