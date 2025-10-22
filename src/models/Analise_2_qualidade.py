@@ -68,7 +68,7 @@ class Analise_2_qualidade():
 
         data = self.get_busca_defeitos_apontados()
         data = data.groupby(['motivo2Qualidade']).agg({
-            'qtde':'sum'
+            'qtd':'sum'
         }).reset_index()
 
         return data
