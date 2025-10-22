@@ -18,10 +18,10 @@ def token_required(f):
 @token_required
 def get_Dashboar2Qualidade():
     codEmpresa = request.args.get('codEmpresa', '1')
-    data_inincio = request.args.get('data_inincio', '-')
+    data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inincio,data_fim).dashboard_TOTAL_tags_2_qualidade_periodo()
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).dashboard_TOTAL_tags_2_qualidade_periodo()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
