@@ -63,6 +63,16 @@ class Analise_2_qualidade():
         return pd.DataFrame([data])
 
 
+    def motivos_agrupo_periodo(self):
+        '''Metodo publico que retorna os motivos de defeitos agrupaodos , de acordo com um determinado periodo; '''
+
+        data = self.get_busca_defeitos_apontados()
+        data = data.groupby(['motivo2Qualidade']).agg({
+            'qtde':'sum'
+        }).reset_index()
+
+        return data
+
 
 
 
