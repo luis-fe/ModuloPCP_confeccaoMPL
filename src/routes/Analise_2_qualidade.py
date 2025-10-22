@@ -61,3 +61,25 @@ def get_MotivosAgrupado():
     return jsonify(OP_data)
 
 
+@Analise_2_qualidade_routes.route('/api/defeitos_faccionista_agrupo_periodo', methods=['GET'])
+@token_required
+def get_defeitos_faccionista_agrupo_periodo():
+    codEmpresa = request.args.get('codEmpresa', '1')
+    data_inicio = request.args.get('data_inicio', '-')
+    data_fim = request.args.get('data_fim', '-')
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_faccionista_agrupo_periodo()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+

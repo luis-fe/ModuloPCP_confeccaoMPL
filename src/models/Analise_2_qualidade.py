@@ -80,6 +80,33 @@ class Analise_2_qualidade():
         return data
 
 
+    def defeitos_faccionista_agrupo_periodo(self):
+        """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
+
+        data = self.get_busca_defeitos_apontados()
+        data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
+        data = data[data['nomeOrigem']=='COSTURA'].reset_index()
+        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
+        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
+        data = pd.merge(data, ordemProd_faccionistas, on='OPpai', how='left')
+        data.fillna('-',inplace=True)
+
+
+        data = (
+            data.groupby(['nomeFaccicionista'], as_index=False)
+            .agg({'qtd': 'sum'})
+        )
+
+        data['motivo2Qualidade'] = data['motivo2Qualidade']+'-'+data['nome']+' ('+data['nomeOrigem']+')'
+
+        data = data.sort_values(by=['qtd'], ascending=False)
+
+        return data
+
+
+
+
+
 
 
 
