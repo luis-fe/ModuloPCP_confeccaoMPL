@@ -70,10 +70,12 @@ class Analise_2_qualidade():
 
         data = (
             data.groupby(['motivo2Qualidade'], as_index=False)
-            .agg({'qtd': 'sum','nome':'first'})
+            .agg({'qtd': 'sum','nome':'first',"nomeOrigem":'first'})
         )
 
-        data['motivo2Qualidade'] = data['motivo2Qualidade']+'-'+data['nome']
+        data['motivo2Qualidade'] = data['motivo2Qualidade']+'-'+data['nome']+'('+data['nomeOrigem']+')'
+
+        data = data.sort_values(by=['qtd'], ascending=False)
 
         return data
 
