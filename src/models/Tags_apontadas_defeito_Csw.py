@@ -80,6 +80,10 @@ class Tags_apontada_defeitos():
             count (codBarrasTag) as qtd , 
             codReduzido , 
             numeroOP , 
+            codEngenharia,
+            (select e.descricao from tcp.Engenharia e 
+            WHERE e.codempresa = 1 
+            and e.codengenharia = t.codEngenharia) as descProd,
             CONVERT(VARCHAR(6), numeroOP) as OPpai,
             motivo2Qualidade  
         FROM 
