@@ -579,7 +579,51 @@ class Produtos_CSW():
 
         return consulta
 
+    def materiais_requisicao_OP_csw(self, dataBaixaInicial):
+        '''Metodo publico que busca no csw o tecido principal baixado numa requisicao '''
 
+        sql = f"""
+        SELECT 
+            r.numOPConfec, 
+            CONVERT(VARCHAR(6), r.numOPConfec) as OPpai
+            nomeMaterial as CodComponente, 
+            r.dtEmissao,
+            ri.codMaterialEdt,
+            ri.qtdeEntregue 
+        FROM 
+            tcq.Requisicao r
+        INNER JOIN 
+            tcq.RequisicaoItem ri 
+            ON ri.codEmpresa = r.codEmpresa 
+            AND ri.codRequisicao = r.numero
+        WHERE 
+            r.codEmpresa = 1
+            AND r.codNatEstoque  = 2
+            and r.seqRoteiro in (408, 409)
+            AND r.dtBaixa  >= DATEADD(day, -80, TO_DATE('{dataBaixaInicial}', 'YYYY-MM-DD'))
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+            del rows
+
+
+        consulta = consulta.sort_values(by=['qtdeEntregue'], ascending=False)
+        consulta['ocorrencia'] = consulta.groupby('OPpai').cumcount() + 1
+        consulta = consulta[consulta['ocorrencia']==1].reset_index()
+
+
+        fornecedor = self.informacoesComponente()
+        consulta = pd.merge(consulta, fornecedor, on='CodComponente', how='left')
+        consulta.fillna('-', inplace=True)
+
+
+        return consulta
 
 
 
