@@ -122,6 +122,24 @@ class Analise_2_qualidade():
 
 
 
+    def defeitos_Origem_agrupo_periodo(self):
+        """Método público que retorna as ORGIEM de defeitos agrupados de acordo com um determinado período."""
+
+        data = self.get_busca_defeitos_apontados()
+
+        data = (
+            data.groupby(['nomeOrigem'], as_index=False)
+            .agg({'qtd': 'sum'})
+        )
+
+
+        data = data.sort_values(by=['qtd'], ascending=False)
+
+        return data
+
+
+
+
 
 
 
