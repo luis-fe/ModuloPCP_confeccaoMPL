@@ -602,7 +602,7 @@ class Produtos_CSW():
             and r.seqRoteiro in (408, 409)
             AND r.dtBaixa  >= DATEADD(day, -80, TO_DATE('{dataBaixaInicial}', 'YYYY-MM-DD'))
         """
-
+        print(sql)
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
