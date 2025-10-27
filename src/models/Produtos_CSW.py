@@ -584,9 +584,9 @@ class Produtos_CSW():
 
         sql = f"""
         SELECT 
-            r.numOPConfec, 
+            r.numOPConfec CodComponente, 
             CONVERT(VARCHAR(6), r.numOPConfec) as OPpai,
-            nomeMaterial as CodComponente, 
+            nomeMaterial, 
             r.dtEmissao,
             ri.codMaterialEdt,
             ri.qtdeEntregue 
