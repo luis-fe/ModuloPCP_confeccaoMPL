@@ -623,7 +623,8 @@ class Produtos_CSW():
         fornecedor = self.informacoesComponente()
         consulta = pd.merge(consulta, fornecedor, on='CodComponente', how='left')
         consulta.fillna('-', inplace=True)
-        consulta.drop(['LeadTime','LoteMin','fatorConversao','index','ocorrencia','novoNome','codMaterialEdt'], axis=1, inplace=True)
+        consulta.drop(['LeadTime','LoteMin','fatorConversao','index',
+                       'ocorrencia','novoNome','codMaterialEdt','loteMut',"dtEmissao"], axis=1, inplace=True)
 
 
         return consulta
