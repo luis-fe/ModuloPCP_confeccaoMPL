@@ -590,7 +590,7 @@ class Produtos_CSW():
             nomeMaterial, 
             r.dtEmissao,
             ri.codMaterialEdt,
-            (select nome from cgi.item i where i.codigo = CONVERT(VARCHAR(9), r.codMaterialEdt) as nomeItem,
+            (select nome from cgi.item i where i.codigo = CONVERT(VARCHAR(9), ri.codMaterialEdt) as nomeItem,
             ri.qtdeEntregue 
         FROM 
             tcq.Requisicao r
