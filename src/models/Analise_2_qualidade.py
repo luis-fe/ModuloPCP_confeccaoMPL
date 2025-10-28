@@ -13,27 +13,36 @@ class Analise_2_qualidade():
         self.data_inicio = data_inicio
         self.data_final = data_final
 
-
-
-    def get_busca_defeitos_apontados(self):
-        '''Metodo publico que contabiliza a 2 Qualidade no periodo '''
-
+    def get_busca_defeitos_apontados(self, textoAvancao=''):
+        '''Metodo publico que contabiliza a 2ª Qualidade no periodo'''
 
         sql = """
-        select
+        SELECT
             *
-        from
+        FROM
             "PCP".pcp.tags_defeitos_csw tdc 
-        where 
+        WHERE 
             data_receb >= %s
-            and data_receb <= %s
+            AND data_receb <= %s
         """
+
         conn = ConexaoPostgre.conexaoEngine()
-        consulta = pd.read_sql(sql,conn, params=(self.data_inicio, self.data_final))
+        consulta = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
+
+        # Cria a coluna de busca concatenando os campos relevantes
+        consulta['textoAvançado'] = (
+                consulta['fornencedorPreferencial'].astype(str)
+                + ' ' + consulta['nome'].astype(str)
+                + ' ' + consulta['nomeItem'].astype(str)
+                + ' ' + consulta['nomeOrigem'].astype(str)
+                + ' ' + consulta['nomeFaccicionista'].astype(str)
+        )
+
+        # Aplica o filtro tipo "LIKE %texto%"
+        if textoAvancao.strip() != '':
+            consulta = consulta[consulta['textoAvançado'].str.contains(textoAvancao, case=False, na=False)]
 
         return consulta
-
-
 
     def dashboard_TOTAL_tags_2_qualidade_periodo(self):
         '''Metodo publico que retorna o total de tags de 2 qualidade '''
@@ -63,10 +72,10 @@ class Analise_2_qualidade():
         }
         return pd.DataFrame([data])
 
-    def motivos_agrupo_periodo(self):
+    def motivos_agrupo_periodo(self, textoAvancao = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancao)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
 
         data = (

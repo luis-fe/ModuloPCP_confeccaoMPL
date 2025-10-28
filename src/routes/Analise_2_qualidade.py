@@ -44,8 +44,9 @@ def get_MotivosAgrupado():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancao = request.args.get('textoAvancao', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).motivos_agrupo_periodo()
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).motivos_agrupo_periodo(textoAvancao)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
