@@ -139,6 +139,8 @@ class Tags_apontada_defeitos():
                 dados_tags_defeito = pd.merge(dados_tags_defeito, conultaOpFinalizada, on='numeroOP',how='left')
 
                 dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
+                dadosFornecedor = dadosFornecedor.drop_duplicates()
+
                 dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
 
 
