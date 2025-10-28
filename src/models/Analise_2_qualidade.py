@@ -35,7 +35,6 @@ class Analise_2_qualidade():
                 + ' ' + consulta['nome'].astype(str)
                 + ' ' + consulta['nomeItem'].astype(str)
                 + ' ' + consulta['nomeOrigem'].astype(str)
-                + ' ' + consulta['nomeFaccicionista'].astype(str)
         )
 
         # Aplica o filtro tipo "LIKE %texto%"
