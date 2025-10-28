@@ -28,6 +28,13 @@ class Analise_2_qualidade():
 
         conn = ConexaoPostgre.conexaoEngine()
         consulta = pd.read_sql(sql, conn, params=(self.data_inicio, self.data_final))
+        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
+
+        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
+        ordemProd_faccionistas['nomeOrigem'] = 'COSTURA'
+
+        consulta = pd.merge(consulta, ordemProd_faccionistas, on=['OPpai', 'nomeOrigem'], how='left')
+        consulta.fillna('-',inplace=True)
 
         # Cria a coluna de busca concatenando os campos relevantes
         consulta['textoAvançado'] = (
@@ -35,6 +42,7 @@ class Analise_2_qualidade():
                 + ' ' + consulta['nome'].astype(str)
                 + ' ' + consulta['nomeItem'].astype(str)
                 + ' ' + consulta['nomeOrigem'].astype(str)
+                + ' ' + consulta['nomeFaccicionista'].astype(str)
         )
 
         # Aplica o filtro tipo "LIKE %texto%"
@@ -55,10 +63,7 @@ class Analise_2_qualidade():
         ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
         ordemProd_baixadas = ordemProd.ops_baixas_csw()
 
-        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
-        ordemProd_faccionistas['nomeOrigem'] = 'COSTURA'
 
-        tags = pd.merge(tags, ordemProd_faccionistas, on=['OPpai','nomeOrigem'], how='left')
 
         tags.fillna('-',inplace=True)
 
@@ -95,10 +100,7 @@ class Analise_2_qualidade():
         data = self.get_busca_defeitos_apontados()
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
         data = data[data['nomeOrigem']=='COSTURA'].reset_index()
-        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
-        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
-        data = pd.merge(data, ordemProd_faccionistas, on='OPpai', how='left')
-        data.fillna('-',inplace=True)
+
 
 
         data = (
@@ -117,12 +119,7 @@ class Analise_2_qualidade():
 
         data = self.get_busca_defeitos_apontados()
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
-        ordemProd = OrdemProd.OrdemProd(self.codEmpresa,'',self.data_inicio, self.data_final)
-        ordemProd_faccionistas = ordemProd.ops_baixas_faccionista_csw()
-        ordemProd_faccionistas['nomeOrigem'] = 'COSTURA'
 
-        data = pd.merge(data, ordemProd_faccionistas, on=['OPpai','nomeOrigem'], how='left')
-        data.fillna('-',inplace=True)
 
         data = data.sort_values(by=['qtd'], ascending=False)
 
