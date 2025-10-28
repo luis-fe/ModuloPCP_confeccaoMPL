@@ -1,6 +1,7 @@
 import pandas as pd
 from src.connection import ConexaoPostgre
 from src.models import OrdemProd
+import numpy as np
 
 
 class Analise_2_qualidade():
@@ -116,6 +117,8 @@ class Analise_2_qualidade():
         data.fillna('-',inplace=True)
 
         data = data.sort_values(by=['qtd'], ascending=False)
+
+        data['fornencedorPreferencial'] = np.where(data['nomeOrigem'] != 'LABORATORIO', '-', data['fornencedorPreferencial'])
 
         return data
 
