@@ -579,7 +579,7 @@ class Produtos_CSW():
 
         return consulta
 
-    def materiais_requisicao_OP_csw(self, dataBaixaInicial):
+    def materiais_requisicao_OP_csw(self, dias):
         '''Metodo publico que busca no csw o tecido principal baixado numa requisicao '''
 
         sql = f"""
@@ -602,7 +602,7 @@ class Produtos_CSW():
             r.codEmpresa = 1
             AND r.codNatEstoque  = 2
             and r.seqRoteiro in (408, 409)
-            AND r.dtBaixa  >= DATEADD(day, -80, TO_DATE('{dataBaixaInicial}', 'YYYY-MM-DD'))
+            AND r.dtBaixa  >= DATEADD(day, -{dias}, TO_DATE(NOW(), 'YYYY-MM-DD'))
         """
         print(sql)
 

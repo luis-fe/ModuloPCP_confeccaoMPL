@@ -4,7 +4,7 @@ import pandas as pd
 import pytz
 
 from src.connection import ConexaoERP, ConexaoPostgre
-from src.models import ServicoAutomacao
+from src.models import ServicoAutomacao, Produtos_CSW
 
 class Tags_apontada_defeitos():
     '''Classe que gerencia a compilacao das tags apontadas pelo motivo de segunda no csw '''
@@ -137,6 +137,9 @@ class Tags_apontada_defeitos():
 
                 conultaOpFinalizada = self.consulta_ops_finalizada_csw()
                 dados_tags_defeito = pd.merge(dados_tags_defeito, conultaOpFinalizada, on='numeroOP',how='left')
+
+                dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
+                dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
 
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
