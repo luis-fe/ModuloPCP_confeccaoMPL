@@ -121,6 +121,7 @@ class Analise_2_qualidade():
         data['fornencedorPreferencial'] = np.where(data['nomeOrigem'] != 'LABORATORIO', '-', data['fornencedorPreferencial'])
         data['fornencedorPreferencial'] = data['fornencedorPreferencial'].str.replace('LTDA', '', regex=False)
         data['nome'] = data['nome'].str.replace('FORA DE ESPECIFICACAO', 'FORA/ESPEC.', regex=False)
+        data['nomeFaccicionista'] = data['nomeFaccicionista'].str.replace('LTDA', '', regex=False)
 
         return data
 
