@@ -138,6 +138,25 @@ class Analise_2_qualidade():
         return data
 
 
+    def defeitos_fornecedor_agrupo_periodo(self):
+        """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
+
+        data = self.get_busca_defeitos_apontados()
+        data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
+        data = data[data['nomeOrigem']=='LABORATORIO'].reset_index()
+
+
+        data = (
+            data.groupby(['fornencedorPreferencial'], as_index=False)
+            .agg({'qtd': 'sum'})
+        )
+
+        data = data[data['fornencedorPreferencial']!='-'].reset_index()
+        data = data.sort_values(by=['qtd'], ascending=False)
+
+        return data
+
+
 
 
 
