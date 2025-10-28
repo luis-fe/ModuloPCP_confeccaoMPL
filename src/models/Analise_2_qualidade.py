@@ -119,6 +119,7 @@ class Analise_2_qualidade():
         data = data.sort_values(by=['qtd'], ascending=False)
 
         data['fornencedorPreferencial'] = np.where(data['nomeOrigem'] != 'LABORATORIO', '-', data['fornencedorPreferencial'])
+        data['fornencedorPreferencial'] = data['fornencedorPreferencial'].str.replace('LTDA', '', regex=False)
 
         return data
 
