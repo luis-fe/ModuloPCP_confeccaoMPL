@@ -625,7 +625,7 @@ class Produtos_CSW():
         consulta.fillna('-', inplace=True)
         consulta.drop(['LeadTime','LoteMin','fatorConversao','index',
                        'ocorrencia','novoNome','codMaterialEdt','loteMut',"dtEmissao","numOPConfec"], axis=1, inplace=True)
-
+        consulta['qtdeEntregue'] = consulta['qtdeEntregue'].astype(str)
 
         return consulta
 

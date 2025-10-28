@@ -140,7 +140,6 @@ class Tags_apontada_defeitos():
 
                 dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
                 dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
-                dados_tags_defeito['qtdeEntregue'] = dados_tags_defeito['qtdeEntregue'].fillna(0,inplace=True)
 
 
                 dataHora = self.servicoAutomacao.obterHoraAtual()
