@@ -35,6 +35,8 @@ class Analise_2_qualidade():
 
         consulta = pd.merge(consulta, ordemProd_faccionistas, on=['OPpai', 'nomeOrigem'], how='left')
         consulta.fillna('-',inplace=True)
+        consulta['fornencedorPreferencial'] = np.where(consulta['nomeOrigem'] != 'LABORATORIO', '-', consulta['fornencedorPreferencial'])
+        consulta['nomeItem'] = np.where(consulta['nomeOrigem'] != 'LABORATORIO', '-', consulta['nomeItem'])
 
         # Cria a coluna de busca concatenando os campos relevantes
         consulta['textoAvançado'] = (
@@ -45,9 +47,11 @@ class Analise_2_qualidade():
                 + ' ' + consulta['nomeFaccicionista'].astype(str)
         )
 
+
         # Aplica o filtro tipo "LIKE %texto%"
         if textoAvancao.strip() != '':
             consulta = consulta[consulta['textoAvançado'].str.contains(textoAvancao, case=False, na=False)]
+
 
         return consulta
 
