@@ -38,6 +38,7 @@ class Analise_2_qualidade():
         consulta['fornencedorPreferencial'] = np.where(consulta['nomeOrigem'] != 'LABORATORIO', '-', consulta['fornencedorPreferencial'])
         consulta['nomeItem'] = np.where(consulta['nomeOrigem'] != 'LABORATORIO', '-', consulta['nomeItem'])
         consulta['nomeItem'] = consulta['nomeItem'].str.replace(' SEM ACESSORIO', '', regex=False)
+        consulta['nomeItem'] = consulta['nomeItem'].str.replace(' S/A', '', regex=False)
 
         # Cria a coluna de busca concatenando os campos relevantes
         consulta['textoAvançado'] = (
