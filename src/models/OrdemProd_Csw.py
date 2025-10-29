@@ -140,7 +140,7 @@ class OrdemProd_Csw():
 								AND mf.databaixa >= DATEADD(DAY, -40, '{datainicial}')
 					            AND mf.databaixa <= DATEADD(DAY, 40, '{datafinal}')
                         )  
-                        and tiprem = 1 
+                        and tiprem in (1 ,33) 
                         and r.codfase = 429
                     """
 
