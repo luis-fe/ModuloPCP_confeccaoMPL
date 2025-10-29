@@ -137,8 +137,8 @@ class OrdemProd_Csw():
 							WHERE 
 								mf.codempresa = 1 
 								and mf.codfase = 429
-								AND mf.databaixa >= DATEADD(DAY, -40, '{datainicial}')
-					            AND mf.databaixa <= DATEADD(DAY, 40, '{datafinal}')
+								AND mf.databaixa >= DATEADD(DAY, -70, '{datainicial}')
+					            AND mf.databaixa <= DATEADD(DAY, 70, '{datafinal}')
                         )  
                         and tiprem in (1 ,33) 
                         and r.codfase = 429
