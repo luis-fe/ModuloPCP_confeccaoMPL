@@ -44,9 +44,9 @@ def get_MotivosAgrupado():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
-    textoAvancao = request.args.get('textoAvancao', '')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).motivos_agrupo_periodo(textoAvancao)
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).motivos_agrupo_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -68,8 +68,10 @@ def get_defeitos_faccionista_agrupo_periodo():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_faccionista_agrupo_periodo()
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_faccionista_agrupo_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -91,8 +93,10 @@ def get_defeitos_fornecedor_agrupo_periodo():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_fornecedor_agrupo_periodo()
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_fornecedor_agrupo_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -114,8 +118,10 @@ def get_defeitos_fornecedor_base_agrupo_periodo():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_fornecedor_base_agrupo_periodo()
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_fornecedor_base_agrupo_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -138,8 +144,10 @@ def get_defeitos_detalhado_periodo():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_detalhado_periodo()
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_detalhado_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
@@ -161,8 +169,10 @@ def get_defeitos_origem_periodo():
     codEmpresa = request.args.get('codEmpresa', '1')
     data_inicio = request.args.get('data_inicio', '-')
     data_fim = request.args.get('data_fim', '-')
+    textoAvancado = request.args.get('textoAvancado', '')
 
-    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_Origem_agrupo_periodo()
+
+    dados = Analise_2_qualidade.Analise_2_qualidade(codEmpresa,data_inicio,data_fim).defeitos_Origem_agrupo_periodo(textoAvancado)
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

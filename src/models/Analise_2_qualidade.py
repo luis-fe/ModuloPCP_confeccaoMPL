@@ -76,10 +76,10 @@ class Analise_2_qualidade():
         }
         return pd.DataFrame([data])
 
-    def motivos_agrupo_periodo(self, textoAvancao = ''):
+    def motivos_agrupo_periodo(self, textoAvancado = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados(textoAvancao)
+        data = self.get_busca_defeitos_apontados(textoAvancado)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
 
         data = (
@@ -94,10 +94,10 @@ class Analise_2_qualidade():
         return data
 
 
-    def defeitos_faccionista_agrupo_periodo(self):
+    def defeitos_faccionista_agrupo_periodo(self,textoAvancado = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancado)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
         data = data[data['nomeOrigem']=='COSTURA'].reset_index()
 
@@ -114,10 +114,10 @@ class Analise_2_qualidade():
         return data
 
 
-    def defeitos_detalhado_periodo(self):
+    def defeitos_detalhado_periodo(self,textoAvancado = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancado)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
 
 
@@ -133,10 +133,10 @@ class Analise_2_qualidade():
 
 
 
-    def defeitos_Origem_agrupo_periodo(self):
+    def defeitos_Origem_agrupo_periodo(self,textoAvancado = ''):
         """Método público que retorna as ORGIEM de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancado)
 
         data = (
             data.groupby(['nomeOrigem'], as_index=False)
@@ -149,10 +149,10 @@ class Analise_2_qualidade():
         return data
 
 
-    def defeitos_fornecedor_agrupo_periodo(self):
+    def defeitos_fornecedor_agrupo_periodo(self,textoAvancado = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancado)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
         data = data[data['nomeOrigem']=='LABORATORIO'].reset_index()
 
@@ -169,10 +169,10 @@ class Analise_2_qualidade():
 
 
 
-    def defeitos_fornecedor_base_agrupo_periodo(self):
+    def defeitos_fornecedor_base_agrupo_periodo(self,textoAvancado = ''):
         """Método público que retorna os motivos de defeitos agrupados de acordo com um determinado período."""
 
-        data = self.get_busca_defeitos_apontados()
+        data = self.get_busca_defeitos_apontados(textoAvancado)
         data['motivo2Qualidade'] = data['motivo2Qualidade'].astype(str)
         data = data[data['nomeOrigem']=='LABORATORIO'].reset_index()
 
