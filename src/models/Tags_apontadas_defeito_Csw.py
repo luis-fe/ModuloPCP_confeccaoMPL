@@ -1,3 +1,4 @@
+import gc
 from datetime import datetime
 
 import pandas as pd
@@ -10,15 +11,15 @@ class Tags_apontada_defeitos():
     '''Classe que gerencia a compilacao das tags apontadas pelo motivo de segunda no csw '''
 
 
-    def __init__(self, codEmpresa = '1', intervalo_automacao = 100, n_dias_historico = 40):
+    def __init__(self, codEmpresa = '1', intervalo_automacao = 100, n_dias_historico = 40, nomeAtualizacao = 'Busca de tags dos ultimos '):
 
         self.codEmpresa = codEmpresa
         self.intervalo_automacao = intervalo_automacao # Atrubuto para Controlar o intervalo de automacao em Segundos
         self.n_dias_historico = n_dias_historico
-
+        nomeAtualizacao = f'{nomeAtualizacao}{str(self.n_dias_historico)} dias'
         ''''Metodo publico que insere informacoes levantadas no postgre'''
         self.servicoAutomacao = ServicoAutomacao.ServicoAutomacao('1',
-                                                         f'Busca de tags dos ultimos {str(self.n_dias_historico)} dias')
+                                                                  nomeAtualizacao)
 
     def motivos_csw(self):
         '''Metodo que busca os motivos cadastros no csw'''
@@ -216,6 +217,57 @@ class Tags_apontada_defeitos():
                 del rows, colunas
 
             return consulta
+
+    def get_tags_pilotos_csw(self):
+        '''Metodo que busca no csw as tags do estoque de pilotos'''
+
+
+
+        consulta = f"""
+        SELECT
+            t.codBarrasTag,
+            t.codEngenharia,
+            (select s.corbase from tcp.SortimentosProduto s where s.codempresa = 1 
+            and s.codproduto = t.codEngenharia and t.codSortimento = s.codsortimento)
+            as cor,
+            (select s.descricao from tcp.Tamanhos s where s.codempresa = 1 
+            and s.sequencia = t.seqTamanho)
+            as tamanho,
+            (select s.descricao from tcp.Engenharia s where s.codempresa = 1 
+            and s.codengenharia = t.codEngenharia)
+            as descricao
+        FROM
+            tcr.TagBarrasProduto t
+        WHERE
+            t.codEmpresa = {self.codEmpresa}
+            and t.situacao = 3
+            and t.codNaturezaAtual = 24
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(consulta)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+        dataHora = self.servicoAutomacao.obterHoraAtual()
+
+        if consulta['codBarrasTag'].size > 0:
+            consulta['codBarrasTag'] = self.obterHoraAtual()
+            self.servicoAutomacao.update_controle_automacao(
+                f'Finalizado tags inseridas {consulta["codBarrasTag"].size}', dataHora)
+            self.servicoAutomacao.exluir_historico_antes_quarentena()
+            ConexaoPostgre.Funcao_InserirPCPMatriz(consulta, consulta['codBarrasTag'].size,
+                                                   'tags_piloto_csw', 'replace')
+        else:
+            self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
+            self.servicoAutomacao.exluir_historico_antes_quarentena()
+
 
 
 

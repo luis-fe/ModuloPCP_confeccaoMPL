@@ -24,6 +24,7 @@ if __name__ == '__main__':
     tempo_tags = 60*10
     Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags, 20).inserindo_informacoes_tag_postgre()
     #Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags, 20,'Tags Pilotos').get_tags_pilotos_csw()
 
 
 
