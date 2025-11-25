@@ -257,16 +257,79 @@ class Tags_apontada_defeitos():
         gc.collect()
         dataHora = self.servicoAutomacao.obterHoraAtual()
 
+        tagsAtuais_postgres = self.consultar_tags_pilotos_atuais()
+
+        consulta = pd.merge(consulta, tagsAtuais_postgres , on='codBarrasTag', how = 'left')
+        consulta = consulta[consulta['status']!='OK'].reset_index()
+        consulta = consulta.drop(columns=['status'])
+        inventario = self.__ultimo_inventario_tag()
+        consulta = pd.merge(consulta, inventario, on='codBarrasTag', how='left')
+
+
+
         if consulta['codBarrasTag'].size > 0:
             consulta['dataHora'] = self.obterHoraAtual()
             self.servicoAutomacao.update_controle_automacao(
                 f'Finalizado tags inseridas {consulta["codBarrasTag"].size}', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
             ConexaoPostgre.Funcao_InserirPCPMatriz(consulta, consulta['codBarrasTag'].size,
-                                                   'tags_piloto_csw', 'replace')
+                                                   'tags_piloto_csw', 'append')
         else:
             self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
+
+    def consultar_tags_pilotos_atuais(self):
+
+        consulta = f"""
+                select 
+                    "codBarrasTag", 
+                    'OK' as "status" 
+                from 
+                    "PCP".pcp."tags_piloto_csw" 
+        """
+
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn)
+
+
+        return consulta
+
+
+    def __ultimo_inventario_tag(self):
+
+
+        sql = """
+        SELECT 
+            convert(varchar(40),t.codBarrasTag) as codBarrasTag, 
+            ip.dataEncContagem as ultimoInv
+        FROM tci.InventarioProdutosTagLidas t
+        INNER JOIN tci.InventarioProdutos ip 
+            ON ip.Empresa = 1 
+            AND t.inventario = ip.inventario 
+        WHERE t.Empresa = 1 
+          AND ip.codnatureza = 24 
+          AND ip.situacao = 4
+          AND ip.dataEncContagem = (
+                SELECT MAX(ip2.dataEncContagem)
+                FROM tci.InventarioProdutos ip2
+                WHERE ip2.Empresa = ip.Empresa
+                  AND ip2.codnatureza = ip.codnatureza
+            )
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
 
 
 
