@@ -410,7 +410,7 @@ class Tags_apontada_defeitos():
         consulta['dataHoraFase'] = consulta['observacao10'].str.extract(r'(\d{2}/\d{2}/\d{4}\s\d{2}:\d{2})')
         consulta['dataHoraFase'] = pd.to_datetime(consulta['dataHoraFase'], format='%d/%m/%Y %H:%M')
         consulta['dataFase'] = consulta['dataHoraFase'].dt.date
-        consulta['dataBaixa'] = pd.to_datetime(consulta['dataBaixa'], format='%Y-%m-%d ')
+        consulta['dataBaixa'] = pd.to_datetime(consulta['dataBaixa'], format='%Y-%m-%d')
 
         consulta['horaFase'] = consulta['dataHoraFase'].dt.time
         consulta['observacao10'] = consulta['observacao10'].str.replace(r'\d{2}/\d{2}/\d{4}\s\d{2}:\d{2}', '',
