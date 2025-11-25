@@ -299,8 +299,6 @@ class Tags_apontada_defeitos():
 
         consulta = pd.merge(consulta, ultimamov, on='codBarrasTag', how='left')
         consulta.fillna('-',inplace=True)
-        consulta = consulta[consulta['status']!='OK']
-        consulta = consulta.drop(columns=['status'])
         inventario = self.__ultimo_inventario_tag()
 
         consulta = pd.merge(consulta, inventario, on='codBarrasTag', how='left')
@@ -313,7 +311,7 @@ class Tags_apontada_defeitos():
                 f'Finalizado tags inseridas {consulta["codBarrasTag"].size}', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
             ConexaoPostgre.Funcao_InserirPCPMatriz(consulta, consulta['codBarrasTag'].size,
-                                                   'tags_piloto_csw', 'append')
+                                                   'tags_piloto_csw', 'replace')
         else:
             self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
