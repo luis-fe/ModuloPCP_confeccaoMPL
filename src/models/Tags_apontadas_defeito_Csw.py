@@ -258,7 +258,7 @@ class Tags_apontada_defeitos():
         dataHora = self.servicoAutomacao.obterHoraAtual()
 
         if consulta['codBarrasTag'].size > 0:
-            consulta['codBarrasTag'] = self.obterHoraAtual()
+            consulta['dataHora'] = self.obterHoraAtual()
             self.servicoAutomacao.update_controle_automacao(
                 f'Finalizado tags inseridas {consulta["codBarrasTag"].size}', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
