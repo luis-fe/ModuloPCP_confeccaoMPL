@@ -250,7 +250,7 @@ class Tags_apontada_defeitos():
                 cursor.execute(consulta)
                 colunas = [desc[0] for desc in cursor.description]
                 rows = cursor.fetchall()
-                consulta = pd.DataFrame(rows, columns=colunas)
+                consulta_csw = pd.DataFrame(rows, columns=colunas)
 
         # Libera memória manualmente
         del rows
@@ -259,7 +259,41 @@ class Tags_apontada_defeitos():
 
         tagsAtuais_postgres = self.consultar_tags_pilotos_atuais()
 
-        consulta = pd.merge(consulta, tagsAtuais_postgres , on='codBarrasTag', how = 'left')
+        consulta = pd.merge(consulta_csw, tagsAtuais_postgres , on='codBarrasTag', how = 'left')
+
+        consulta2 = pd.merge(
+            tagsAtuais_postgres,
+            consulta_csw,
+            on='codBarrasTag',
+            how='left',
+            indicator=True  # Adiciona uma coluna especial '_merge'
+        )
+
+        # Filtra apenas as linhas onde a coluna '_merge' é 'left_only'
+        resultado_final = consulta2[consulta2['_merge'] == 'left_only']
+        resultado_final = resultado_final.drop(columns='_merge')
+
+        if resultado_final['codBarrasTag'].size > 0:
+            # 1. Obter a lista de valores da coluna e formatar
+            # Transforma a Series em uma lista Python
+            lista_codigos = resultado_final['codBarrasTag'].to_list()
+
+            # Formata a lista para o padrão SQL: ('valor1', 'valor2', 'valor3')
+            # Use aspas simples (') em torno de cada valor, essencial para strings em SQL.
+            valores_sql = str(tuple(lista_codigos)).replace(",)", ")")  # Remove vírgula extra no caso de 1 item
+
+            # 2. Concatena a instrução DELETE com a lista de valores
+            delete_query = f"""
+            delete from "PCP".pcp."tags_piloto_csw" 
+             where "codBarrasTag" in {valores_sql}
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn2:
+                with conn2.cursor() as curr:
+
+                    curr.execute(delete_query,)
+                    conn2.commit()
+
         consulta = consulta[consulta['status']!='OK']
         consulta = consulta.drop(columns=['status'])
         inventario = self.__ultimo_inventario_tag()
