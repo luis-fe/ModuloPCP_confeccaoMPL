@@ -298,11 +298,15 @@ class Tags_apontada_defeitos():
         ultimamov = self.__ultima_saida_tercerizado()
 
         consulta = pd.merge(consulta, ultimamov, on='codBarrasTag', how='left')
-        consulta.fillna('-',inplace=True)
         inventario = self.__ultimo_inventario_tag()
 
         consulta = pd.merge(consulta, inventario, on='codBarrasTag', how='left')
 
+
+        tags_transf = self.tags_em_transferencia()
+
+        consulta = pd.merge(consulta, tags_transf, on='codBarrasTag', how='left')
+        consulta.fillna('-',inplace=True)
 
 
         if consulta['codBarrasTag'].size > 0:
@@ -426,6 +430,28 @@ class Tags_apontada_defeitos():
         consulta['dataFase'] = consulta['dataHoraFase'].astype(str).str.split(' ').str[0]
         consulta['horaFase'] = consulta['dataHoraFase'].astype(str).str.split(' ').str[1]
         consulta['dataBaixa'] = consulta['dataBaixa'].dt.strftime('%Y-%m-%d')
+
+        return consulta
+
+
+
+
+    def tags_em_transferencia(self):
+
+        sql = '''
+                select
+                    codbarrastag,
+                    p."tipoTransacao" ,
+                    p."dataTransferencia"
+                from
+                    pcp."transacaoPilotos" p
+                where
+                    "tipoTransacao" = 'Transferencia'
+        '''
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
+
 
         return consulta
 
