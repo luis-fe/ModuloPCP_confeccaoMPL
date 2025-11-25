@@ -260,7 +260,7 @@ class Tags_apontada_defeitos():
         tagsAtuais_postgres = self.consultar_tags_pilotos_atuais()
 
         consulta = pd.merge(consulta, tagsAtuais_postgres , on='codBarrasTag', how = 'left')
-        consulta = consulta[consulta['status']!='OK'].reset_index()
+        consulta = consulta[consulta['status']!='OK']
         consulta = consulta.drop(columns=['status'])
         inventario = self.__ultimo_inventario_tag()
         consulta = pd.merge(consulta, inventario, on='codBarrasTag', how='left')
