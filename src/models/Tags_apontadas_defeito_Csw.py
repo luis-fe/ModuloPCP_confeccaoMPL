@@ -440,7 +440,7 @@ class Tags_apontada_defeitos():
 
         sql = '''
                 select
-                    codbarrastag,
+                    codbarrastag as "codBarrasTag",
                     p."tipoTransacao" ,
                     p."dataTransferencia"
                 from
