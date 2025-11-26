@@ -306,6 +306,12 @@ class Tags_apontada_defeitos():
         tags_transf = self.tags_em_transferencia()
 
         consulta = pd.merge(consulta, tags_transf, on='codBarrasTag', how='left')
+
+
+        retornoPilotos = self.__ultimo_retorno_tercerizado()
+        consulta = pd.merge(consulta, retornoPilotos, on='numeroOP', how='left')
+
+
         consulta.fillna('-',inplace=True)
 
 
@@ -452,6 +458,45 @@ class Tags_apontada_defeitos():
         conn = ConexaoPostgre.conexaoEngine()
         consulta = pd.read_sql(sql, conn)
 
+
+        return consulta
+
+
+
+    def __ultimo_retorno_tercerizado(self):
+
+        sql = """
+        SELECT
+            observacao1 as codBarrasTag_retorno,
+            m.numeroOP,
+            observacao10 as ob10 ,
+            nomeFase as nomeFase_retorno, m2.dataBaixa as dataEntrega
+        FROM
+            tco.RoteiroOP m
+        left join tco.MovimentacaoOPFase m2 on m2.codEmpresa = 1 
+            and m2.numeroOP = m.numeroOP  
+            and m2.codFase = m.codFase 
+        WHERE
+        	m.observacao1 like '0%'
+        	and m.observacao1 not like '%Piloto na%'
+        	and m.numeroOP like '%-001'
+            and m.codEmpresa = 1
+            and m.codFase in (429, 432, 441 )
+            and m2.codFase in (429, 432, 441 )
+            AND m2.dataBaixa > DATEADD(day, -500, CURRENT_DATE)
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
 
         return consulta
 
