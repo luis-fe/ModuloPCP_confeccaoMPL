@@ -307,6 +307,10 @@ class Tags_apontada_defeitos():
 
         consulta = pd.merge(consulta, tags_transf, on='codBarrasTag', how='left')
 
+        tags_receb = self.__tags_em_ultimo_recebimento()
+        consulta = pd.merge(consulta, tags_receb, on='codBarrasTag', how='left')
+
+
 
         retornoPilotos = self.__ultimo_retorno_tercerizado()
         consulta = pd.merge(consulta, retornoPilotos, on='numeroOP', how='left')
@@ -458,6 +462,25 @@ class Tags_apontada_defeitos():
                     pcp."transacaoPilotos" p
                 where
                     "tipoTransacao" = 'Transferencia'
+        '''
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
+
+
+        return consulta
+
+
+    def __tags_em_ultimo_recebimento(self):
+
+        sql = '''
+                select
+                    codbarrastag as "codBarrasTag",
+                    p."dataTransferencia" as "dataRecebimento"
+                from
+                    pcp."transacaoPilotos" p
+                where
+                    "tipoTransacao" = 'Recebida'
         '''
 
         conn = ConexaoPostgre.conexaoEngine()
