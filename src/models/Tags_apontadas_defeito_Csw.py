@@ -312,6 +312,11 @@ class Tags_apontada_defeitos():
         consulta = pd.merge(consulta, retornoPilotos, on='numeroOP', how='left')
 
 
+
+        pilotoNRetornada = self.piloto_nao_retornada()
+        consulta = pd.merge(consulta, pilotoNRetornada, on='numeroOP', how='left')
+
+
         consulta.fillna('-',inplace=True)
 
 
@@ -483,6 +488,41 @@ class Tags_apontada_defeitos():
             and m.codEmpresa = 1
             and m.codFase in (429, 432, 441 )
             and m2.codFase in (429, 432, 441 )
+            AND m2.dataBaixa > DATEADD(day, -500, CURRENT_DATE)
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
+    def piloto_nao_retornada(self):
+
+
+        sql = """
+        SELECT
+            observacao1 as codBarrasTag_nao_retorno,
+            m.numeroOP
+        FROM
+            tco.RoteiroOP m
+        left join tco.MovimentacaoOPFase m2 on m2.codEmpresa = 1 
+            and m2.numeroOP = m.numeroOP  
+            and m2.codFase = m.codFase 
+        WHERE
+        	 m.observacao1  like '%Piloto na%'
+        	and m.numeroOP like '%-001'
+            and m.codEmpresa = 1
             AND m2.dataBaixa > DATEADD(day, -500, CURRENT_DATE)
         """
 
