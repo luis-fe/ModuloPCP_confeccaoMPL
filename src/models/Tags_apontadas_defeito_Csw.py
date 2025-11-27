@@ -284,7 +284,7 @@ class Tags_apontada_defeitos():
 
             # 2. Concatena a instrução DELETE com a lista de valores
             delete_query = f"""
-            delete from "PCP".pcp."tags_piloto_csw_2" 
+            delete from "PCP".pcp."tags_pilotos" 
              where "codBarrasTag" in {valores_sql}
             """
 
@@ -333,7 +333,7 @@ class Tags_apontada_defeitos():
                 f'Finalizado tags inseridas {consulta["codBarrasTag"].size}', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
             ConexaoPostgre.Funcao_InserirPCPMatriz(consulta, consulta['codBarrasTag'].size,
-                                                   'tags_piloto_csw_2', 'replace')
+                                                   'tags_pilotos', 'replace')
         else:
             self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
             self.servicoAutomacao.exluir_historico_antes_quarentena()
@@ -345,7 +345,7 @@ class Tags_apontada_defeitos():
                     "codBarrasTag", 
                     'OK' as "status" 
                 from 
-                    "PCP".pcp."tags_piloto_csw_2" 
+                    "PCP".pcp."tags_pilotos" 
         """
 
 
