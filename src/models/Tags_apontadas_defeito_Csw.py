@@ -321,7 +321,7 @@ class Tags_apontada_defeitos():
         consulta = pd.merge(consulta, pilotoNRetornada, on='numeroOP', how='left')
 
         tags_inv_local = self.__buscar_inventario_local()
-        consulta = pd.merge(consulta, tags_transf, on='codBarrasTag', how='left')
+        consulta = pd.merge(consulta, tags_inv_local, on='codBarrasTag', how='left')
 
 
         consulta.fillna('-',inplace=True)
