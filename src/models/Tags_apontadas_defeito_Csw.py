@@ -240,7 +240,7 @@ class Tags_apontada_defeitos():
             tcr.TagBarrasProduto t
         WHERE
             t.codEmpresa = {self.codEmpresa}
-            and t.situacao = 3
+            and t.situacao in (3 , 8)
             and t.codNaturezaAtual = 24
         """
 
@@ -319,6 +319,9 @@ class Tags_apontada_defeitos():
 
         pilotoNRetornada = self.piloto_nao_retornada()
         consulta = pd.merge(consulta, pilotoNRetornada, on='numeroOP', how='left')
+
+        tags_inv_local = self.__buscar_inventario_local()
+        consulta = pd.merge(consulta, tags_transf, on='codBarrasTag', how='left')
 
 
         consulta.fillna('-',inplace=True)
@@ -560,6 +563,27 @@ class Tags_apontada_defeitos():
         # Libera memória manualmente
         del rows
         gc.collect()
+
+        return consulta
+
+
+
+    def __buscar_inventario_local(self):
+        '''Metodo que busca o inventario do local '''
+
+        sql = """
+                select
+                "codBarrasTag",
+                "DataHoraInvLocal",
+                "local" as "localInv"
+                    from
+                        pcp."InventarioLocalPiloto" as t
+        """
+
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(sql, conn)
+
 
         return consulta
 
