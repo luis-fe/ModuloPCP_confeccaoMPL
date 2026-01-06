@@ -13,6 +13,25 @@ class DashboardTV():
         def get_metas_cadastradas_ano_empresa(self):
             '''Metodo que obtem as metas cadastradas para um determinado ano '''
 
+            dados = [
+                { "mes": "01-Janeiro"},
+                { "mes": "02-Fevereiro"},
+                { "mes": "03-Março"},
+                {"mes": "04-Abril"},
+                { "mes": "05-Maio"},
+                {"mes": "06-Junho"},
+                {"mes": "07-Julho"},
+                {"mes": "08-Agosto"},
+                {"mes": "09-Setembro"},
+                {"mes": "10-Outubro"},
+                {"mes": "11-Novembro"},
+                {"mes": "12-Dezembro"}
+            ]
+
+            # DataFrame somente com a coluna 'mes'
+            mes = pd.DataFrame(dados)[["mes"]]
+
+
             sql = """
             select
                 *
@@ -25,6 +44,8 @@ class DashboardTV():
             """
             conn = ConexaoPostgre.conexaoEngine()
             consulta = pd.read_sql(sql,conn, params=(self.codAno, self.codEmpresa))
+
+            consulta = pd.merge(mes, consulta, on='mes', how='left')
 
             return consulta
 
