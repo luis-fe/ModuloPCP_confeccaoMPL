@@ -48,6 +48,10 @@ class DashboardTV():
             consulta = pd.merge(mes, consulta, on='mes', how='left')
             consulta.fillna('R$0,00',inplace=True)
 
+            consulta["meta"] = consulta["meta"].apply(
+                lambda x: f"R$ {x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            )
+
             return consulta
 
 
