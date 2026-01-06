@@ -22,6 +22,15 @@ def get_metas_cadastradas_ano_empresa():
     codEmpresa = request.args.get('codEmpresa','1')
     ano =  request.args.get('ano','1')
 
+    codEmpresa = str(codEmpresa)
+    codEmpresa = codEmpresa.upper()
+
+
+    if codEmpresa == 'FILIAL':
+        codEmpresa = '4'
+
+    if codEmpresa == 'MATRIZ':
+        codEmpresa = '1'
 
     dados = DashboardTV.DashboardTV(codEmpresa, ano).get_metas_cadastradas_ano_empresa()
 
