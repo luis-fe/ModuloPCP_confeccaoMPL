@@ -34,7 +34,7 @@ class DashboardTV():
 
             sql = """
             select
-                *
+                mes, meta
             from
                 "PCP"."DashbordTV".metas m
             where 
