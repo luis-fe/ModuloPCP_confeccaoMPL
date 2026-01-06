@@ -46,6 +46,7 @@ class DashboardTV():
             consulta = pd.read_sql(sql,conn, params=(self.codAno, self.codEmpresa))
 
             consulta = pd.merge(mes, consulta, on='mes', how='left')
+            consulta = consulta.fillna('R$0,00',inplace=True)
 
             return consulta
 
