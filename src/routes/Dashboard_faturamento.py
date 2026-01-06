@@ -20,10 +20,10 @@ def token_required(f):
 @token_required
 def get_metas_cadastradas_ano_empresa():
     codEmpresa = request.args.get('codEmpresa','1')
-    codAno =  request.args.get('codAno','1')
+    ano =  request.args.get('ano','1')
 
 
-    dados = DashboardTV.DashboardTV(codEmpresa, codAno).get_metas_cadastradas_ano_empresa()
+    dados = DashboardTV.DashboardTV(codEmpresa, ano).get_metas_cadastradas_ano_empresa()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
