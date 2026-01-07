@@ -150,6 +150,7 @@ class DashboardTV():
                 return pd.DataFrame([{'Mensagem':"Cadastar Nova Senha",'status':False}])
 
             else:
+                print(usuarioInformacao)
 
                 if str(self.senha) == usuarioInformacao['senha'][0]:
                     return pd.DataFrame([{'Mensagem': "Autentificado com sucesso", 'status': True}])
