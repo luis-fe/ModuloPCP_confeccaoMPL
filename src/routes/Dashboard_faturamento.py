@@ -110,7 +110,7 @@ def get_autentificarUsuarioSenhaMetas():
     matricula = request.args.get('matricula')
     senha = request.args.get('senha')
 
-    dados = DashboardTV.DashboardTV('','','','',matricula, senha).usuario_autentificar()
+    dados = DashboardTV.DashboardTV('','','','',matricula, '',senha).usuario_autentificar()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
