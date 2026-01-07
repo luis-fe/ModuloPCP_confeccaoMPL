@@ -151,7 +151,7 @@ class DashboardTV():
 
             else:
 
-                if self.senha == usuarioInformacao['senha'][0]:
+                if str(self.senha) == usuarioInformacao['senha'][0]:
                     return pd.DataFrame([{'Mensagem': "Autentificado com sucesso", 'status': True}])
                 else:
                     return pd.DataFrame([{'Mensagem': "Senhas nao Confere", 'status': False}])
