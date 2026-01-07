@@ -140,13 +140,39 @@ class DashboardTV():
 
 
 
-        def criar_usuario_autentificado(self):
+        def usuario_autentificar(self):
             '''metodo para criar usuario'''
 
-            usuarioDados = self.get_colaboradores_api()
-            print(usuarioDados)
+            usuarioInformacao = self.obter_informacao_autentificacao()
 
-            return usuarioDados
+            if usuarioInformacao.empty:
+
+                return pd.DataFrame([{'Mensagem':"Cadastar Nova Senha",'status':False}])
+
+            else:
+
+                if self.senha == usuarioInformacao['senha'][0]:
+                    return pd.DataFrame([{'Mensagem': "Autentificado com sucesso", 'status': True}])
+                else:
+                    return pd.DataFrame([{'Mensagem': "Senhas nao Confere", 'status': False}])
+
+        def obter_informacao_autentificacao(self):
+
+            select = """
+            select 
+                matricula,
+                nome,
+                senha
+             from "PCP"."DashbordTV".autentificacao
+            where  
+                matricula = %s
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+            consulta = pd.read_sql(select,conn,params=(self.usuario,))
+
+            return consulta
+
 
         def devolver_nome_usuario(self):
 
