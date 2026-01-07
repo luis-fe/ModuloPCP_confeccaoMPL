@@ -19,7 +19,7 @@ def token_required(f):
 @dashboard_fat_routes.route('/pcp/api/get_metas_cadastradas_ano_empresa', methods=['GET'])
 @token_required
 def get_metas_cadastradas_ano_empresa():
-    codEmpresa = request.args.get('codEmpresa','1')
+    codEmpresa = request.args.get('Empresa','1')
     ano =  request.args.get('ano','1')
 
     codEmpresa = str(codEmpresa)
@@ -45,5 +45,31 @@ def get_metas_cadastradas_ano_empresa():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@dashboard_fat_routes.route('/pcp/api/post_atualizarMetaMesesAno', methods=['POST'])
+@token_required
+def post_atualizarMetaMesesAno():
+
+    data = request.get_json()
+    codEmpresa = data.get('Empresa')
+    ano = data.get('ano')
+    meses = data.get('meses')
+    metas = data.get('metas')
+
+    dados = DashboardTV.DashboardTV(codEmpresa,ano,meses,metas).post_metas_empresa_ano()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
 
 
