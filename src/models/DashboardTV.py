@@ -1,15 +1,22 @@
 import pandas as pd
 from src.connection import ConexaoPostgre
+import requests
 
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
-        def __init__(self, codEmpresa = '', codAno = '', meses = '', metas_valores = ''):
+        def __init__(self, codEmpresa = '', codAno = '', meses = '', metas_valores = '',
+                     usuario = '', nome = '', senha = ''
+                     ):
 
             self.codEmpresa = str(codEmpresa)
             self.codAno = str(codAno)
             self.meses = meses
             self.metas_valores = metas_valores
+
+            self.usuario = usuario
+            self.nome = nome
+            self.senha = senha
 
 
         def get_metas_cadastradas_ano_empresa(self):
@@ -130,6 +137,57 @@ class DashboardTV():
                         conn.commit()
 
             return pd.DataFrame([{'Mensagem': 'Dados gravados com sucesso', 'status': True}])
+
+
+
+        def criar_usuario_autentificado(self):
+            '''metodo para criar usuario'''
+
+            usuarioDados = self.get_colaboradores_api()
+
+            return usuarioDados
+
+        def get_colaboradores_api(self):
+            '''Consome API de colaboradores e retorna DataFrame filtrado pela empresa'''
+
+            url = "http://10.162.0.202:3001/api/colaboradores"
+
+            try:
+                # 1. Faz a requisição
+                response = requests.get(url, timeout=10)  # Timeout evita travamento eterno
+                response.raise_for_status()  # Levanta erro se der 404 ou 500
+
+                # 2. Transforma o JSON em DataFrame
+                dados = response.json()
+                df = pd.DataFrame(dados)
+
+                if df.empty:
+                    return pd.DataFrame()
+
+                # 3. Tratamento de Data (Opcional, mas recomendado para visualização)
+                # Converte de string ISO para objeto datetime do Pandas
+                if 'data_nasc' in df.columns:
+                    df['data_nasc'] = pd.to_datetime(df['data_nasc'])
+                    # Se quiser formatar apenas para visualização (ex: 22/09/2003):
+                    # df['data_nasc_str'] = df['data_nasc'].dt.strftime('%d/%m/%Y')
+
+                # 4. Filtrar pela empresa da Classe (self.codEmpresa)
+                # A API retorna int, mas self.codEmpresa é string no seu init.
+                # Vamos converter para garantir o match.
+                if 'empresa' in df.columns and self.codEmpresa:
+                    df = df[df['empresa'] == int(self.codEmpresa)]
+
+                df['id'] = df['id'].astype(str)
+                df = df[df['id']==self.usuario]
+
+                return df
+
+            except requests.exceptions.RequestException as e:
+                print(f"Erro ao conectar na API: {e}")
+                return pd.DataFrame()  # Retorna vazio em caso de erro para não quebrar o sistema
+            except Exception as e:
+                print(f"Erro ao processar dados: {e}")
+                return pd.DataFrame()
 
 
 
