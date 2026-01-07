@@ -167,7 +167,7 @@ class DashboardTV():
                 insert = """
                 insert into 
                     "PCP"."DashbordTV".autentificacao
-                (matriucla, nome, "senha")
+                (matricula, nome, "senha")
                 values 
                 (%s, %s, %s)
                 """
