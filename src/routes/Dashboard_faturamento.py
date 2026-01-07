@@ -57,6 +57,13 @@ def post_atualizarMetaMesesAno():
     meses = data.get('meses')
     metas = data.get('metas')
 
+
+    if codEmpresa == 'FILIAL':
+        codEmpresa = '4'
+
+    if codEmpresa == 'MATRIZ':
+        codEmpresa = '1'
+
     dados = DashboardTV.DashboardTV(codEmpresa,ano,meses,metas).post_metas_empresa_ano()
 
     # Obtém os nomes das colunas
