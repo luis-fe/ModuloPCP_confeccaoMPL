@@ -136,7 +136,7 @@ def post_salvarUsuarioSenha():
     senha = data.get('senha')
 
 
-    dados = DashboardTV.DashboardTV('','','','',matricula, nome, senha).usuario_autentificar()
+    dados = DashboardTV.DashboardTV('','','','',matricula, nome, senha).criar_editar_senha()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
