@@ -167,14 +167,7 @@ class DashboardTV():
 
                 # 3. Tratamento de Data (Opcional, mas recomendado para visualização)
                 # Converte de string ISO para objeto datetime do Pandas
-                if 'data_nasc' in df.columns:
-                    df['data_nasc'] = pd.to_datetime(df['data_nasc'])
-                    # Se quiser formatar apenas para visualização (ex: 22/09/2003):
-                    # df['data_nasc_str'] = df['data_nasc'].dt.strftime('%d/%m/%Y')
 
-                # 4. Filtrar pela empresa da Classe (self.codEmpresa)
-                # A API retorna int, mas self.codEmpresa é string no seu init.
-                # Vamos converter para garantir o match.
                 if 'empresa' in df.columns and self.codEmpresa:
                     df = df[df['empresa'] == int(self.codEmpresa)]
 
