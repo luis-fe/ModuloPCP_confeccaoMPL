@@ -166,7 +166,7 @@ class DashboardTV():
             if verificar.empty:
                 insert = """
                 insert into 
-                    "PCP"."DashbordTV".metas
+                    "PCP"."DashbordTV".autentificacao
                 (matriucla, nome, "senha")
                 values 
                 (%s, %s, %s)
@@ -182,7 +182,7 @@ class DashboardTV():
             else:
 
                 update = """
-                update  "PCP"."DashbordTV".metas
+                update  "PCP"."DashbordTV".autentificacao
                 set senha = %s
                 where matricula = %s
                 """
