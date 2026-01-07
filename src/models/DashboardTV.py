@@ -157,6 +157,44 @@ class DashboardTV():
                 else:
                     return pd.DataFrame([{'Mensagem': "Senhas nao Confere", 'status': False}])
 
+
+
+        def criar_editar_senha(self):
+
+            verificar = self.obter_informacao_autentificacao()
+
+            if verificar.empty:
+                insert = """
+                insert into 
+                    "PCP"."DashbordTV".metas
+                (matriucla, nome, senha")
+                values 
+                (%s, %s, %s)
+                """
+
+                with ConexaoPostgre.conexaoInsercao() as conn:
+                    with conn.cursor() as curr:
+
+                        curr.execute(insert,(self.usuario, self.nome, self.usuario))
+                        conn.commit()
+
+                return pd.DataFrame([{'Mensagem':'usuario salvo com sucesso', 'status':True}])
+            else:
+
+                update = """
+                update  "PCP"."DashbordTV".metas
+                set senha = %s
+                where matricula = %s
+                """
+
+                with ConexaoPostgre.conexaoInsercao() as conn:
+                    with conn.cursor() as curr:
+                        curr.execute(update, (self.senha, self.usuario))
+                        conn.commit()
+
+                return pd.DataFrame([{'Mensagem': 'usuario salvo com sucesso', 'status': True}])
+
+
         def obter_informacao_autentificacao(self):
 
             select = """

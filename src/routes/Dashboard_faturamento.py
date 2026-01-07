@@ -123,3 +123,29 @@ def get_autentificarUsuarioSenhaMetas():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+
+@dashboard_fat_routes.route('/pcp/api/post_salvarUsuarioSenha', methods=['POST'])
+@token_required
+def post_salvarUsuarioSenha():
+
+    data = request.get_json()
+    matricula = data.get('matricula')
+    nome = data.get('nome','')
+    senha = data.get('senha')
+
+
+    dados = DashboardTV.DashboardTV('','','','',matricula, nome, senha).usuario_autentificar()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
