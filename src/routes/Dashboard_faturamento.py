@@ -84,12 +84,12 @@ def post_atualizarMetaMesesAno():
 
 
 
-@dashboard_fat_routes.route('/pcp/api/usuarios', methods=['GET'])
+@dashboard_fat_routes.route('/pcp/api/devolver_nome_usuario', methods=['GET'])
 @token_required
 def get_usuarios():
     matricula = request.args.get('matricula')
 
-    dados = DashboardTV.DashboardTV('','','','',str(matricula)).criar_usuario_autentificado()
+    dados = DashboardTV.DashboardTV('','','','',str(matricula)).devolver_nome_usuario()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
