@@ -89,7 +89,7 @@ def post_atualizarMetaMesesAno():
 def get_usuarios():
     matricula = request.args.get('matricula')
 
-    dados = DashboardTV.DashboardTV('','','','',str(matricula)).get_colaboradores_api()
+    dados = DashboardTV.DashboardTV('','','','',str(matricula)).criar_usuario_autentificado()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
