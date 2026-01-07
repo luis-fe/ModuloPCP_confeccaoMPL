@@ -57,6 +57,9 @@ def post_atualizarMetaMesesAno():
     meses = data.get('meses')
     metas = data.get('metas')
 
+    codEmpresa = str(codEmpresa)
+    codEmpresa = codEmpresa.upper()
+
 
     if codEmpresa == 'FILIAL':
         codEmpresa = '4'
