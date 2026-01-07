@@ -144,6 +144,7 @@ class DashboardTV():
             '''metodo para criar usuario'''
 
             usuarioDados = self.get_colaboradores_api()
+            print(usuarioDados)
 
             return usuarioDados
 
