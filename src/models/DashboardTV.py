@@ -148,6 +148,15 @@ class DashboardTV():
 
             return usuarioDados
 
+        def devolver_nome_usuario(self):
+
+
+            usuarioDados = self.get_colaboradores_api()
+            usuarioDados = usuarioDados['nome']
+
+            return usuarioDados
+
+
         def get_colaboradores_api(self):
             '''Consome API de colaboradores e retorna DataFrame filtrado pela empresa'''
 
