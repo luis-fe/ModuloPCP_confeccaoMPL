@@ -152,7 +152,7 @@ class DashboardTV():
 
 
             usuarioDados = self.get_colaboradores_api()
-            usuarioDados = usuarioDados['nome']
+            usuarioDados = usuarioDados[usuarioDados['nome']]
 
             return usuarioDados
 
