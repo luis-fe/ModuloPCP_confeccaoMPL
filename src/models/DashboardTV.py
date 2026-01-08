@@ -1,6 +1,8 @@
 import pandas as pd
 from src.connection import ConexaoPostgre
 import requests
+import pytz
+import datetime
 
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
@@ -256,6 +258,63 @@ class DashboardTV():
             except Exception as e:
                 print(f"Erro ao processar dados: {e}")
                 return pd.DataFrame()
+
+
+
+        def gravar_usuario_alteracao_meta(self):
+            '''Metodo que grava o usuario que esta alterando as metas '''
+
+            insert = """
+                insert into 
+                    "PCP"."DashbordTV"."historicoAltMetas"
+                (matricula, empresa, ano, "dataHora")
+                    values
+                (%s, %s, %s, %s)
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert,(self.usuario, self.codEmpresa, self.codAno, self.__obterHoraAtual()))
+                    conn.commit()
+
+
+        def get_ultima_alteracao(self):
+            '''Metodo que devolve a ultima alteracao'''
+
+            consulta = """
+            select 
+                aut.matricula,
+                aut.nome
+                "dataHora"
+            from 
+                "PCP"."DashbordTV"."historicoAltMetas" h
+            inner join
+                "PCP"."DashbordTV".autentificacao aut
+                on aut.matricula = h.matricula
+            where
+                empresa = %s
+                and ano = %s
+            order by 
+                "dataHora" desc
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+            consulta = pd.read_sql(consulta, conn, params=(self.codEmpresa, self.codAno,))
+
+            consulta = consulta.loc[0]
+
+            return consulta
+
+
+        def __obterHoraAtual(self):
+            fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+            agora = datetime.datetime.now(fuso_horario)
+            hora_str = agora.strftime('%Y-%m-%d %H:%M:%S')
+            dia = agora.strftime('%Y-%m-%d')
+            return hora_str
+
+
 
 
 

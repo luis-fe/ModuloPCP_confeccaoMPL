@@ -52,10 +52,12 @@ def get_metas_cadastradas_ano_empresa():
 def post_atualizarMetaMesesAno():
 
     data = request.get_json()
+
     codEmpresa = data.get('Empresa')
     ano = data.get('ano')
     meses = data.get('meses')
     metas = data.get('metas')
+    matricula = data.get('matricula','-')
 
     codEmpresa = str(codEmpresa)
     codEmpresa = codEmpresa.upper()
@@ -67,7 +69,9 @@ def post_atualizarMetaMesesAno():
     if codEmpresa == 'MATRIZ':
         codEmpresa = '1'
 
-    dados = DashboardTV.DashboardTV(codEmpresa,ano,meses,metas).post_metas_empresa_ano()
+    infor = DashboardTV.DashboardTV(codEmpresa,ano,meses,metas, str(matricula))
+    dados = infor.post_metas_empresa_ano()
+    infor.gravar_usuario_alteracao_meta()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
