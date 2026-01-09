@@ -162,6 +162,16 @@ def get_informacaoUltimaAlteMetas():
     codEmpresa = request.args.get('Empresa','1')
     ano =  request.args.get('ano','1')
 
+    codEmpresa = str(codEmpresa)
+    codEmpresa = codEmpresa.upper()
+
+
+    if codEmpresa == 'FILIAL':
+        codEmpresa = '4'
+
+    if codEmpresa == 'MATRIZ':
+        codEmpresa = '1'
+
 
     dados = DashboardTV.DashboardTV(codEmpresa, ano,'','').get_ultima_alteracao()
 
