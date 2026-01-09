@@ -808,7 +808,7 @@ class Plano():
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(inserir,(self.codPlano, self.parametroABC,self.perc_dist))
+                curr.execute(inserir,(self.codPlano, self.parametroABC,self.perc_dist, self.codEmpresa))
                 conn.commit()
 
         return pd.DataFrame([{'status':True,'Mensagem':'Planejamento ABC alterado com sucesso'}])
