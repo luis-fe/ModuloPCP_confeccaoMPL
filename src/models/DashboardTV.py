@@ -303,6 +303,11 @@ class DashboardTV():
             consulta = pd.read_sql(consulta, conn, params=(self.codEmpresa, self.codAno,))
 
             consulta = consulta.loc[0:0]
+            # 🔹 converte para datetime (caso venha como string)
+            consulta["dataHora"] = pd.to_datetime(consulta["dataHora"])
+
+            # 🔹 converte para string no formato brasileiro
+            consulta["dataHora"] = consulta["dataHora"].dt.strftime("%d/%m/%Y %H:%M:%S")
 
             return consulta
 
@@ -310,7 +315,7 @@ class DashboardTV():
         def __obterHoraAtual(self):
             fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
             agora = datetime.datetime.now(fuso_horario)
-            hora_str = agora.strftime('%d/%m/%a %H:%M:%S')
+            hora_str = agora.strftime('%Y-%m-%d %H:%M:%S')
             dia = agora.strftime('%Y-%m-%d')
             return hora_str
 
