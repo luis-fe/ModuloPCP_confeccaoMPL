@@ -489,6 +489,8 @@ class Tendencia_Plano_Materiais():
                     "categoria":"first",
                     "codCor":"first",
                     "tam":"first",
+                    "class":"first",
+                    "classCategoria":"first",
                     "disponivel":"first",
                     "faltaProg (Tendencia)":"first",
                     "Sugestao_PCs": "min"}).reset_index()
