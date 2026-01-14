@@ -357,7 +357,7 @@ class DashboardTV():
                                         "consideraTotalizador"
                                         "empresa"
                         ) values
-                        ( %s, %s, %s, %s )
+                        ( %s, %s, %s )
                     """
 
                     with ConexaoPostgre.conexaoInsercao() as conn:
