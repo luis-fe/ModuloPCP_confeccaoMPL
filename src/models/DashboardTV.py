@@ -354,7 +354,7 @@ class DashboardTV():
                         "PCP"."DashbordTV"."confNota"
                         (
                                         "tipoNota",
-                                        "consideraTotalizador"
+                                        "consideraTotalizador",
                                         "empresa"
                         ) values
                         ( %s, %s, %s )
