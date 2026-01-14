@@ -351,7 +351,7 @@ class DashboardTV():
 
                     insert = """
                     insert into 
-                        "PCP"."DashbordTV"."confNota" aut 
+                        "PCP"."DashbordTV"."confNota"
                         (
                                         "tipoNota",
                                         "consideraTotalizador"
