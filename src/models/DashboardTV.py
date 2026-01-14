@@ -340,11 +340,12 @@ class DashboardTV():
 
             '''Metodo que configura os tipos de notas por empresa '''
 
-            verifica = self.get_tipo_notas_empresa_pornota()
 
 
             # CORREÇÃO 1: Usar zip() para iterar duas listas simultaneamente
             for nota, consideraTotaliza in zip(self.codTipoNota, consideraTotalizador):
+
+                verifica = self.get_tipo_notas_empresa_pornota(nota)
 
                 if verifica.empty:
 
@@ -403,7 +404,7 @@ class DashboardTV():
 
 
 
-        def get_tipo_notas_empresa_pornota(self):
+        def get_tipo_notas_empresa_pornota(self, nota):
 
             select = """
             select
@@ -417,7 +418,7 @@ class DashboardTV():
 
             conn = ConexaoPostgre.conexaoEngine()
 
-            consulta = pd.read_sql(select,conn,params=(self.codEmpresa,self.codTipoNota))
+            consulta = pd.read_sql(select,conn,params=(self.codEmpresa,nota))
 
             return consulta
 
