@@ -8,7 +8,7 @@ class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
         def __init__(self, codEmpresa = '', codAno = '', meses = '', metas_valores = '',
-                     usuario = '', nome = '', senha = ''
+                     usuario = '', nome = '', senha = '', codTipoNota = ''
                      ):
 
             self.codEmpresa = str(codEmpresa)
@@ -19,6 +19,7 @@ class DashboardTV():
             self.usuario = usuario
             self.nome = nome
             self.senha = senha
+            self.codTipoNota = codTipoNota
 
 
         def get_metas_cadastradas_ano_empresa(self):
@@ -318,6 +319,107 @@ class DashboardTV():
             hora_str = agora.strftime('%Y-%m-%d %H:%M:%S')
             dia = agora.strftime('%Y-%m-%d')
             return hora_str
+
+        def __dashboard_mes_atual(self):
+            '''Metodo que obtem do CSW o dashboard de faturmaneto do mes atual'''
+
+            query = """
+                        select 
+                            n.codTipoDeNota as tiponota, 
+                            n.dataEmissao, 
+                            n.vlrTotal as faturado
+                        FROM 
+                            Fat.NotaFiscal n
+                        where 
+                            n.codTipoDeNota in (48, 167, 30, 118, 102, 149, 168, 170, 159, 156, 12)
+                            and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' '
+                                                                       'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 '
+                    """
+
+        def configuracao_tipo_notas_empresa(self, consideraTotalizador = ''):
+
+            '''Metodo que configura os tipos de notas por empresa '''
+
+            verifica = self.get_tipo_notas_empresa_pornota()
+
+
+            # CORREÇÃO 1: Usar zip() para iterar duas listas simultaneamente
+            for nota, consideraTotaliza in zip(self.codTipoNota, consideraTotalizador):
+
+                if verifica.empty:
+
+                    insert = """
+                    insert into 
+                        "PCP"."DashbordTV"."confNota" aut 
+                        (
+                                        "tipoNota",
+                                        "consideraTotalizador"
+                                        "empresa"
+                        ) values
+                        ( %s, %s, %s, %s )
+                    """
+
+                    with ConexaoPostgre.conexaoInsercao() as conn:
+                        with conn.cursor() as curr:
+
+                            curr.execute(insert,(nota, consideraTotaliza, self.codEmpresa))
+                            conn.commit()
+
+                else:
+                    update = """
+                    update 
+                        "PCP"."DashbordTV"."confNota"
+                    set 
+                        "consideraTotalizador" = %
+                    where
+                        "tipoNota" = %s
+                        and "empresa" = %s
+                    """
+
+                    with ConexaoPostgre.conexaoInsercao() as conn:
+                        with conn.cursor() as curr:
+                            curr.execute(update, (consideraTotaliza, nota, self.codEmpresa))
+                            conn.commit()
+
+            return pd.DataFrame([{'Mensagem':'Dados Gravados com sucesso ', 'status':True}])
+
+
+        def get_tipo_notas_empresa(self):
+
+            select = """
+            select
+                "tipoNota",
+                "consideraTotalizador"
+            from 
+                "PCP"."DashbordTV"."confNota" aut 
+            where
+                empresa = %s
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+
+            consulta = pd.read_sql(select,conn,params=(self.codEmpresa))
+            return consulta
+
+
+
+        def get_tipo_notas_empresa_pornota(self):
+
+            select = """
+            select
+                "tipoNota",
+                "consideraTotalizador"
+            from 
+                "PCP"."DashbordTV"."confNota" aut 
+            where
+                empresa = %s and "tipoNota" = %s
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+
+            consulta = pd.read_sql(select,conn,params=(self.codEmpresa,self.codTipoNota))
+
+            return consulta
 
 
 
