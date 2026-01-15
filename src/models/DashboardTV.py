@@ -341,6 +341,17 @@ class DashboardTV():
             '''Metodo que configura os tipos de notas por empresa '''
 
 
+            delete = """
+            delete from "PCP"."DashbordTV"."confNota"
+            where "empresa" = %s
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(delete, (self.codEmpresa,))
+                    conn.commit()
+
+
 
             # CORREÇÃO 1: Usar zip() para iterar duas listas simultaneamente
             for nota, consideraTotaliza in zip(self.codTipoNota, consideraTotalizador):
