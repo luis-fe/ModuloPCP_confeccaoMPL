@@ -410,7 +410,7 @@ class DashboardTV():
 
             conn = ConexaoPostgre.conexaoEngine()
 
-            consulta = pd.read_sql(select,conn,params=(self.codEmpresa))
+            consulta = pd.read_sql(select,conn,params=(self.codEmpresa,))
             return consulta
 
 
