@@ -226,3 +226,35 @@ def post_inserirConfiguracoes():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+
+@dashboard_fat_routes.route('/pcp/api/get_informacaoNotasConfigruadas', methods=['GET'])
+@token_required
+def get_informacaoNotasConfigruadas():
+    codEmpresa = request.args.get('Empresa','1')
+
+    codEmpresa = str(codEmpresa)
+    codEmpresa = codEmpresa.upper()
+
+
+    if codEmpresa == 'FILIAL':
+        codEmpresa = '4'
+
+    if codEmpresa == 'MATRIZ':
+        codEmpresa = '1'
+
+
+    dados = DashboardTV.DashboardTV(codEmpresa, '','','').get_tipo_notas_empresa()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
