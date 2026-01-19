@@ -1,5 +1,7 @@
 import gc
 import pandas as pd
+
+from src.configApp import configApp
 from src.connection import ConexaoERP
 from src.models import ServicoAutomacao
 from dateutil.relativedelta import relativedelta
@@ -483,8 +485,7 @@ class Pedidos_CSW():
             ano = self.dataInicioFat[0:4]
 
             dataFrame = self.faturamento_periodo_empresa()
-            load_dotenv('db.env')
-            caminhoAbsoluto = os.getenv('CAMINHO')
+            caminhoAbsoluto = configApp.localProjeto
             dataFrame.to_csv(f'{caminhoAbsoluto}_{ano}_{self.codEmpresa}')
 
 
