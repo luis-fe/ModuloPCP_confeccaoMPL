@@ -5,7 +5,7 @@ from datetime import datetime
 import psutil
 import pytz
 
-from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw
+from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw, Pedidos_CSW
 
 
 def obterHoraAtual():
@@ -29,7 +29,8 @@ if __name__ == '__main__':
     Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags2, 20,'Tags Pilotos').get_tags_pilotos_csw()
 
 
-
+    pedidosCsw = Pedidos_CSW.Pedidos_CSW('1')
+    pedidosCsw.put_automacao()
 
 
     os.system('clear')

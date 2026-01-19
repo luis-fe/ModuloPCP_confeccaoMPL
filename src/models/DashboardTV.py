@@ -1,14 +1,17 @@
+import os
+from dotenv import load_dotenv, dotenv_values
 import pandas as pd
 from src.connection import ConexaoPostgre
 import requests
 import pytz
 import datetime
+from src.models import Pedidos_CSW
 
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
         def __init__(self, codEmpresa = '', codAno = '', meses = '', metas_valores = '',
-                     usuario = '', nome = '', senha = '', codTipoNota = ''
+                     usuario = '', nome = '', senha = '', codTipoNota = '', dataInicio = '', dataFim = ''
                      ):
 
             self.codEmpresa = str(codEmpresa)
@@ -20,6 +23,8 @@ class DashboardTV():
             self.nome = nome
             self.senha = senha
             self.codTipoNota = codTipoNota
+            self.dataInicio = dataInicio
+            self.dataFim = dataFim
 
 
         def get_metas_cadastradas_ano_empresa(self):
@@ -320,21 +325,119 @@ class DashboardTV():
             dia = agora.strftime('%Y-%m-%d')
             return hora_str
 
-        def __dashboard_mes_atual(self):
+        def __dashboard_informacoes_faturamento_csw(self):
             '''Metodo que obtem do CSW o dashboard de faturmaneto do mes atual'''
 
+
+            tipoNota = self.obterTipoNotasConsiderado()
+
+
+            tipoNota['tipoNota'] = tipoNota['tipoNota'].str.split('-').str[0]
+            clausua = ", ".join(tipoNota['tipoNota'])
+
+
+            pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
+
+            consulta = pedidosCsw.faturamento_csw_periodo(clausua)
+
+            consulta['tipoNota'] = consulta['tipoNota'].astype(str)
+            tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
+
+            consulta = pd.merge(consulta, tipoNota, on='tipoNota')
+
+
+            return consulta
+
+        def __obter_backup(self):
+            '''Metodo que obtem os backups via arquivo csv'''
+
+            load_dotenv('db.env')
+            caminhoAbsoluto = os.getenv('CAMINHO')
+            nome = f'{caminhoAbsoluto}/dados/' + self.codAno + 'Vendas' + self.codEmpresa + '.csv'
+
+            get_backup = pd.read_csv(nome)
+
+
+            return get_backup
+
+
+        def __get_retorna(self):
+            '''Metodo que busca os pedidos no retorna '''
+
+            pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
+            consulta = pedidosCsw.retorna_csw_empresa()
+
+            return consulta
+
+
+
+        def dashboard_view(self):
+            '''Metodo responsavel pela Apresentacao do Dashboard'''
+
+            # 1 - Montando a analise do retorna
+            retornaCsw = self.__get_retorna()
+            retornaCsw["codPedido"] = retornaCsw["codPedido"] + '-' + retornaCsw["codSequencia"]
+
+            retornaCswSB = retornaCsw[retornaCsw['codigo'] != 39]
+            retornaCswMPLUS = retornaCsw[retornaCsw['codigo'] == 39]
+
+
+            retorna = retornaCswSB['vlrSugestao'].sum()
+            retorna = "{:,.2f}".format(retorna)
+            retorna = str(retorna)
+            retorna = 'R$ ' + retorna.replace(',', ';').replace('.', ',').replace(';', '.')
+
+            ValorRetornaMplus = retornaCswMPLUS['vlrSugestao'].sum()
+            ValorRetornaMplus = "{:,.2f}".format(ValorRetornaMplus)
+            ValorRetornaMplus = str(ValorRetornaMplus)
+            ValorRetornaMplus = 'R$ ' + ValorRetornaMplus.replace(',', ';').replace('.', ',').replace(';', '.')
+
+
+            # 2 -
+
+            meses = ['01-Janeiro', '02-Fevereiro', '03-Março', '04-Abril', '05-Maio', '06-Junho',
+                     '07-Julho', '08-Agosto', '09-Setembro', '10-Outubro', '11-Novembro', '12-Dezembro']
+
+            if self.codEmpresa == 'Todas':
+                data = {
+                    '1- Ano:': f'{self.codAno}',
+                    '2- Empresa:': f'{self.codEmpresa}',
+                    '3- No Retorna': f"{retorna}",
+                    '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
+                    '4- No Dia': f"{df_dia}",
+                    '5- TOTAL': f"{total}",
+                    '6- Atualizado as': f"{datahora}",
+                    '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+                }
+            else:
+                data = {
+                    '1- Ano:': f'{self.codAno}',
+                    '2- Empresa:': f'{self.codEmpresa}',
+                    '3- No Retorna': f"{retorna}",
+                    '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
+                    '4- No Dia': f"{df_dia}",
+                    '5- TOTAL': f"{total}",
+                    '6- Atualizado as': f"{datahora}",
+                    '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+                }
+
+        def obterTipoNotasConsiderado(self):
+            '''Metodo utilizado para carregar os tipo de notas sem pedidos '''
+
             query = """
-                        select 
-                            n.codTipoDeNota as tiponota, 
-                            n.dataEmissao, 
-                            n.vlrTotal as faturado
-                        FROM 
-                            Fat.NotaFiscal n
-                        where 
-                            n.codTipoDeNota in (48, 167, 30, 118, 102, 149, 168, 170, 159, 156, 12)
-                            and n.dataEmissao >= ' + "'" + dataInicio + "'" + ' '
-                                                                       'and n.dataEmissao <= ' + "'" + dataFim + "'" + ' and situacao = 2 '
-                    """
+            select
+                "tipoNota"
+            from
+                PCP"."DashbordTV"."confNota"
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+
+            consulta = pd.read_sql(query,conn)
+
+            return consulta
+
+
 
         def configuracao_tipo_notas_empresa(self, consideraTotalizador = ''):
 

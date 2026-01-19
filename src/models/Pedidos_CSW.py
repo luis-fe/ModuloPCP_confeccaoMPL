@@ -1,8 +1,8 @@
 import gc
-
 import pandas as pd
 from src.connection import ConexaoERP
-
+from src.models import ServicoAutomacao
+from dateutil.relativedelta import relativedelta
 
 class Pedidos_CSW():
     '''Classe utilizado para interagir com os Pedidos do Csw '''
@@ -346,22 +346,68 @@ class Pedidos_CSW():
             del rows
             return consulta
 
-    def faturamento_nota_semPedidos_global(self):
+    def faturamento_csw_periodo(self, clausualaFitro = '1, 2, 3, 4, 5, 6, 7, 8'):
 
-        queryPorEmpresa = f"""
-            SELECT 
-                 n.codTipoDeNota as tiponota, 
-                 n.dataEmissao, 
-                 n.vlrTotal as faturado 
-            FROM
-                 Fat.NotaFiscal n 
-            WHERE
-                n.codTipoDeNota in (30, 180, 156, 51, 175, 81, 12, 47, 67, 149, 159, 1030, 2015, 1, 27, 102, 2, 9998) 
-                and codPedido is null
-                and n.dataEmissao >= '{self.dataInicioFat}'
-                and n.dataEmissao <= '{self.dataFmFat}'
-                and situacao = 2
-        """
+        if self.codEmpresa == 'Todas':
+
+            queryPorEmpresa = f"""
+                        select 
+                            n.codTipoDeNota as tipoNota, 
+                            n.dataEmissao, 
+                            n.vlrTotal as faturado, 
+                            codPedido, 
+                            codNumNota, 
+                            codEmpresa
+                        FROM 
+                            Fat.NotaFiscal n 
+                        where 
+                            n.codPedido >= 0
+                            and n.dataEmissao >= '{self.dataInicioFat}'
+                            and n.dataEmissao <= '{self.dataFmFat}' and situacao = 2
+                        union
+                        select 
+                            n.codTipoDeNota as tiponota, 
+                            n.dataEmissao, n.vlrTotal as faturado, '0' ,
+                            codNumNota, {self.codEmpresa}
+                        FROM 
+                            Fat.NotaFiscal n
+                        where 
+                            n.codTipoDeNota in ({clausualaFitro}) and codPedido is null
+                            and n.dataEmissao >= '{self.dataInicioFat}'
+                            and n.dataEmissao <= '{self.dataFmFat} '
+                            and situacao = 2 
+            """
+        else:
+
+
+            queryPorEmpresa = f"""
+                        select 
+                            n.codTipoDeNota as tipoNota, 
+                            n.dataEmissao, 
+                            n.vlrTotal as faturado, 
+                            codPedido, 
+                            codNumNota, 
+                            codEmpresa
+                        FROM 
+                            Fat.NotaFiscal n 
+                        where 
+                            n.codPedido >= 0
+                            and n.dataEmissao >= '{self.dataInicioFat}'
+                            and n.dataEmissao <= '{self.dataFmFat}' and situacao = 2 and codempresa = {self.codEmpresa} 
+                        union
+                        select 
+                            n.codTipoDeNota as tiponota, 
+                            n.dataEmissao, n.vlrTotal as faturado, '0' ,
+                            codNumNota, {self.codEmpresa}
+                        FROM 
+                            Fat.NotaFiscal n
+                        where 
+                            n.codTipoDeNota in ({clausualaFitro}) and codPedido is null
+                            and n.dataEmissao >= '{self.dataInicioFat}'
+                            and n.dataEmissao <= '{self.dataFmFat} '
+                            and situacao = 2 
+                            and codempresa ={self.codEmpresa}
+            """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
@@ -394,7 +440,7 @@ class Pedidos_CSW():
                         and i.codsequencia = e.codsequencia 
                 WHERE 
                     e.codEmpresa = {self.codEmpresa} 
-                    and e.dataGeracao > '2023-01-01' 
+                    and e.dataGeracao > '2025-01-01' 
                     and situacaoSugestao = 2
                 group by 
                     i.codPedido, e.vlrSugestao,  i.codSequencia 
@@ -410,6 +456,35 @@ class Pedidos_CSW():
                 consulta = pd.DataFrame(rows, columns=colunas)
             del rows
             return consulta
+
+
+    def put_automacao(self, intervaloAutomacao = 9000):
+        '''automaco para gravar arquivo csv com o backup das notas faturadas no acumulado do ano vigente'''
+
+        servicoAutomacao = ServicoAutomacao.ServicoAutomacao('02','FaturamentoAcumuladoAno')
+        dataHora = servicoAutomacao.obterHoraAtual()
+
+        ultima_atualizacao = servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
+        print(f'ultima atualizacao {ultima_atualizacao} - servico {"FaturamentoAcumuladoAno"}')
+
+        if ultima_atualizacao > intervaloAutomacao:
+            data_atual = dataHora.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
+
+            primeiro_dia_ano = data_atual.replace(month=1, day=1, hour=0, minute=0, second=0)
+            self.dataInicioFat = primeiro_dia_ano.strftime("%Y-%m-%d")
+
+            ultimo_dia_anterior= (data_atual.replace(day=1) - relativedelta(days=1))
+            self.dataFmFat = ultimo_dia_anterior.strftime("%Y-%m-%d")
+
+            dataFrame = self.faturamento_periodo_empresa()
+            print(dataFrame)
+
+
+
+
+
+
+
 
 
 
