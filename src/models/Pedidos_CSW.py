@@ -3,6 +3,7 @@ import pandas as pd
 from src.connection import ConexaoERP
 from src.models import ServicoAutomacao
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 class Pedidos_CSW():
     '''Classe utilizado para interagir com os Pedidos do Csw '''
@@ -468,7 +469,7 @@ class Pedidos_CSW():
         print(f'ultima atualizacao {ultima_atualizacao} - servico {"FaturamentoAcumuladoAno"}')
 
         if ultima_atualizacao > intervaloAutomacao:
-            data_atual = dataHora.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
+            data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
 
             primeiro_dia_ano = data_atual.replace(month=1, day=1, hour=0, minute=0, second=0)
             self.dataInicioFat = primeiro_dia_ano.strftime("%Y-%m-%d")
