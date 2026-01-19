@@ -77,7 +77,7 @@ class ServicoAutomacao():
             ultimo = '2000-01-01 00:00:00'
         else:
 
-            ultimo = consulta['data_hora'][0]
+            ultimo = consulta['dataAtualizacao'][0]
 
         return ultimo
 
