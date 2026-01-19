@@ -4,6 +4,8 @@ from src.connection import ConexaoERP
 from src.models import ServicoAutomacao
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+import os
+from dotenv import load_dotenv, dotenv_values
 
 class Pedidos_CSW():
     '''Classe utilizado para interagir com os Pedidos do Csw '''
@@ -478,8 +480,14 @@ class Pedidos_CSW():
             ultimo_dia_anterior= (data_atual.replace(day=1) - relativedelta(days=1))
             self.dataFmFat = ultimo_dia_anterior.strftime("%Y-%m-%d")
 
+            ano = self.dataInicioFat[0:4]
+
             dataFrame = self.faturamento_periodo_empresa()
-            print(dataFrame)
+            load_dotenv('db.env')
+            caminhoAbsoluto = os.getenv('CAMINHO')
+            dataFrame.to_csv(f'{caminhoAbsoluto}_{ano}_{self.codEmpresa}')
+
+
             servicoAutomacao.update_controle_automacao('Finalizado Faturamento Acumulado', dataHora)
             servicoAutomacao.exluir_historico_antes_quarentena()
 
