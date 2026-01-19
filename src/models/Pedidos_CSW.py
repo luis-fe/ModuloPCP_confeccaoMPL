@@ -470,6 +470,7 @@ class Pedidos_CSW():
 
         if ultima_atualizacao > intervaloAutomacao:
             data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
+            servicoAutomacao.inserindo_automacao(dataHora)
 
             primeiro_dia_ano = data_atual.replace(month=1, day=1, hour=0, minute=0, second=0)
             self.dataInicioFat = primeiro_dia_ano.strftime("%Y-%m-%d")
@@ -479,6 +480,8 @@ class Pedidos_CSW():
 
             dataFrame = self.faturamento_periodo_empresa()
             print(dataFrame)
+            servicoAutomacao.update_controle_automacao('Finalizado Faturamento Acumulado', dataHora)
+            servicoAutomacao.exluir_historico_antes_quarentena()
 
 
 
