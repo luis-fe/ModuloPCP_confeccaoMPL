@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv, dotenv_values
 import pandas as pd
+
+from src.configApp import configApp
 from src.connection import ConexaoPostgre
 import requests
 import pytz
@@ -351,8 +353,7 @@ class DashboardTV():
         def __obter_backup(self):
             '''Metodo que obtem os backups via arquivo csv'''
 
-            load_dotenv('db.env')
-            caminhoAbsoluto = os.getenv('CAMINHO')
+            caminhoAbsoluto = configApp.localProjeto
             nome = f'{caminhoAbsoluto}/dados/' + self.codAno + 'Vendas' + self.codEmpresa + '.csv'
 
             get_backup = pd.read_csv(nome)
