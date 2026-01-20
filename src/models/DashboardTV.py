@@ -359,8 +359,9 @@ class DashboardTV():
 
 
             consulta = pd.read_csv(nome)
-            consulta['tipoNota'] = consulta['tipoNota'].astype(str)
+            consulta['tipoNota'] = consulta['tiponota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
+            consulta = pd.merge(consulta, tipoNota, on='tipoNota')
 
 
             return consulta
