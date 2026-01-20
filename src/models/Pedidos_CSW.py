@@ -486,7 +486,11 @@ class Pedidos_CSW():
 
             dataFrame = self.faturamento_periodo_empresa()
             caminhoAbsoluto = configApp.localProjeto
-            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/{ano}_{self.codEmpresa}.csv')
+            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_{self.codEmpresa}.csv')
+
+            self.codEmpresa = '4'
+            dataFrame4 = self.faturamento_periodo_empresa()
+            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_{self.codEmpresa}.csv')
 
 
             servicoAutomacao.update_controle_automacao(f'Finalizado Faturamento Acumulado{caminhoAbsoluto}{self.dataInicioFat}_{self.dataFmFat}', dataHora)

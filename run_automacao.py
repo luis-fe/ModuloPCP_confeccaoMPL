@@ -33,6 +33,7 @@ if __name__ == '__main__':
     pedidosCsw.put_automacao()
 
 
+
     os.system('clear')
 
 
