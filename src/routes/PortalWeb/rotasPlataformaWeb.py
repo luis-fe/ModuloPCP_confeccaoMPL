@@ -20,7 +20,7 @@ def TelaFaturamentoGeral():
 def TelaFaturamentoFilial():
     return render_template('/templates/TelaFaturamentoFilial.html')
 
-@rotasPlataformaWeb.route('TelaFaturamentoMatriz.html')
+@rotasPlataformaWeb.route('/TelaFaturamentoMatriz.html')
 def TelaFaturamentoMatriz():
     return render_template('TelaFaturamentoMatriz.html')
 
