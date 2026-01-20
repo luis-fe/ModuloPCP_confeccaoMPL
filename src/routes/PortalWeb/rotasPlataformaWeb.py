@@ -14,23 +14,23 @@ def home():
 
 @rotasPlataformaWeb.route('/templates/TelaFaturamentoGeral.html')
 def TelaFaturamentoGeral():
-    return render_template('TelaFaturamentoGeral.html')
+    return render_template('/templates/TelaFaturamentoGeral.html')
 
 @rotasPlataformaWeb.route('/templates/TelaFaturamentoFilial.html')
 def TelaFaturamentoFilial():
-    return render_template('TelaFaturamentoFilial.html')
+    return render_template('/templates/TelaFaturamentoFilial.html')
 
 @rotasPlataformaWeb.route('/templates/TelaFaturamentoMatriz.html')
 def TelaFaturamentoMatriz():
-    return render_template('TelaFaturamentoMatriz.html')
+    return render_template('/templates/TelaFaturamentoMatriz.html')
 
 @rotasPlataformaWeb.route('/templates/TelaFaturamentoVarejo.html')
 def TelaFaturamentoVarejo():
-    return render_template('TelaFaturamentoVarejo.html')
+    return render_template('/templates/TelaFaturamentoVarejo.html')
 
 @rotasPlataformaWeb.route('/templates/TelaFaturamentoOutraSaidas.html')
 def TelaFaturamentoOutraSaida():
-    return render_template('TelaFaturamentoOutraSaidas.html')
+    return render_template('/templates/TelaFaturamentoOutraSaidas.html')
 
 @rotasPlataformaWeb.route('/TelaCurvaVendas')
 def TelaCurvaVendas():
