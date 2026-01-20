@@ -28,7 +28,7 @@ def TelaFaturamentoMatriz():
 def TelaFaturamentoVarejo():
     return render_template('TelaFaturamentoVarejo.html')
 
-@rotasPlataformaWeb.route('TelaFaturamentoOutraSaidas.html')
+@rotasPlataformaWeb.route('/TelaFaturamentoOutraSaidas.html')
 def TelaFaturamentoOutraSaida():
     return render_template('elaFaturamentoOutraSaidas.html')
 
