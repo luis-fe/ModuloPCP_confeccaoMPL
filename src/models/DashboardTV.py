@@ -460,7 +460,7 @@ class DashboardTV():
             select
                 "tipoNota"
             from
-                PCP"."DashbordTV"."confNota"
+                "PCP"."DashbordTV"."confNota"
             """
 
             conn = ConexaoPostgre.conexaoEngine()
