@@ -489,7 +489,7 @@ class Pedidos_CSW():
             dataFrame.to_csv(f'{caminhoAbsoluto}/dados/{ano}_{self.codEmpresa}.csv')
 
 
-            servicoAutomacao.update_controle_automacao(f'Finalizado Faturamento Acumulado{caminhoAbsoluto}', dataHora)
+            servicoAutomacao.update_controle_automacao(f'Finalizado Faturamento Acumulado{caminhoAbsoluto}{self.dataInicioFat}_{self.dataFmFat}', dataHora)
             servicoAutomacao.exluir_historico_antes_quarentena()
 
 
