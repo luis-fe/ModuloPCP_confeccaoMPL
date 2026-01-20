@@ -476,7 +476,7 @@ class Pedidos_CSW():
             data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
             servicoAutomacao.inserindo_automacao(dataHora)
 
-            primeiro_dia_ano = data_atual.replace(month=1, day=1, hour=0, minute=0, second=0)
+            primeiro_dia_ano = data_atual.replace(year=data_atual.year - 1,month=1, day=1, hour=0, minute=0, second=0)
             self.dataInicioFat = primeiro_dia_ano.strftime("%Y-%m-%d")
 
             ultimo_dia_anterior= (data_atual.replace(day=1) - relativedelta(days=1))
