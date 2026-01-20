@@ -62,6 +62,6 @@ def LeadTimeProducao():
     return render_template('LeadTime.html')
 
 
-@rotasPlataformaWeb.route('/login.html')
+@rotasPlataformaWeb.route('/templates/login.html')
 def LeadTimeProducao():
-    return render_template('login.html')
+    return render_template('/templates/login.html')
