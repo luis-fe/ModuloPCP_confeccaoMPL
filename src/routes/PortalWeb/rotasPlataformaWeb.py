@@ -12,9 +12,9 @@ def home():
     return render_template('index.html')
 
 
-@rotasPlataformaWeb.route('/templates/TelaFaturamentoGeral.html')
+@rotasPlataformaWeb.route('/TelaFaturamentoGeral.html')
 def TelaFaturamentoGeral():
-    return render_template('/templates/TelaFaturamentoGeral.html')
+    return render_template('TelaFaturamentoGeral.html')
 
 @rotasPlataformaWeb.route('/TelaFaturamentoFilial.html')
 def TelaFaturamentoFilial():
@@ -30,7 +30,7 @@ def TelaFaturamentoVarejo():
 
 @rotasPlataformaWeb.route('/TelaFaturamentoOutraSaidas.html')
 def TelaFaturamentoOutraSaida():
-    return render_template('elaFaturamentoOutraSaidas.html')
+    return render_template('TelaFaturamentoOutraSaidas.html')
 
 @rotasPlataformaWeb.route('/TelaCurvaVendas')
 def TelaCurvaVendas():
