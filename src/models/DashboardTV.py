@@ -417,13 +417,14 @@ class DashboardTV():
             df_dia = mesAtual[mesAtual['dataEmissao']==self.dataFim].sum()
 
             consulta = pd.concat([mesesAnteriores, mesAtual])
-            consulta = consulta.groupby("mes").agg({'faturado'}).reset_index()
 
 
             consulta['mes'] = pd.to_datetime(consulta['dataEmissao'])
             consulta['mes'] = consulta['mes'].dt.month.apply(lambda x: meses[x - 1])
 
             consulta['faturado'] = consulta['faturado'].astype(int)
+            consulta = consulta.groupby("mes").agg({'faturado'}).reset_index()
+
             total = ''
 
             if self.codEmpresa == 'Todas':
