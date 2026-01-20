@@ -6,9 +6,9 @@ from src.configApp import configApp
 from src.connection import ConexaoPostgre
 import requests
 import pytz
-import datetime
 from src.models import Pedidos_CSW
-
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
@@ -354,12 +354,16 @@ class DashboardTV():
             '''Metodo que obtem os backups via arquivo csv'''
 
             caminhoAbsoluto = configApp.localProjeto
-            nome = f'{caminhoAbsoluto}/dados/' + self.codAno + 'Vendas' + self.codEmpresa + '.csv'
+            nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
+            tipoNota = self.obterTipoNotasConsiderado()
 
-            get_backup = pd.read_csv(nome)
+
+            consulta = pd.read_csv(nome)
+            consulta['tipoNota'] = consulta['tipoNota'].astype(str)
+            tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
 
 
-            return get_backup
+            return consulta
 
 
         def __get_retorna(self):
@@ -374,6 +378,12 @@ class DashboardTV():
 
         def dashboard_view(self):
             '''Metodo responsavel pela Apresentacao do Dashboard'''
+            dataHora = self.__obterHoraAtual()
+
+            data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
+
+            self.dataInicio = (data_atual.replace(day=1))
+            self.dataFim = data_atual.strftime('%Y-%m-%d')
 
             # 1 - Montando a analise do retorna
             retornaCsw = self.__get_retorna()
@@ -399,6 +409,22 @@ class DashboardTV():
             meses = ['01-Janeiro', '02-Fevereiro', '03-Março', '04-Abril', '05-Maio', '06-Junho',
                      '07-Julho', '08-Agosto', '09-Setembro', '10-Outubro', '11-Novembro', '12-Dezembro']
 
+
+            mesesAnteriores = self.__obter_backup()
+
+            mesAtual = self.__dashboard_informacoes_faturamento_csw()
+            df_dia = mesAtual[mesAtual['dataEmissao']==self.dataFim].sum()
+
+            consulta = pd.concat([mesesAnteriores, mesAtual])
+            consulta = consulta.groupby("mes").agg({'faturado'}).reset_index()
+
+
+            consulta['mes'] = pd.to_datetime(consulta['dataEmissao'])
+            consulta['mes'] = consulta['mes'].dt.month.apply(lambda x: meses[x - 1])
+
+            consulta['faturado'] = consulta['faturado'].astype(int)
+            total = consulta[''].sum()
+
             if self.codEmpresa == 'Todas':
                 data = {
                     '1- Ano:': f'{self.codAno}',
@@ -407,9 +433,11 @@ class DashboardTV():
                     '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
                     '4- No Dia': f"{df_dia}",
                     '5- TOTAL': f"{total}",
-                    '6- Atualizado as': f"{datahora}",
-                    '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+                    '6- Atualizado as': f"{dataHora}",
+                    '7- Detalhamento por Mes': consulta.to_dict(orient='records')
                 }
+
+                return pd.DataFrame([data])
             else:
                 data = {
                     '1- Ano:': f'{self.codAno}',
@@ -418,9 +446,12 @@ class DashboardTV():
                     '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
                     '4- No Dia': f"{df_dia}",
                     '5- TOTAL': f"{total}",
-                    '6- Atualizado as': f"{datahora}",
-                    '7- Detalhamento por Mes': df_faturamento.to_dict(orient='records')
+                    '6- Atualizado as': f"{dataHora}",
+                    '7- Detalhamento por Mes': consulta.to_dict(orient='records')
                 }
+
+                return pd.DataFrame([data])
+
 
         def obterTipoNotasConsiderado(self):
             '''Metodo utilizado para carregar os tipo de notas sem pedidos '''
