@@ -423,7 +423,7 @@ class DashboardTV():
             consulta['mes'] = consulta['mes'].dt.month.apply(lambda x: meses[x - 1])
 
             consulta['faturado'] = consulta['faturado'].astype(int)
-            consulta = consulta.groupby("mes").agg({'faturado'}).reset_index()
+            consulta = consulta.groupby("mes").agg({'faturado':'sum'}).reset_index()
 
             total = ''
 
