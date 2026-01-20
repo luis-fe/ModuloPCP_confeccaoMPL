@@ -64,9 +64,9 @@ def login():
     return render_template('login.html')
 
 @rotasPlataformaWeb.route('/templates/TiposdeNotas.html')
-def login():
+def TiposdeNotas():
     return render_template('TiposdeNotas.html')
 
 @rotasPlataformaWeb.route('/templates/TelaConfiguracaoMetas.html')
-def login():
+def TelaConfiguracaoMetas():
     return render_template('TelaConfiguracaoMetas.html')
