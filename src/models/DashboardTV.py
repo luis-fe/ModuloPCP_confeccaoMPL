@@ -423,7 +423,7 @@ class DashboardTV():
             consulta['mes'] = consulta['mes'].dt.month.apply(lambda x: meses[x - 1])
 
             consulta['faturado'] = consulta['faturado'].astype(int)
-            total = consulta[''].sum()
+            total = ''
 
             if self.codEmpresa == 'Todas':
                 data = {

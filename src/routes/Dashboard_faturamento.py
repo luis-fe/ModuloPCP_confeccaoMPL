@@ -258,3 +258,31 @@ def get_informacaoNotasConfigruadas():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+@dashboard_fat_routes.route('/pcp/api/dashboarTV', methods=['GET'])
+def dashboarTV():
+
+
+        ano = request.args.get('ano')
+        empresa = request.args.get('empresa', 'Todas')
+
+        dados = DashboardTV.DashboardTV(empresa,ano)
+
+        if empresa == 'Outras':
+            usuarios = dados.dashboard_view()
+            usuarios = pd.DataFrame(usuarios)
+        else:
+            usuarios = dados.dashboard_view()
+            usuarios = pd.DataFrame(usuarios)
+
+        #os.system("clear")
+        # Obtém os nomes das colunas
+        column_names = usuarios.columns
+        # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+        OP_data = []
+        for index, row in usuarios.iterrows():
+            op_dict = {}
+            for column_name in column_names:
+                op_dict[column_name] = row[column_name]
+            OP_data.append(op_dict)
+
+        return jsonify(OP_data)
