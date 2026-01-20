@@ -283,5 +283,5 @@ function adicionarLinhaConfigurada(item) {
 ===================================================== */
 
 document.getElementById('btnHome')?.addEventListener('click', () => {
-    window.location.href = "/TelaFaturamentoMatriz.html";
+    window.location.href = "/templates/TelaFaturamentoMatriz.html";
 });

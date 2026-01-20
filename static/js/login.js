@@ -116,7 +116,7 @@ if (resultado.status === true) {
         localStorage.removeItem("destinoPosLogin");
         window.location.href = destino;
     } else {
-        window.location.href = "../TiposdeNotas.html";
+        window.location.href = "../templates/TiposdeNotas.html";
     }
 }
 

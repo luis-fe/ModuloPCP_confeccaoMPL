@@ -268,5 +268,5 @@ async function salvarMetasAno() {
 ===================================================== */
 
 document.getElementById('btnHome')?.addEventListener('click', () => {
-    window.location.href = "/TelaFaturamentoMatriz.html";
+    window.location.href = "/templates/TelaFaturamentoMatriz.html";
 });
