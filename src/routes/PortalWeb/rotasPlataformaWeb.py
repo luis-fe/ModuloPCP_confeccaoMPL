@@ -10,42 +10,25 @@ rotasPlataformaWeb = Blueprint('rotasPlataformaWeb', __name__)
 @rotasPlataformaWeb.route('/Home')
 def home():
     return render_template('index.html')
-@rotasPlataformaWeb.route('/TelaEstrutura')
-def telaEstrutura():
-    return render_template('TelaEstrutura.html')
-@rotasPlataformaWeb.route('/TelaPlano')
-def TelaPlano():
-    return render_template('TelaPlano.html')
-@rotasPlataformaWeb.route('/TelaPrincipal')
-def TelaPrincipal():
-    return render_template('TelaPrincipal.html')
-@rotasPlataformaWeb.route('/TelaUsuarios')
-def TelaUsuarios():
-    return render_template('TelaUsuarios.html')
-@rotasPlataformaWeb.route('/TelaCurva')
-def TelaCurvaABC():
-    return render_template('TelaCurva.html')
-@rotasPlataformaWeb.route('/TelaControleFase')
-def TelaControleFase():
-    return render_template('TelaControleFase.html')
 
-@rotasPlataformaWeb.route('/TelaFaturamentoGeral.html')
+
+@rotasPlataformaWeb.route('/templates/TelaFaturamentoGeral.html')
 def TelaFaturamentoGeral():
     return render_template('TelaFaturamentoGeral.html')
 
-@rotasPlataformaWeb.route('/TelaFaturamentoFilial.html')
+@rotasPlataformaWeb.route('/templates/TelaFaturamentoFilial.html')
 def TelaFaturamentoFilial():
     return render_template('TelaFaturamentoFilial.html')
 
-@rotasPlataformaWeb.route('/TelaFaturamentoMatriz.html')
+@rotasPlataformaWeb.route('/templates/TelaFaturamentoMatriz.html')
 def TelaFaturamentoMatriz():
     return render_template('TelaFaturamentoMatriz.html')
 
-@rotasPlataformaWeb.route('/TelaFaturamentoVarejo.html')
+@rotasPlataformaWeb.route('/templates/TelaFaturamentoVarejo.html')
 def TelaFaturamentoVarejo():
     return render_template('TelaFaturamentoVarejo.html')
 
-@rotasPlataformaWeb.route('/TelaFaturamentoOutraSaidas.html')
+@rotasPlataformaWeb.route('/templates/TelaFaturamentoOutraSaidas.html')
 def TelaFaturamentoOutraSaida():
     return render_template('TelaFaturamentoOutraSaidas.html')
 
@@ -59,14 +42,14 @@ def LeadTimeProducao():
 
 
 
-@rotasPlataformaWeb.route('/login.html')
+@rotasPlataformaWeb.route('/templates/login.html')
 def login():
     return render_template('login.html')
 
-@rotasPlataformaWeb.route('/TiposdeNotas.html')
+@rotasPlataformaWeb.route('/templates/TiposdeNotas.html')
 def TiposdeNotas():
     return render_template('TiposdeNotas.html')
 
-@rotasPlataformaWeb.route('/TelaConfiguracaoMetas.html')
+@rotasPlataformaWeb.route('/templates/TelaConfiguracaoMetas.html')
 def TelaConfiguracaoMetas():
     return render_template('TelaConfiguracaoMetas.html')
