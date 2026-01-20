@@ -16,21 +16,21 @@ def home():
 def TelaFaturamentoGeral():
     return render_template('/templates/TelaFaturamentoGeral.html')
 
-@rotasPlataformaWeb.route('/templates/TelaFaturamentoFilial.html')
+@rotasPlataformaWeb.route('/TelaFaturamentoFilial.html')
 def TelaFaturamentoFilial():
-    return render_template('/templates/TelaFaturamentoFilial.html')
+    return render_template('TelaFaturamentoFilial.html')
 
 @rotasPlataformaWeb.route('/TelaFaturamentoMatriz.html')
 def TelaFaturamentoMatriz():
     return render_template('TelaFaturamentoMatriz.html')
 
-@rotasPlataformaWeb.route('/templates/TelaFaturamentoVarejo.html')
+@rotasPlataformaWeb.route('/TelaFaturamentoVarejo.html')
 def TelaFaturamentoVarejo():
-    return render_template('/templates/TelaFaturamentoVarejo.html')
+    return render_template('TelaFaturamentoVarejo.html')
 
-@rotasPlataformaWeb.route('/templates/TelaFaturamentoOutraSaidas.html')
+@rotasPlataformaWeb.route('TelaFaturamentoOutraSaidas.html')
 def TelaFaturamentoOutraSaida():
-    return render_template('/templates/TelaFaturamentoOutraSaidas.html')
+    return render_template('elaFaturamentoOutraSaidas.html')
 
 @rotasPlataformaWeb.route('/TelaCurvaVendas')
 def TelaCurvaVendas():
@@ -42,14 +42,14 @@ def LeadTimeProducao():
 
 
 
-@rotasPlataformaWeb.route('/templates/login.html')
+@rotasPlataformaWeb.route('/login.html')
 def login():
     return render_template('login.html')
 
-@rotasPlataformaWeb.route('/templates/TiposdeNotas.html')
+@rotasPlataformaWeb.route('/TiposdeNotas.html')
 def TiposdeNotas():
     return render_template('TiposdeNotas.html')
 
-@rotasPlataformaWeb.route('/templates/TelaConfiguracaoMetas.html')
+@rotasPlataformaWeb.route('/TelaConfiguracaoMetas.html')
 def TelaConfiguracaoMetas():
     return render_template('TelaConfiguracaoMetas.html')
