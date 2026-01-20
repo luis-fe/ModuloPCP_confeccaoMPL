@@ -5,37 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Faturamento</title>
     <link rel="stylesheet" href="/static/css/TelaFaturamentoVarejo.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="Titulo">
-        <h3>FATURAMENTO VAREJO</h3>
-    </div>
 
-    <div class="Opcoes">
-        <button id="Matriz">Matriz</button>
-        <button id="Filial">Filial</button>
-        <button id="Varejo">Varejo</button>
-        <button id="Geral">Geral</button>
-        <button id="Outros">Outros</button>
-        <label for="on-off">Status:</label>
-        <input type="checkbox" id="on-off" checked style="width: 56px; height: 24px;"> <!-- Ajuste largura e altura conforme necessário -->
-        <span id="status" style="color: white;">MENSAL</span>
-    </div>
-    </div>
- <div class="Informacoes">
-        <div class="Dados">
-            <table border="2" class="TabelaFaturamento" id="TabelaFaturamento"></table>
-            <div class= 'labels'>
-                <label for="text" id="FaturadoDia"></label>
+<body class="bg-dark text-white">
+
+        <!-- Cabeçalho -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info mb-1 rounded py-1">
+        <div class="container-fluid d-flex justify-content-center">
+            <span class="navbar-brand mb-0" style="font-size:1.5rem; font-weight:bold;">FATURAMENTO VAREJO</span>
+        </div>
+    </nav>
+
+    <!-- Botões / Filtros -->
+    <div class="container-fluid mb-2">
+        <div class="d-flex flex-wrap align-items-center bg-dark rounded p1">
+            <button class="btn btn-outline-light me-3 mb-0" id="Matriz">Matriz</button>
+            <button class="btn btn-outline-light me-3 mb-0" id="Filial">Filial</button>
+            <button class="btn btn-outline-light me-3 mb-0" id="Varejo">Varejo</button>
+            <button class="btn btn-outline-light me-3 mb-0" id="Geral">Geral</button>
+            <button class="btn btn-outline-light me-3 mb-0" id="Outros">Outros</button>
+
+            <div class="ms-auto d-flex align-items-center mb-1">
+                <label for="on-off" class="text-white me-2 mb-0">Status:</label>
+                <input type="checkbox" id="on-off" checked>
+                <span id="status" class="text-white ms-2">MENSAL</span>
             </div>
-            <label for="text" id="Retorna"></label>
         </div>
-        <div class="grafico">
-            <canvas id="meuGraficoDeBarras"></canvas>
+    </div>
+
+    <!-- Painel Superior (Tabela + Gráfico) -->
+    <div class="container-fluid ">
+        <div class="row g-3">
+
+            <!-- Coluna da Tabela -->
+            <div class="col-xl-6 col-lg-6 col-md-12 d-flex flex-column">
+                <div class="div-container bg-custom-table p-0 rounded flex-grow-1">
+                    <table class="table table-dark table-bordered table-striped w-100" id="TabelaFaturamento"></table>
+                </div>
+            </div>
+
+            <!-- Coluna do Gráfico -->
+            <div class="col-xl-6 col-lg-6 col-md-12 d-flex flex-column">
+                <div class="div-container bg-custom-chart p-0 rounded flex-grow-1">
+                    <canvas id="meuGraficoDeBarras" class="w-100 h-100"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Painel Inferior (Faturado no Dia + Retorna) -->
+    <div class="container-fluid">
+        <div class="row g-3">
+
+            <!-- Faturado no Dia -->
+            <div class="col-xl-6 col-lg-6 col-md-12 d-flex flex-column">
+                <div class="bg-darkp-3 rounded d-flex flex-column align-items-center justify-content-center h-100">
+                    <span class="fw-bold"></span>
+                    <span id="FaturadoDia" class="fs-2">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- Retorna -->
+            <div class="col-xl-6 col-lg-6 col-md-12 d-flex flex-column">
+                <div class="bg-dark p-3 rounded d-flex flex-column align-items-center justify-content-center h-100">
+                    <span class="fw-bold"></span>
+                    <span id="Retorna" class="fs-2">R$ 0,00</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
     </div>
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/static/js/TelaFaturamentoVarejo.js"></script>
@@ -87,7 +131,7 @@ if (localStorageStatus === "ACUMULADO") {
     setTimeout(() => {
         window.location.href = "TelaFaturamentoOutraSaidas.html";
     }, 20000);
-    
+   
 });}
 </script>
 </html>

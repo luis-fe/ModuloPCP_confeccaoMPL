@@ -14,186 +14,175 @@
     
 }
 
-.Titulo{
-    background-color: var(--cor6);
-    color: white;
-    font-size: 40px;
-    text-align: center;
-  
-
+/* Cabeçalho */
+.Titulo {
+    background-color: var(--cor3); /* Fundo azul médio */
+    color: white;                  /* Texto branco */
+    font-size: 2rem;               /* Tamanho da fonte grande */
+    text-align: center;            /* Centraliza o texto */
+    padding: 10px 0;               /* Espaçamento vertical no cabeçalho */
 }
 
-.Opcoes{
-    background-color: black;
+/* Botões */
+.Opcoes {
+    background-color: black; /* Fundo preto para container de botões */
 }
 
 #on-off,
 #Outros,
+
 #Matriz,
 #Filial,
 #Varejo,
-#Geral{
-    border: 2px solid rgb(129, 129, 129);
-    background-color: rgb(129, 129, 129);
-    color: black;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 20px;
+#Geral {
+    border: 2px solid rgb(129, 129, 129); /* Borda cinza */
+    background-color: rgb(155, 155, 158);       /* Fundo escuro */
+    color: black;                         /* Texto preto (pode ficar ilegível no fundo escuro) */
+    cursor: pointer;                      /* Mostra "mãozinha" ao passar o mouse */
+    margin-top: 5px;                      /* Espaçamento superior */
+    font-size: 0.7rem;                      /* Tamanho médio da fonte */
+    transition: 0.3s;                     /* Suaviza efeitos ao interagir */
+}
+
+#on-off:hover,
+#Outros:hover,
+#Matriz:hover,
+#Filial:hover,
+#Varejo:hover,
+#Geral:hover {
+    background-color: var(--cor3); /* Muda cor de fundo ao passar o mouse */
+    transform: scale(1.2);         /* Aumenta levemente o botão */
 }
 
 
+/* Containers principais */
+.div-container {
+    border-radius: 0.5rem;              /* Bordas arredondadas */
+    padding: 1rem;                      /* Espaçamento interno */
+    display: flex;                      /* Usa flexbox */
+    flex-direction: column;             /* Organiza itens em coluna */
+    justify-content: center;            /* Centraliza verticalmente */
+    height: 100%;                       /* Ocupa altura máxima do container */
+    border: solid rgb(88, 85, 85) 1px;
+}
 
+/* Tabela */
+.table {
+    font-size: 0.875rem; /* Fonte menor para tabela */
+}
 
+.table thead {
+    top: 0;                       /* Fixa no topo do container */
+    background-color: var(--cor3);/* Fundo azul médio */
+    color: rgb(180, 176, 176);                 /* Texto branco */
+    z-index: 10;                  /* Garante que fique por cima do conteúdo */
+}
+
+.table th,
+.table td {
+    vertical-align: middle; /* Centraliza verticalmente conteúdo */
+    text-align: center;     /* Centraliza horizontalmente */
+    padding: 0.3rem;        /* Espaçamento interno das células */
+}
+
+/* Painéis Inferiores */
+#FaturadoDia {
+    font-size: 1.5rem; /* Fonte maior */
+    font-weight: bold; /* Texto em negrito */
+    color: white;      /* Texto branco */
+    text-align: center;/* Centraliza o texto */
+}
+
+/* Gráfico */
+#grafico-container,
+#meuGraficoDeBarras {
+    width: 100%;  /* Ocupa toda largura disponível */
+    height: 100%; /* Ocupa toda altura disponível */
+}
+
+/* Layout geral */
 .Informacoes {
-    display: flex;
-    background-color: black;
-    min-height: 95vh;
+    display: flex;   /* Usa flexbox */
+    flex-wrap: wrap; /* Quebra linha quando não couber */
+    gap: 1rem;       /* Espaçamento entre os elementos */
 }
 
-.Dados{
-    width: 75%;
-    flex-direction: column;
-    display: block;
-    align-items: center;
-    text-align: center;
+.Dados {
+    flex: 1 1 100%; /* Ocupa ~45% da largura, ajustável */
 }
 
 
-
-.Dados .TabelaFaturamento th {
-    background-color: var(--cor6);
-    max-height: 20px;
-  }
-          
-  .Dados .TabelaFaturamento tdd {
-    height: 40px; /* Defina a altura desejada em pixels */
-    vertical-align: middle; /* Centraliza o conteúdo verticalmente */
-    overflow: hidden; /* Oculta o conteúdo extra que ultrapassar a altura definida */
-  }
-          
-  
-  .Dados .TabelaFaturamento thead{
-    position: sticky;
-    top: 0;
-    background-color: var(--cor6);
-    z-index: 0;
-    border: 2px solid var(--cor6);
-    color: white;
-  }
-
-.grafico{
-    width: 70%;
-    margin-top: 150px;
-    height: 1300px;
-}
-
-
-
-    .labels{
-        margin-top: 50px;
-    }
-
-
-    /* Media query para telas menores */
-@media (max-width: 768px) {
+/* Responsividade */
+@media (max-width: 768px) {   /* Para telas menores (celulares) */
     .Informacoes {
-        flex-direction: column; /* Empilhar elementos em telas menores */
-        align-items: center; /* Centralizar elementos verticalmente */
+        flex-direction: column;   /* Coloca itens em coluna */
+        align-items: center;      /* Centraliza no meio */
     }
 
-    .Dados {
-        width: 100%;
-        text-align: center;
-    }
-
+    .Dados,
     .grafico {
-        width: 100%;
-        text-align: center;
+        flex: 1 1 100%;           /* Ocupa 100% da largura */
     }
 
-    #TabelaFaturamento{
-        width: 80%;
-        max-width: 80%;
-        font-size: 20px;
-        text-align: center;
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
+    #TabelaFaturamento {
+        font-size: 22px;          /* Fonte maior na tabela (mas pode exagerar em celular) */
+        margin-top: 1rem;         /* Espaçamento superior */
     }
 
-    #Retorna{
-        margin-top: 100px;
-            color: white;
-            font-size: 30px;
-        
-        }
-        
-        #FaturadoDia{
-            margin-top: 100px;
-                color: white;
-                font-size: 30px;
-            
-            }
+    #FaturadoDia,
+    #Retorna {
+        font-size: 1.2rem;        /* Fonte um pouco menor */
+        margin-top: 1rem;         /* Espaçamento superior */
+    }
+
+
+
+}
+
+
+@media (min-width: 769px) {  /* Para telas médias e grandes */
+    #TabelaFaturamento {
+        font-size: 0.95rem;     /* Fonte normal */
+    }
+
+    #FaturadoDia
+     {
+        font-size: 1.5rem;   /* Fonte maior */
+    }
+
 }
 
 
 
-@media (min-width: 769px) and (max-width: 2000px) {
-    #TabelaFaturamento{
-        width: 100%;
-        max-width: 100%;
-        font-size: 38px;
-        text-align: center;
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
-    }
 
-    #Retorna{
-        margin-top: 100px;
-        background-color: var(--cor6);
-            color: white;
-            font-size: 50px;/* aqui é para tv */
-            font-weight: bold;
 
-        }
 
-        #FaturadoDia{
-            margin-top: 100px;
-            background-color: var(--cor6);
-                color: white;
-                font-size: 50px;/* aqui é para tv */
-            font-weight: bold;
-            }
-}
 
-@media (min-width: 2000px) {
-    #TabelaFaturamento{
-        width: 80%;
-        max-width: 80%;
-        font-size: 20px;
-        text-align: center;
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
-    }
 
-    #Retorna{
-        margin-top: 100px;
-            color: white;
-            font-size: 45px;
-        
-        }
-        
-        #FaturadoDia{
-            margin-top: 100px;
-                color: white;
-                font-size: 45px;
-            
-            }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,111 +1,204 @@
-let DadosFaturamento = '';
-Token = 'a44pcp22';
-let Retorna = ''
-let FaturadoDia = ''
-let Atualizacao = ''
+let DadosFaturamento = [];
+const Token = 'a44pcp22';
+let Retorna = '';
+let FaturadoDia = '';
+let Atualizacao = '';
+let anoSelecionado = obterAnoAtualComoString();
 
+// ------------------- SPINNER -------------------
+function mostrarSpinner() {
+    const TabelaFaturamento = document.getElementById('TabelaFaturamento');
+    TabelaFaturamento.innerHTML = `
+        <tr>
+            <td colspan="6" style="text-align:center; padding:20px;">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function ocultarSpinner() {
+    document.getElementById('TabelaFaturamento').innerHTML = '';
+}
+
+// ---------------- FUNÇÃO PARA OBTER O ANO ATUAL ----------------
+function obterAnoAtualComoString() {
+    return new Date().getFullYear().toString();
+}
+
+// ------------------- FUNÇÃO PARA OBTER DADOS DA API -------------------
 async function Faturamento() {
     try {
-        const response = await fetch(`http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${2025}&empresa=${'Outras'}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': Token
-            },
-        });
+        mostrarSpinner();
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log(data);
-            DadosFaturamento = data[0]['7- Detalhamento por Mes'];
-            Retorna = data[0]['3- No Retorna'];
-            FaturadoDia = data[0]['4- No Dia'];
-            Atualizacao = data[0]['6- Atualizado as'];
-            console.log(DadosFaturamento);
-        } else {
-            throw new Error('Erro ao obter os dados da API');
-        }
+        const response = await fetch(
+            `http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${anoSelecionado}&empresa=Outras`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': Token
+                }
+            }
+        );
+
+        if (!response.ok) throw new Error('Erro ao obter os dados da API');
+
+        const data = await response.json();
+
+        DadosFaturamento = data[0]['7- Detalhamento por Mes'] || [];
+        Retorna = data[0]['3- No Retorna'] || '-';
+        FaturadoDia = data[0]['4- No Dia'] || '-';
+        Atualizacao = data[0]['6- Atualizado as'] || '-';
+
+        ocultarSpinner();
+
     } catch (error) {
         console.error(error);
+        DadosFaturamento = [];
+        ocultarSpinner();
     }
 }
 
-function criarTabelaEmbalagens(listaChamados, CondicaoFat, CondicaoMeta, condicao2, condicao3, vdimob) {
+// ------------------- TABELA PRINCIPAL -------------------
+function criarTabelaEmbalagens(
+    listaChamados,
+    CondicaoFat,
+    CondicaoMeta,
+    condicao2,
+    condicao3,
+    vdimob
+) {
     const TabelaFaturamento = document.getElementById('TabelaFaturamento');
-    TabelaFaturamento.innerHTML = ''; // Limpa o conteúdo da tabela antes de preenchê-la novamente
+    TabelaFaturamento.innerHTML = '';
 
-    // Cria o cabeçalho da tabela
     const cabecalho = TabelaFaturamento.createTHead();
-    const cabecalhoLinha = cabecalho.insertRow();
+    const linhaCabecalho = cabecalho.insertRow();
 
-    const cabecalhoCelula1 = cabecalhoLinha.insertCell(0);
-    cabecalhoCelula1.innerHTML = 'Mês';
-    const cabecalhoCelula2 = cabecalhoLinha.insertCell(1);
-    cabecalhoCelula2.innerHTML = 'VD Mostruario';
-    const cabecalhoCelula3 = cabecalhoLinha.insertCell(2);
-    cabecalhoCelula3.innerHTML = 'Revenda MP.';
-    const cabecalhoCelula4 = cabecalhoLinha.insertCell(3);
-    cabecalhoCelula4.innerHTML = 'Devolucao MP';
-        const cabecalhoCelula5 = cabecalhoLinha.insertCell(4);
-    cabecalhoCelula5.innerHTML = "VD Imobilizado";
-    const cabecalhoCelula6 = cabecalhoLinha.insertCell(5);
-    cabecalhoCelula6.innerHTML = "_____Total____";
+    [
+        'Mês',
+        'VD Mostruario',
+        'Revenda MP.',
+        'Devolucao MP',
+        'VD Imobilizado',
+        '_____Total____'
+    ].forEach(texto => {
+        const th = linhaCabecalho.insertCell();
+        th.innerHTML = texto;
+    });
 
     const corpoTabela = TabelaFaturamento.createTBody();
 
+    if (!listaChamados || listaChamados.length === 0) {
+        const linha = corpoTabela.insertRow();
+        const celula = linha.insertCell();
+        celula.colSpan = 6;
+        celula.style.textAlign = 'center';
+        celula.style.padding = '15px';
+        celula.innerText = '-';
+
+        document.getElementById('Retorna').textContent = '-';
+        document.getElementById('FaturadoDia').textContent = '-';
+        return;
+    }
+
     listaChamados.forEach(item => {
         const linha = corpoTabela.insertRow();
-        const celula1 = linha.insertCell(0);
-        celula1.innerHTML = item.Mês;
-        const celula2 = linha.insertCell(1);
-        celula2.innerHTML = item[CondicaoFat];
-        const celula3 = linha.insertCell(2);
-        celula3.innerHTML = item[CondicaoMeta];
-        const celula4 = linha.insertCell(3);
-        celula4.innerHTML = item[condicao2];
-        const celula5 = linha.insertCell(4);
-        celula5.innerHTML = item[vdimob];
-        const celula6 = linha.insertCell(5);
-        celula6.innerHTML = item[condicao3];
 
-        celula6.classList.add('cor-da-coluna');
-        // Define as propriedades de estilo para a classe
-const style = document.createElement('style');
-style.innerHTML = `
-  .cor-da-coluna {
-    background-color: rgb(60, 160, 100);  // Substitua 'yellow' pela cor desejada
-    // Adicione outras propriedades de estilo, se necessário
-  }
-`;
-// Adiciona o elemento style ao cabeçalho do documento (pode ser o head ou outro local apropriado)
-document.head.appendChild(style);
+        linha.insertCell(0).innerHTML = item.Mês ?? '-';
+        linha.insertCell(1).innerHTML = item[CondicaoFat] ?? '-';
+        linha.insertCell(2).innerHTML = item[CondicaoMeta] ?? '-';
+        linha.insertCell(3).innerHTML = item[condicao2] ?? '-';
+        linha.insertCell(4).innerHTML = item[vdimob] ?? '-';
 
-
+        const total = linha.insertCell(5);
+        total.innerHTML = item[condicao3] ?? '-';
+        total.classList.add('cor-da-coluna');
     });
 
-    document.getElementById('Retorna').textContent = `Retorna: ${Retorna}`
-    document.getElementById('FaturadoDia').textContent = `Faturado no Dia: ${FaturadoDia}`
-    
+    document.getElementById('Retorna').textContent = `Retorna: ${Retorna}`;
+    document.getElementById('FaturadoDia').textContent = `Faturado no Dia: ${FaturadoDia}`;
+}
 
+// ------------------- ATUALIZAR DASHBOARD -------------------
+async function atualizarDashboard() {
+
+    // 🔹 LIMPA A TABELA ANTES DE ATUALIZAR
+    document.getElementById('TabelaFaturamento').innerHTML = '';
+
+    // 🔹 (se tiver gráfico com Chart.js, destrua aqui também)
+    if (window.meuGrafico) {
+        window.meuGrafico.destroy();
+        window.meuGrafico = null;
+    }
+
+    const statusText = document.getElementById('status');
+    const valorStatus = statusText.innerText.trim().toUpperCase();
+
+    await Faturamento();
+
+    if (valorStatus === "MENSAL") {
+        criarTabelaEmbalagens(
+            DadosFaturamento,
+            'Faturado',
+            'meta',
+            'Devolucao',
+            'Total',
+            'VD Imobilizado'
+        );
+        createBarChart('Faturado', 'meta');
+    } else {
+        criarTabelaEmbalagens(
+            DadosFaturamento,
+            'Fat.Acumulado',
+            'meta acum.',
+            'Devolucao',
+            'Total',
+            'VD Imobilizado'
+        );
+        createBarChart('Fat.Acumulado', 'meta acum.');
+    }
 }
 
 
+// ------------------- EVENTOS -------------------
+document.addEventListener('DOMContentLoaded', () => {
 
-document.getElementById('Matriz').addEventListener('click', () => {
-    window.location.href = "TelaFaturamentoMatriz.html";
-})
+    // CSS criado uma única vez
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .cor-da-coluna {
+            background-color: rgb(60, 160, 100);
+            color: white;
+            font-weight: bold;
+        }
+    `;
+    document.head.appendChild(style);
 
-document.getElementById('Geral').addEventListener('click', () => {
-    window.location.href = "TelaFaturamentoGeral.html";
-})
+    document.getElementById('box_ano').value = anoSelecionado;
+    atualizarDashboard();
 
-document.getElementById('Filial').addEventListener('click', () => {
-    window.location.href = "TelaFaturamentoFilial.html";
-})
-document.getElementById('Varejo').addEventListener('click', () => {
-    window.location.href = "TelaFaturamentoVarejo.html";
-})
-document.getElementById('Outros').addEventListener('click', () => {
-    window.location.href = "TelaFaturamentoOutraSaidas.html";
-})
+    document.getElementById('box_ano').addEventListener('change', e => {
+        anoSelecionado = e.target.value;
+        atualizarDashboard();
+    });
 
+    document.getElementById('Matriz')?.addEventListener('click', () => {
+        window.location.href = "TelaFaturamentoMatriz.html";
+    });
+    document.getElementById('Geral')?.addEventListener('click', () => {
+        window.location.href = "TelaFaturamentoGeral.html";
+    });
+    document.getElementById('Filial')?.addEventListener('click', () => {
+        window.location.href = "TelaFaturamentoFilial.html";
+    });
+    document.getElementById('Outros')?.addEventListener('click', () => {
+        window.location.href = "TelaFaturamentoOutraSaida.html";
+    });
+
+    document.getElementById('Config')?.addEventListener('click', () => {
+        window.location.href = "login.html";
+    });
+});

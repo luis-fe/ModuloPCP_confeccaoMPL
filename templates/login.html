@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Autenticação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #252729;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #btnVoltar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #btnVoltar:hover {
+            background-color: #1f6feb;
+            border-color: #1f6feb;
+            color: #ffffff;
+        }
+
+        .login-card {
+            background-color: #252729;
+            border-radius: 16px;
+            border: none;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+        }
+
+        .login-header {
+            background-color: #1f6feb;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.15rem;
+            padding: 14px;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .login-body {
+            padding: 28px;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            color: #ffffff;
+        }
+
+        .form-control {
+            background-color: #2b2f33;
+            border: 1px solid #3a3f44;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            background-color: #2b2f33;
+            color: #ffffff;
+            border-color: #1f6feb;
+            box-shadow: none;
+        }
+
+        .form-control[readonly] {
+            background-color: #24272c;
+            color: #ffffff;
+        }
+
+        .input-group .btn {
+            background-color: #2b2f33;
+            border: 1px solid #3a3f44;
+            color: #ffffff;
+        }
+
+        .btn-login {
+            background-color: #1f6feb;
+            border: none;
+            font-weight: 600;
+            padding: 10px;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Botão Voltar -->
+    <button class="btn btn-outline-secondary" id="btnVoltar">
+        <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <!-- Card de Login -->
+    <div class="login-card">
+        <div class="login-header">ACESSO AO SISTEMA</div>
+
+        <div class="login-body">
+
+            <div class="mb-3">
+                <label class="form-label">Matrícula</label>
+                <input type="text" id="matricula" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nome</label>
+                <input type="text" id="nome" class="form-control" readonly>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Senha</label>
+                <div class="input-group">
+                    <input type="password" id="senha" class="form-control">
+                    <button class="btn" type="button" id="toggleSenha">
+                        <i class="bi bi-eye-slash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-4 d-none" id="novaSenhaContainer">
+                <label class="form-label">Digite a nova senha</label>
+                <input type="password" id="novaSenha" class="form-control">
+            </div>
+
+            <div class="d-grid">
+                <button class="btn btn-login" id="btnEntrar">Entrar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 🔽 MODAL DE ESCOLHA 🔽 -->
+    <div class="modal fade" id="modalEscolhaTela" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white rounded-4">
+
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Escolha o destino</h5>
+                </div>
+
+                <div class="modal-body d-grid gap-3">
+                    <button class="btn btn-primary" id="btnMetas">
+                        <i class="bi bi-bullseye me-2"></i> Configuração de Metas
+                    </button>
+
+                    <button class="btn btn-secondary" id="btnNotas">
+                        <i class="bi bi-receipt me-2"></i> Tipos de Notas
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/login.js"></script>
+
+    <script>
+        document.getElementById("btnVoltar").onclick = () => window.history.back();
+
+        document.getElementById("btnMetas").onclick = () =>
+            window.location.href = "TelaConfiguracaoMetas.html";
+
+        document.getElementById("btnNotas").onclick = () =>
+            window.location.href = "TiposdeNotas.html";
+    </script>
+
+</body>
+</html>

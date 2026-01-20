@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuração de Metas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #2b2f33;
+            color: #ffffff;
+        }
+
+        .navbar {
+            border-radius: 0 0 10px 10px;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .card-header {
+            background-color: #1f6feb;
+        }
+
+        .input-meta {
+            background-color: #2b2f33;
+            border: 1px solid #3a3f44;
+            color: #ffffff;
+            text-align: right;
+        }
+
+        .linha-total {
+            background-color: #1c1f24;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background-color: #1c1f24;
+            border: 1px solid #3a3f44;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 0.9rem;
+        }
+
+        .info-box .small {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container-fluid d-flex align-items-center">
+
+        <!-- Espaço vazio à esquerda -->
+        <div></div>
+
+        <!-- Título centralizado -->
+        <span class="navbar-brand fw-bold fs-4 text-center">
+            CONFIGURAÇÃO DE METAS ANUAIS
+        </span>
+
+        <!-- Botão Home no canto direito -->
+        <button
+            id="btnHome"
+            class="btn btn-outline-light d-flex align-items-center justify-content-center"
+            title="Página inicial">
+            <i class="bi bi-house-fill fs-5"></i>
+        </button>
+
+    </div>
+</nav>
+
+
+<div class="container">
+
+    <!-- FILTROS -->
+    <div class="row mb-4 align-items-end">
+
+        <!-- ANO -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Ano</label>
+            <select id="anoMeta" class="form-select">
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+            </select>
+        </div>
+
+        <!-- TIPO -->
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Tipo</label>
+            <select id="tipoMeta" class="form-select">
+                <option value="Matriz">Matriz</option>
+                <option value="Filial">Filial</option>
+                <option value="Varejo">Varejo</option>
+                <option value="Geral">Geral</option>
+                <option value="Outros">Outros</option>
+            </select>
+        </div>
+
+        <!-- INFO: ÚLTIMA ATUALIZAÇÃO -->
+         
+<div class="col-md-4">
+    <label class="form-label fw-bold">Última Atualização</label>
+    <div class="info-box bg-white text-dark border p-2">
+        <div class="d-flex align-items-center gap-4">
+            <div>
+                👤 Matrícula: <span id="matriculaAtualizacao">—</span>
+            </div>
+            <div>
+                📅 <span id="dataAtualizacao">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+
+    <!-- CARD METAS -->
+    <div class="card bg-secondary text-white">
+        <div class="card-header fw-bold">
+            Metas Mensais
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-dark table-bordered mb-0 text-center">
+                <thead>
+                    <tr>
+                        <th>Mês</th>
+                        <th>Meta (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaMetas"></tbody>
+                <tfoot>
+                    <tr class="linha-total">
+                        <td>Total Geral</td>
+                        <td id="totalGeral">R$ 0,00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- BOTÃO SALVAR -->
+    <div class="d-flex justify-content-end mt-3">
+        <button id="btnSalvarMetas" class="btn btn-primary px-4">
+            💾 Salvar Metas
+        </button>
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="../static/js/metasApi.js"></script>
+
+</body>
+</html>

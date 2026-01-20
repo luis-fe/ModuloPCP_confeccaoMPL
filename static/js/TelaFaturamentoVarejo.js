@@ -59,7 +59,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
             datasets: [{
                 label: 'Faturamento por Mês',
                 data: valoresFaturadosMilhoes,
-                backgroundColor: 'rgb(93, 140, 233)',
+                backgroundColor: 'rgba(226, 233, 236, 1)',
                 borderColor: 'rgb(211, 211, 211)',
                 borderWidth: 1,
             },
@@ -67,7 +67,7 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                 type: 'bar',
                 label: 'Meta',
                 data: MetasMilhoes,
-                backgroundColor: 'rgb(241, 129, 17)',
+                backgroundColor: 'rgb(13, 202, 240)',
                 borderColor: 'rgb(211, 211, 211)',
                 borderWidth: 1,
             },
@@ -79,16 +79,42 @@ async function createBarChart(CondicaoFat, CondicaoMeta) {
                     beginAtZero: true,
                     ticks: {
                         callback: function (value) {
+                             if (value >= 1000000){
+                              return 'R$' + (value / 1000000) + 'M'; // Converte milhões
+                             }   
+
                             return 'R$ ' + value.toLocaleString('pt-BR');
-                        },
+                            },
+                            font:{
+                                size: 15
+                            }
                     },
                 },
+
+                x: {
+                    barPercentage: 0.1,// Ajusta a largura da barra dentro da categoria
+                    ticks: {
+                            font: {
+                                size: 15 // Ajuste o tamanho da fonte do eixo X
+                                    },
+                            //color: 'white' // Cor da fonte no eixo X
+
+
+                            }
+                    }
             },
+
             plugins: {
                 legend: {
                     display: true,
                     position: 'top',
-                },
+                     labels: {
+                      font: {
+                        size: 15, // <<<<< aumenta o tamanho da legenda
+                         weight: 'bold' // opcional: deixa em negrito
+                            },
+                            }},
+  
                 tooltip: {
                     callbacks: {
                         label: function (context) {
@@ -110,12 +136,21 @@ function criarTabelaEmbalagens(listaChamados, CondicaoFat, CondicaoMeta) {
     const cabecalho = TabelaFaturamento.createTHead();
     const cabecalhoLinha = cabecalho.insertRow();
 
-    const cabecalhoCelula1 = cabecalhoLinha.insertCell(0);
-    cabecalhoCelula1.innerHTML = 'Mês';
-    const cabecalhoCelula2 = cabecalhoLinha.insertCell(1);
-    cabecalhoCelula2.innerHTML = 'Meta';
-    const cabecalhoCelula3 = cabecalhoLinha.insertCell(2);
-    cabecalhoCelula3.innerHTML = 'Faturado';
+    const headers = ['Mês', 'Meta', 'Faturado'];
+
+headers.forEach((text) => {
+    const th = cabecalhoLinha.insertCell();
+    th.innerHTML = text;
+    th.style.backgroundColor = 'rgb(13, 202, 240)'; // Cor primary
+    th.style.color = '#fff';               // Texto branco
+    th.style.fontWeight = 'bold';          // Opcional: negrito
+});
+   // const cabecalhoCelula1 = cabecalhoLinha.insertCell(0);
+    //cabecalhoCelula1.innerHTML = 'Mês';
+   // const cabecalhoCelula2 = cabecalhoLinha.insertCell(1);
+   // cabecalhoCelula2.innerHTML = 'Meta';
+   // const cabecalhoCelula3 = cabecalhoLinha.insertCell(2);
+    //cabecalhoCelula3.innerHTML = 'Faturado';
 
     const corpoTabela = TabelaFaturamento.createTBody();
 

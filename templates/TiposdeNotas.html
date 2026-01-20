@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuração de Tipos de Notas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #2b2f33;
+            color: #ffffff;
+        }
+
+        .navbar {
+            border-radius: 0 0 10px 10px;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .card-header {
+            background-color: #1f6feb;
+        }
+
+        .table-dark th,
+        .table-dark td {
+            vertical-align: middle;
+        }
+
+        .btn-add {
+            background-color: #1f6feb;
+            border: none;
+        }
+
+        .btn-add:hover {
+            background-color: #1a5fd0;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR SUPERIOR -->
+<nav class="navbar navbar-dark bg-primary mb-4">
+    <div class="container-fluid d-flex align-items-center">
+        
+        <!-- Espaço vazio à esquerda -->
+        <div></div>
+
+        <!-- Título centralizado -->
+        <span class="navbar-brand fw-bold fw-bold fs-4 text-center">
+            CONFIGURAÇÃO DE TIPO DE NOTAS
+        </span>
+
+                <!-- Botão Home no canto direito -->
+        <button
+            id="btnHome"
+            class="btn btn-outline-light d-flex align-items-center justify-content-center"
+            title="Página inicial">
+            <i class="bi bi-house-fill fs-5"></i>
+        </button>
+        
+    </div>
+</nav>
+
+<!-- Botão Home no canto direito -->
+<div class="container">
+
+    <!-- CARD PRINCIPAL -->
+    <div class="card bg-secondary text-white">
+
+        <!-- CABEÇALHO DO CARD -->
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+            Tipos de Notas
+            <button id="btnAdicionar" class="btn btn-sm btn-add text-white" title="Adicionar nova linha">
+                ✚
+            </button>
+        </div>
+
+        <!-- CORPO DO CARD -->
+        <div class="card-body p-0">
+            <table class="table table-dark table-bordered mb-0 text-center">
+                <thead>
+                    <tr>
+                        <th>Tipo de Nota</th>
+                        <th>Considerar na Meta?</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaNotas">
+                    <!-- Linhas geradas via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- RODAPÉ DO CARD -->
+        <div class="card-footer bg-dark border-0 d-flex justify-content-end">
+            <button id="btnSalvar" class="btn btn-primary px-4">
+                💾 Salvar
+            </button>
+        </div>
+
+    </div>
+    
+</div>
+
+<!-- MODAL DE PESQUISA -->
+<div class="modal fade" id="modalNotas" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Selecionar Tipo de Nota</h5>
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="list-group" id="listaNotas">
+                    <!-- Itens da API -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS DA TELA -->
+<script src="../static/js/TiposdeNotas.js"></script>
+
+</body>
+</html>

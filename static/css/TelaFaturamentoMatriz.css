@@ -1,27 +1,40 @@
+/* ============================== */
+/* VARIÁVEIS GLOBAIS */
+/* ============================== */
 :root {
-    --cor1: rgb(211, 211, 211);
-    --cor2: rgb(17, 45, 126);
-    --cor3: rgb(93, 140, 233);
-    --cor4: #fff
+    --cor1: rgb(211, 211, 211);  /* Cinza claro */
+    --cor2: rgb(17, 45, 126);    /* Azul escuro */
+    --cor3: rgb(93, 140, 233);   /* Azul médio */
+    --cor4: #fff;                /* Branco */
+    --fundo: #121212;            /* Fundo geral */
+    --fundo-card: #292727;       /* Fundo dos cards */
 }
 
+/* ============================== */
+/* RESET E BOX-SIZING */
+/* ============================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    
 }
 
-.Titulo{
+
+/* ============================== */
+/* CABEÇALHO */
+/* ============================== */
+.Titulo {
     background-color: var(--cor3);
-    color: white;
-    font-size: 40px;
+    color: var(--cor4);
+    font-size: 2rem;
     text-align: center;
-  
-
+    padding: 10px 0;
 }
 
-.Opcoes{
+/* ============================== */
+/* BOTÕES DE OPÇÕES */
+/* ============================== */
+.Opcoes {
     background-color: black;
 }
 
@@ -30,177 +43,267 @@
 #Matriz,
 #Filial,
 #Varejo,
-#Geral{
+#Geral {
     border: 2px solid rgb(129, 129, 129);
-    background-color: rgb(129, 129, 129);
+    background-color: rgb(155, 155, 158);
     color: black;
     cursor: pointer;
-    margin-top: 10px;
-    font-size: 20px;
+    margin-top: 5px;
+    font-size: 0.7rem;
+    transition: 0.3s;
 }
 
-
-
-
-.Informacoes {
-    display: flex;
-    background-color: black;
-    min-height: 95vh;
-}
-
-.Dados{
-    width: 55%;
-    height: 90%;
-    flex-direction: column;
-    display: block;
-    align-items: center;
-    text-align: center;
-}
-
-
-
-.Dados .TabelaFaturamento th {
+#on-off:hover,
+#Outros:hover,
+#Matriz:hover,
+#Filial:hover,
+#Varejo:hover,
+#Geral:hover {
     background-color: var(--cor3);
-    max-height: 30px;
-  }
-          
-  .Dados .TabelaFaturamento tdd {
-    height: 40px; /* Defina a altura desejada em pixels */
-    vertical-align: middle; /* Centraliza o conteúdo verticalmente */
-    overflow: hidden; /* Oculta o conteúdo extra que ultrapassar a altura definida */
-  }
-          
-  
-  .Dados .TabelaFaturamento thead{
+    transform: scale(1.2);
+}
+
+/* ============================== */
+/* CONTAINERS PRINCIPAIS */
+/* ============================== */
+.div-container {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    border: solid rgb(88, 85, 85) 1px;
+}
+
+/* ============================== */
+/* TABELA PRINCIPAL */
+/* ============================== */
+.table {
+    font-size: 0.875rem;
+}
+
+.table thead {
     position: sticky;
     top: 0;
     background-color: var(--cor3);
-    z-index: 0;
-    border: 2px solid var(--cor3);
-    color: white;
-  }
-
-.grafico{
-    width: 45%;
-    height: 90%;
-
-    margin-top: 100px;
-    height: 600px;
-
+    color: rgb(180, 176, 176);
+    z-index: 10;
 }
 
+.table th,
+.table td {
+    vertical-align: middle;
+    text-align: center;
+    padding: 0.3rem;
+}
+
+/* ============================== */
+/* PAINÉIS INFERIORES */
+/* ============================== */
+#FaturadoDia,
+#Retorna {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--cor4);
+    text-align: center;
+}
+
+/* ============================== */
+/* GRÁFICO */
+/* ============================== */
+#grafico-container,
 #meuGraficoDeBarras {
-    width: 100%; /* Ocupa 100% da largura do contêiner pai */
-    height: 90%; /* Ocupa 90% da altura do contêiner pai */
+    width: 100%;
+    height: 100%;
 }
 
+/* ============================== */
+/* LAYOUT DE INFORMAÇÕES */
+/* ============================== */
+.Informacoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
 
+.Dados,
+.grafico {
+    flex: 1 1 45%;
+}
 
-    .labels{
-        margin-top: 50px;
-    }
-
-
-    /* Media query para telas menores */
+/* ============================== */
+/* RESPONSIVIDADE */
+/* ============================== */
 @media (max-width: 768px) {
     .Informacoes {
-        flex-direction: column; /* Empilhar elementos em telas menores */
-        align-items: center; /* Centralizar elementos verticalmente */
+        flex-direction: column;
+        align-items: center;
     }
-
-    .Dados {
-        width: 100%;
-        text-align: center;
-    }
-
+    .Dados,
     .grafico {
-        width: 100%;
-        text-align: center;
+        flex: 1 1 100%;
     }
-
-    #TabelaFaturamento{
-        width: 80%;
-        max-width: 80%;
-        font-size: 25px;
-        /*text-align: center;*/
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
+    #TabelaFaturamento {
+        font-size: 22px;
+        margin-top: 1rem;
     }
+    #FaturadoDia,
+    #Retorna {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+}
 
-    #Retorna{
-        margin-top: 100px;
-            color: white;
-            font-size: 40px;
-        
-        }
-        
-        #FaturadoDia{
-            margin-top: 100px;
-                color: white;
-                font-size: 40px;
-            
-            }
+@media (min-width: 769px) {
+    #TabelaFaturamento {
+        font-size: 0.95rem;
+    }
+    #FaturadoDia,
+    #Retorna {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================== */
+/* MÊS CLICÁVEL PARA MODAL */
+/* ============================== */
+.mes {
+    cursor: pointer;
+    color: #0d6efd;
+}
+
+.mes:hover {
+    color: #0a58ca;
+}
+
+/* ============================== */
+/* MODAL */
+/* ============================== */
+#modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#modal-content {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    width: 300px;
+    min-width: 200px;
+    max-width: 90%;
+    height: 300px;
+    min-height: 150px;
+    max-height: 90%;
+    position: absolute;
+    top: 20%;
+    left: 65%;
+    transform: translate(-50%, 0);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.5);
+    overflow: hidden;
+    display: block;
+}
+
+#modal-header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 5px 10px;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+#close-modal {
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modal-body {
+    padding: 10px;
+    overflow: auto;
+    height: calc(100% - 32px);
+}
+
+#modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+#modal-body th,
+#modal-body td {
+    border: 1px solid #555;
+    padding: 4px;
+    text-align: center;
+}
+
+#modal-body th {
+    background: #0d6efd;
+    color: white;
+    font-size: 0.85rem;
+}
+
+/* ============================== */
+/* BOTÕES DE ORDENAÇÃO NO MODAL */
+/* ============================== */
+#modal-body th {
+    background-color: #0d6efd; /* Fundo azul */
+    color: white;               /* Texto branco */
+    font-size: 0.85rem;
+    cursor: pointer;            /* Mostra mãozinha */
+    transition: background 0.3s, color 0.3s; /* Transição suave */
+}
+
+#modal-body th:hover {
+    background-color: #0a58ca; /* Muda fundo ao passar o mouse */
+    color: #fff;               /* Pode mudar cor do texto também */
+}
+
+#modal-body th.sorted-asc::after {
+    content: " ▲"; /* seta para cima */
+}
+
+#modal-body th.sorted-desc::after {
+    content: " ▼"; /* seta para baixo */
 }
 
 
 
-@media (min-width: 769px) and (max-width: 2000px) {
-    #TabelaFaturamento{
-        width: 100%;
-        max-width: 100%;
-        font-size: 38px;
-        text-align: center;
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
-    }
+/* ============================== */
+/* CURSORES PARA REDIMENSIONAMENTO DO MODAL */
+/* ============================== */
+#modal-content.resizing-e { cursor: ew-resize; }
+#modal-content.resizing-s { cursor: ns-resize; }
+#modal-content.resizing-se { cursor: nwse-resize; }
+#modal-content.resizing-n { cursor: ns-resize; }
+#modal-content.resizing-w { cursor: ew-resize; }
+#modal-content.resizing-nw { cursor: nwse-resize; }
+#modal-content.resizing-ne { cursor: nesw-resize; }
+#modal-content.resizing-sw { cursor: nesw-resize; }
 
-    #Retorna{
-        margin-top: 100px;
-        background-color: var(--cor3);
-            color: white;
-            font-size: 50px;/* aqui é para tv */
-            font-weight: bold;
 
-        }
-
-        #FaturadoDia{
-            margin-top: 100px;
-            background-color: var(--cor3);
-                color: white;
-                font-size: 50px;/* aqui é para tv */
-            font-weight: bold;
-            }
+#Config {
+    border-color:rgb(129, 129, 129);
 }
 
-@media (min-width: 2000px) {
-    #TabelaFaturamento{
-        width: 80%;
-        max-width: 80%;
-        font-size: 20px;
-        text-align: center;
-        color: white;
-        margin-top: 50px;
-        height: 50vh;
-        max-height: 50vh;
-    }
+#Config i {
+    color: rgb(155, 155, 158);
+}
 
-    #Retorna{
-        margin-top: 100px;
-            color: white;
-            font-size: 45px;
-        
-        }
-        
-        #FaturadoDia{
-            margin-top: 100px;
-                color: white;
-                font-size: 45px;
-            
-            }
+#Config:hover {
+    background-color: rgb(93, 140, 233);
+}
+
+#Config:hover i {
+    color: rgb(155, 155, 158);
 }
 
 
