@@ -35,7 +35,7 @@ async function Faturamento() {
     try {
         mostrarSpinner();
 
-        const response = await fetch(`http://192.168.0.183:8000/pcp/api/dashboarTV?ano=${anoSelecionado}&empresa=4`, {
+        const response = await fetch(`http://10.162.0.53:9000/pcp/api/dashboarTV?ano=${anoSelecionado}&empresa=4`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'Authorization': Token },
         });
