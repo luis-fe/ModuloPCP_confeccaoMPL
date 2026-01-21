@@ -328,30 +328,33 @@ class DashboardTV():
             return hora_str
 
         def __dashboard_informacoes_faturamento_csw(self):
-            '''Metodo que obtem do CSW o dashboard de faturmaneto do mes atual'''
+            """Método que obtém do CSW o dashboard de faturamento do período atual."""
 
+            # 1. Obter os tipos de nota (sugestão: renomear para df_tipo_nota para clareza)
+            df_tipo_nota = self.obterTipoNotasConsiderado().copy()
 
-            tipoNota = self.obterTipoNotasConsiderado()
+            # 2. Limpar a coluna 'tipoNota' (pegar apenas o código antes do '-')
+            # O .strip() remove espaços em branco indesejados
+            df_tipo_nota['tipoNota'] = df_tipo_nota['tipoNota'].astype(str).str.split('-').str[0].str.strip()
 
+            # 3. Criar a cláusula para a consulta (ex: "1, 2, 3")
+            # O .unique() evita enviar códigos duplicados para a consulta SQL
+            clausula = ", ".join(df_tipo_nota['tipoNota'].unique())
 
-            tipoNota['tipoNota'] = tipoNota['tipoNota'].str.split('-').str[0]
-            clausua = ", ".join(tipoNota['tipoNota'])
+            # 4. Instanciar a classe de Pedidos e realizar a consulta
+            pedidos_csw = Pedidos_CSW.Pedidos_CSW(
+                self.codEmpresa, '', '', '', '', '', self.dataInicio, self.dataFim
+            )
+            df_faturamento = pedidos_csw.faturamento_csw_periodo(clausula)
 
+            # 5. Garantir que as chaves de junção sejam do mesmo tipo e estejam limpas
+            df_faturamento['tipoNota'] = df_faturamento['tipoNota'].astype(str).str.strip()
+            df_tipo_nota['tipoNota'] = df_tipo_nota['tipoNota'].astype(str).str.strip()
 
-            pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
+            # 6. Realizar o merge (junção) dos DataFrames
+            consulta_final = pd.merge(df_faturamento, df_tipo_nota, on='tipoNota')
 
-            consulta = pedidosCsw.faturamento_csw_periodo(clausua)
-
-            consulta['tipoNota'] = consulta['tipoNota'].astype(str)
-            tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
-            print(consulta)
-
-            consulta = pd.merge(consulta, tipoNota, on='tipoNota')
-            print(consulta)
-
-
-            return consulta
-
+            return consulta_final
         def __obter_backup(self):
             '''Metodo que obtem os backups via arquivo csv'''
 
@@ -418,11 +421,8 @@ class DashboardTV():
             mesAtual = self.__dashboard_informacoes_faturamento_csw()
 
             mesAtual['teste'] = self.dataFim
-            print('meu teste')
-            print(mesAtual)
 
             apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim].reset_index()
-            print(apuradoDia)
 
             apuradoDia['faturado'] = apuradoDia['faturado'].astype(float).round(2)
 
