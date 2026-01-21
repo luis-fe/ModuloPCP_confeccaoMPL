@@ -332,6 +332,7 @@ class DashboardTV():
 
 
             tipoNota = self.obterTipoNotasConsiderado()
+            print(tipoNota)
 
 
             tipoNota['tipoNota'] = tipoNota['tipoNota'].str.split('-').str[0]
