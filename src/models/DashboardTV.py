@@ -431,7 +431,7 @@ class DashboardTV():
 
             # --- CÁLCULO DOS ACUMULADOS (Antes da formatação de texto) ---
             df_final['faturado_acumulado'] = df_final['faturado'].cumsum()
-            df_final['meta_acumulada'] = df_final['vlrMeta'].cumsum()
+            df_final['meta_acumulada'] = df_final['meta'].cumsum()
 
             # Cálculo do Total Geral (numérico)
             total_geral = df_final['faturado'].sum()
