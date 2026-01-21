@@ -381,30 +381,26 @@ class DashboardTV():
             return consulta
 
         def dashboard_view(self):
-            """Método responsável pela Apresentação do Dashboard"""
+            """Método responsável pela Apresentação do Dashboard com valores formatados."""
             # 1. Tratamento de Datas
             data_hora_str = self.__obterHoraAtual()
             data_atual = datetime.strptime(data_hora_str, "%Y-%m-%d %H:%M:%S")
-
             self.dataInicio = data_atual.replace(day=1).strftime('%Y-%m-%d')
             self.dataFim = data_atual.strftime('%Y-%m-%d')
 
             # Função auxiliar para formatar moeda (R$)
             def formatar_real(valor):
+                if pd.isna(valor) or valor == '-':
+                    return "R$ 0,00"
                 return f"R$ {valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
 
             # 2. Processamento do "Retorna"
             df_retorna_csw = self.__get_retorna()
-            # Criando codPedido único
             df_retorna_csw["codPedido"] = df_retorna_csw["codPedido"].astype(str) + '-' + df_retorna_csw[
                 "codSequencia"].astype(str)
 
-            # Separação por código
             retorna_sb = df_retorna_csw[df_retorna_csw['codigo'] != 39]['vlrSugestao'].sum()
             retorna_mplus = df_retorna_csw[df_retorna_csw['codigo'] == 39]['vlrSugestao'].sum()
-
-            valor_retorna_str = formatar_real(retorna_sb)
-            valor_mplus_str = formatar_real(retorna_mplus)
 
             # 3. Processamento de Faturamento
             meses_nomes = [
@@ -416,42 +412,38 @@ class DashboardTV():
             df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
 
             # Cálculo do faturamento do dia atual
-            df_mes_atual['dataEmissao'] = pd.to_datetime(df_mes_atual['dataEmissao']).dt.strftime('%Y-%m-%d')
-            faturado_dia = df_mes_atual[df_mes_atual['dataEmissao'] == self.dataFim]['faturado'].astype(float).sum()
+            df_mes_atual['dataEmissao_dt'] = pd.to_datetime(df_mes_atual['dataEmissao'])
+            faturado_dia = df_mes_atual[df_mes_atual['dataEmissao_dt'].dt.strftime('%Y-%m-%d') == self.dataFim][
+                'faturado'].astype(float).sum()
 
             # 4. Consolidação Mensal
             consulta = pd.concat([df_backup, df_mes_atual], ignore_index=True)
             consulta['dataEmissao'] = pd.to_datetime(consulta['dataEmissao'])
-
-            # Criar coluna de mês baseada na lista meses_nomes
             consulta['mes'] = consulta['dataEmissao'].dt.month.apply(lambda x: meses_nomes[x - 1])
 
-            # Agrupamento (Garantindo que faturado seja float antes da soma)
-            consulta['faturado'] = consulta['faturado'].astype(float)
+            # Agrupamento numérico
             df_agrupado = consulta.groupby("mes")["faturado"].sum().reset_index()
+            df_final = pd.merge(pd.DataFrame({'mes': meses_nomes}), df_agrupado, on='mes', how='left').fillna(0)
 
-            # Garantir que todos os meses apareçam, mesmo sem faturamento
-            df_meses_referencia = pd.DataFrame({'mes': meses_nomes})
-            df_final = pd.merge(df_meses_referencia, df_agrupado, on='mes', how='left')
+            # Cálculo do Total Geral (ainda como número)
+            total_geral = df_final['faturado'].sum()
 
-            # CORREÇÃO CRÍTICA: fillna(inplace=True) retorna None. Atribua diretamente.
-            df_final['faturado'] = df_final['faturado'].fillna(0)
+            # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
+            df_final['faturado'] = df_final['faturado'].apply(formatar_real)
 
             # 5. Montagem do Resultado
-            # Removi o if/else redundante já que os dados eram idênticos
             data_dashboard = {
                 '1- Ano:': str(self.codAno),
                 '2- Empresa:': str(self.codEmpresa),
-                '3- No Retorna': valor_retorna_str,
-                '3.1- Retorna Mplus': valor_mplus_str,
+                '3- No Retorna': formatar_real(retorna_sb),
+                '3.1- Retorna Mplus': formatar_real(retorna_mplus),
                 '4- No Dia': formatar_real(faturado_dia),
-                '5- TOTAL': formatar_real(df_final['faturado'].sum()),  # Sugestão: Calcular o total real
+                '5- TOTAL': formatar_real(total_geral),
                 '6- Atualizado as': data_hora_str,
                 '7- Detalhamento por Mes': df_final.to_dict(orient='records')
             }
 
             return pd.DataFrame([data_dashboard])
-
         def obterTipoNotasConsiderado(self):
             '''Metodo utilizado para carregar os tipo de notas sem pedidos '''
 
