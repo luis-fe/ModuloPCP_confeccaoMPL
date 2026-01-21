@@ -414,7 +414,10 @@ class DashboardTV():
             mesesAnteriores = self.__obter_backup()
 
             mesAtual = self.__dashboard_informacoes_faturamento_csw()
-            df_dia = mesAtual[mesAtual['dataEmissao']==self.dataFim].sum()
+            apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim]
+            apuradoDia['faturado'] = apuradoDia['faturado'].astype(int)
+
+            df_dia = apuradoDia["faturado"].sum()
 
             consulta = pd.concat([mesesAnteriores, mesAtual])
 
