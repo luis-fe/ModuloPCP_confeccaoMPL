@@ -432,7 +432,7 @@ class DashboardTV():
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
 
             df_final.rename(
-                columns={'mes': 'Mês'},
+                columns={'mes': 'Mês','faturado':"Faturado"},
                 inplace=True)
 
             # 5. Montagem do Resultado
