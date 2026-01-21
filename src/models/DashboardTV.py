@@ -336,6 +336,7 @@ class DashboardTV():
 
             tipoNota['tipoNota'] = tipoNota['tipoNota'].str.split('-').str[0]
             clausua = ", ".join(tipoNota['tipoNota'])
+            print(clausua)
 
 
             pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
