@@ -416,8 +416,8 @@ class DashboardTV():
             mesesAnteriores = self.__obter_backup()
 
             mesAtual = self.__dashboard_informacoes_faturamento_csw()
-            print(mesAtual)
-            apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim]
+            apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim].reset_index()
+            print(apuradoDia)
 
             apuradoDia['faturado'] = apuradoDia['faturado'].astype(float).round(2)
 
