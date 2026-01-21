@@ -437,6 +437,9 @@ class DashboardTV():
             consulta['faturado'] = consulta['faturado'].astype(int)
             consulta = consulta.groupby("mes").agg({'faturado':'sum'}).reset_index()
 
+            mesesDf = pd.DataFrame(meses)
+            consulta = pd.merge(mesesDf, consulta , on ='mes', how='left')
+            consulta['faturado'] = consulta['faturado'] .fillna('-',inplace=True)
             total = ''
 
             if self.codEmpresa == 'Todas':
