@@ -416,28 +416,36 @@ class DashboardTV():
             faturado_dia = df_mes_atual[df_mes_atual['dataEmissao_dt'].dt.strftime('%Y-%m-%d') == self.dataFim][
                 'faturado'].astype(float).sum()
 
-            # 4. Consolidação Mensal
+            # 4. Consolidação Mensal e Acumulados
             consulta = pd.concat([df_backup, df_mes_atual], ignore_index=True)
             consulta['dataEmissao'] = pd.to_datetime(consulta['dataEmissao'])
             consulta['mes'] = consulta['dataEmissao'].dt.month.apply(lambda x: meses_nomes[x - 1])
 
-            # Agrupamento numérico
+            # Agrupamento numérico do faturamento
             df_agrupado = consulta.groupby("mes")["faturado"].sum().reset_index()
-            df_final = pd.merge(pd.DataFrame({'mes': meses_nomes}), df_agrupado, on='mes', how='left').fillna(0)
 
-            # Cálculo do Total Geral (ainda como número)
+            # Criar base com todos os meses e mesclar com faturamento e metas
+            df_final = pd.merge(pd.DataFrame({'mes': meses_nomes}), df_agrupado, on='mes', how='left').fillna(0)
+            metas = self.get_metas_cadastradas_ano_empresa()  # Assume-se que retorna 'mes' e 'vlrMeta'
+            df_final = pd.merge(df_final, metas, on='mes', how='left').fillna(0)
+
+            # --- CÁLCULO DOS ACUMULADOS (Antes da formatação de texto) ---
+            df_final['faturado_acumulado'] = df_final['faturado'].cumsum()
+            df_final['meta_acumulada'] = df_final['vlrMeta'].cumsum()
+
+            # Cálculo do Total Geral (numérico)
             total_geral = df_final['faturado'].sum()
 
-            # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
-            df_final['faturado'] = df_final['faturado'].apply(formatar_real)
+            # --- FORMATAÇÃO PARA VISUALIZAÇÃO ---
+            # Aplicamos a formatação em todas as colunas de valores
+            df_final['Faturado'] = df_final['faturado'].apply(formatar_real)
+            df_final['Meta'] = df_final['vlrMeta'].apply(formatar_real)
+            df_final['Fat_Acumulado'] = df_final['faturado_acumulado'].apply(formatar_real)
+            df_final['Meta_Acumulada'] = df_final['meta_acumulada'].apply(formatar_real)
 
-            metas = self.get_metas_cadastradas_ano_empresa()
-            df_final = pd.merge(metas, df_final, on='mes',how='left')
-
-            df_final.rename(
-                columns={'mes': 'Mês','faturado':"Faturado"},
-                inplace=True)
-
+            # Limpeza e renomeação de colunas para o dicionário final
+            df_exibicao = df_final[['mes', 'Faturado', 'Meta', 'Fat_Acumulado', 'Meta_Acumulada']].copy()
+            df_exibicao.rename(columns={'mes': 'Mês'}, inplace=True)
 
             # 5. Montagem do Resultado
             data_dashboard = {
@@ -448,10 +456,10 @@ class DashboardTV():
                 '4- No Dia': formatar_real(faturado_dia),
                 '5- TOTAL': formatar_real(total_geral),
                 '6- Atualizado as': data_hora_str,
-                '7- Detalhamento por Mes': df_final.to_dict(orient='records')
+                '7- Detalhamento por Mes': df_exibicao.to_dict(orient='records')
             }
 
-            return pd.DataFrame([data_dashboard])
+            return data_dashboard
         def obterTipoNotasConsiderado(self):
             '''Metodo utilizado para carregar os tipo de notas sem pedidos '''
 
