@@ -344,6 +344,7 @@ class DashboardTV():
 
             consulta['tipoNota'] = consulta['tipoNota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
+            print(consulta)
 
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
             print(consulta)
