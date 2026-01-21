@@ -416,7 +416,7 @@ class DashboardTV():
             mesAtual = self.__dashboard_informacoes_faturamento_csw()
             print(mesAtual)
             apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim]
-            apuradoDia['faturado'] = apuradoDia['faturado'].astype(int)
+            apuradoDia['faturado'] = apuradoDia['faturado'].astype(float).round(2)
 
             df_dia = apuradoDia["faturado"].sum()
 
