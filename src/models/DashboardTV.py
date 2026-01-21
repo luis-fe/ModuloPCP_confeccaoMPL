@@ -341,7 +341,6 @@ class DashboardTV():
             pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
 
             consulta = pedidosCsw.faturamento_csw_periodo(clausua)
-            print(consulta)
 
             consulta['tipoNota'] = consulta['tipoNota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
@@ -415,6 +414,7 @@ class DashboardTV():
             mesesAnteriores = self.__obter_backup()
 
             mesAtual = self.__dashboard_informacoes_faturamento_csw()
+            print(mesAtual)
             apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim]
             apuradoDia['faturado'] = apuradoDia['faturado'].astype(int)
 
