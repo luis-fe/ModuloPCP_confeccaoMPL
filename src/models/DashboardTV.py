@@ -439,7 +439,7 @@ class DashboardTV():
             # --- FORMATAÇÃO PARA VISUALIZAÇÃO ---
             # Aplicamos a formatação em todas as colunas de valores
             df_final['Faturado'] = df_final['faturado'].apply(formatar_real)
-            df_final['Meta'] = df_final['vlrMeta'].apply(formatar_real)
+            df_final['Meta'] = df_final['meta'].apply(formatar_real)
             df_final['Fat_Acumulado'] = df_final['faturado_acumulado'].apply(formatar_real)
             df_final['Meta_Acumulada'] = df_final['meta_acumulada'].apply(formatar_real)
 
