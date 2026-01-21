@@ -380,95 +380,77 @@ class DashboardTV():
 
             return consulta
 
-
-
         def dashboard_view(self):
-            '''Metodo responsavel pela Apresentacao do Dashboard'''
-            dataHora = self.__obterHoraAtual()
+            """Método responsável pela Apresentação do Dashboard"""
+            # 1. Tratamento de Datas
+            data_hora_str = self.__obterHoraAtual()
+            data_atual = datetime.strptime(data_hora_str, "%Y-%m-%d %H:%M:%S")
 
-            data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
-
-            self.dataInicio = (data_atual.replace(day=1).strftime('%Y-%m-%d'))
+            self.dataInicio = data_atual.replace(day=1).strftime('%Y-%m-%d')
             self.dataFim = data_atual.strftime('%Y-%m-%d')
 
-            # 1 - Montando a analise do retorna
-            retornaCsw = self.__get_retorna()
-            retornaCsw["codPedido"] = retornaCsw["codPedido"] + '-' + retornaCsw["codSequencia"]
+            # Função auxiliar para formatar moeda (R$)
+            def formatar_real(valor):
+                return f"R$ {valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
 
-            retornaCswSB = retornaCsw[retornaCsw['codigo'] != 39]
-            retornaCswMPLUS = retornaCsw[retornaCsw['codigo'] == 39]
+            # 2. Processamento do "Retorna"
+            df_retorna_csw = self.__get_retorna()
+            # Criando codPedido único
+            df_retorna_csw["codPedido"] = df_retorna_csw["codPedido"].astype(str) + '-' + df_retorna_csw[
+                "codSequencia"].astype(str)
 
+            # Separação por código
+            retorna_sb = df_retorna_csw[df_retorna_csw['codigo'] != 39]['vlrSugestao'].sum()
+            retorna_mplus = df_retorna_csw[df_retorna_csw['codigo'] == 39]['vlrSugestao'].sum()
 
-            retorna = retornaCswSB['vlrSugestao'].sum()
-            retorna = "{:,.2f}".format(retorna)
-            retorna = str(retorna)
-            retorna = 'R$ ' + retorna.replace(',', ';').replace('.', ',').replace(';', '.')
+            valor_retorna_str = formatar_real(retorna_sb)
+            valor_mplus_str = formatar_real(retorna_mplus)
 
-            ValorRetornaMplus = retornaCswMPLUS['vlrSugestao'].sum()
-            ValorRetornaMplus = "{:,.2f}".format(ValorRetornaMplus)
-            ValorRetornaMplus = str(ValorRetornaMplus)
-            ValorRetornaMplus = 'R$ ' + ValorRetornaMplus.replace(',', ';').replace('.', ',').replace(';', '.')
+            # 3. Processamento de Faturamento
+            meses_nomes = [
+                '01-Janeiro', '02-Fevereiro', '03-Março', '04-Abril', '05-Maio', '06-Junho',
+                '07-Julho', '08-Agosto', '09-Setembro', '10-Outubro', '11-Novembro', '12-Dezembro'
+            ]
 
+            df_backup = self.__obter_backup()
+            df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
 
-            # 2 -
+            # Cálculo do faturamento do dia atual
+            df_mes_atual['dataEmissao'] = pd.to_datetime(df_mes_atual['dataEmissao']).dt.strftime('%Y-%m-%d')
+            faturado_dia = df_mes_atual[df_mes_atual['dataEmissao'] == self.dataFim]['faturado'].astype(float).sum()
 
-            meses = ['01-Janeiro', '02-Fevereiro', '03-Março', '04-Abril', '05-Maio', '06-Junho',
-                     '07-Julho', '08-Agosto', '09-Setembro', '10-Outubro', '11-Novembro', '12-Dezembro']
+            # 4. Consolidação Mensal
+            consulta = pd.concat([df_backup, df_mes_atual], ignore_index=True)
+            consulta['dataEmissao'] = pd.to_datetime(consulta['dataEmissao'])
 
+            # Criar coluna de mês baseada na lista meses_nomes
+            consulta['mes'] = consulta['dataEmissao'].dt.month.apply(lambda x: meses_nomes[x - 1])
 
-            mesesAnteriores = self.__obter_backup()
+            # Agrupamento (Garantindo que faturado seja float antes da soma)
+            consulta['faturado'] = consulta['faturado'].astype(float)
+            df_agrupado = consulta.groupby("mes")["faturado"].sum().reset_index()
 
-            mesAtual = self.__dashboard_informacoes_faturamento_csw()
+            # Garantir que todos os meses apareçam, mesmo sem faturamento
+            df_meses_referencia = pd.DataFrame({'mes': meses_nomes})
+            df_final = pd.merge(df_meses_referencia, df_agrupado, on='mes', how='left')
 
-            mesAtual['teste'] = self.dataFim
+            # CORREÇÃO CRÍTICA: fillna(inplace=True) retorna None. Atribua diretamente.
+            df_final['faturado'] = df_final['faturado'].fillna(0)
 
-            apuradoDia = mesAtual[mesAtual['dataEmissao']==self.dataFim].reset_index()
+            # 5. Montagem do Resultado
+            # Removi o if/else redundante já que os dados eram idênticos
+            data_dashboard = {
+                '1- Ano:': str(self.codAno),
+                '2- Empresa:': str(self.codEmpresa),
+                '3- No Retorna': valor_retorna_str,
+                '3.1- Retorna Mplus': valor_mplus_str,
+                '4- No Dia': formatar_real(faturado_dia),
+                '5- TOTAL': formatar_real(df_final['faturado'].sum()),  # Sugestão: Calcular o total real
+                '6- Atualizado as': data_hora_str,
+                '7- Detalhamento por Mes': df_final.to_dict(orient='records')
+            }
 
-            apuradoDia['faturado'] = apuradoDia['faturado'].astype(float).round(2)
-
-            df_dia = apuradoDia["faturado"].sum()
-
-            consulta = pd.concat([mesesAnteriores, mesAtual])
-
-
-            consulta['mes'] = pd.to_datetime(consulta['dataEmissao'])
-            consulta['mes'] = consulta['mes'].dt.month.apply(lambda x: meses[x - 1])
-
-            consulta['faturado'] = consulta['faturado'].astype(int)
-            consulta = consulta.groupby("mes").agg({'faturado':'sum'}).reset_index()
-
-            mesesDf = pd.DataFrame({'mes':meses})
-            consulta = pd.merge(mesesDf, consulta , on ='mes', how='left')
-            consulta['faturado'] = consulta['faturado'] .fillna('-',inplace=True)
-            total = ''
-
-            if self.codEmpresa == 'Todas':
-                data = {
-                    '1- Ano:': f'{self.codAno}',
-                    '2- Empresa:': f'{self.codEmpresa}',
-                    '3- No Retorna': f"{retorna}",
-                    '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
-                    '4- No Dia': f"{df_dia}",
-                    '5- TOTAL': f"{total}",
-                    '6- Atualizado as': f"{dataHora}",
-                    '7- Detalhamento por Mes': consulta.to_dict(orient='records')
-                }
-
-                return pd.DataFrame([data])
-            else:
-                data = {
-                    '1- Ano:': f'{self.codAno}',
-                    '2- Empresa:': f'{self.codEmpresa}',
-                    '3- No Retorna': f"{retorna}",
-                    '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
-                    '4- No Dia': f"{df_dia}",
-                    '5- TOTAL': f"{total}",
-                    '6- Atualizado as': f"{dataHora}",
-                    '7- Detalhamento por Mes': consulta.to_dict(orient='records')
-                }
-
-                return pd.DataFrame([data])
-
+            return pd.DataFrame([data_dashboard])
 
         def obterTipoNotasConsiderado(self):
             '''Metodo utilizado para carregar os tipo de notas sem pedidos '''
