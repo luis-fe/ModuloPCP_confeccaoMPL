@@ -446,7 +446,7 @@ class DashboardTV():
                     '3- No Retorna': f"{retorna}",
                     '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
                     '4- No Dia': f"{df_dia}",
-                    '5- TOTAL': f"{self.dataInicio}",
+                    '5- TOTAL': f"{total}",
                     '6- Atualizado as': f"{dataHora}",
                     '7- Detalhamento por Mes': consulta.to_dict(orient='records')
                 }
@@ -459,7 +459,7 @@ class DashboardTV():
                     '3- No Retorna': f"{retorna}",
                     '3.1- Retorna Mplus': f"{ValorRetornaMplus}",
                     '4- No Dia': f"{df_dia}",
-                    '5- TOTAL': f"{self.dataInicio}",
+                    '5- TOTAL': f"{total}",
                     '6- Atualizado as': f"{dataHora}",
                     '7- Detalhamento por Mes': consulta.to_dict(orient='records')
                 }
