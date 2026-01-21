@@ -384,7 +384,7 @@ class DashboardTV():
             data_atual = datetime.strptime(dataHora, "%Y-%m-%d")
 
             self.dataInicio = (data_atual.replace(day=1))
-            self.dataFim = data_atual.strftime('%Y-%m-%d')
+            self.dataFim = data_atual
 
             # 1 - Montando a analise do retorna
             retornaCsw = self.__get_retorna()
