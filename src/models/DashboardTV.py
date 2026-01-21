@@ -341,6 +341,7 @@ class DashboardTV():
             pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
 
             consulta = pedidosCsw.faturamento_csw_periodo(clausua)
+            print(consulta)
 
             consulta['tipoNota'] = consulta['tipoNota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
