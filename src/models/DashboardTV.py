@@ -332,7 +332,6 @@ class DashboardTV():
 
 
             tipoNota = self.obterTipoNotasConsiderado()
-            print(tipoNota)
 
 
             tipoNota['tipoNota'] = tipoNota['tipoNota'].str.split('-').str[0]
@@ -345,6 +344,7 @@ class DashboardTV():
 
             consulta['tipoNota'] = consulta['tipoNota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
+            print(tipoNota)
 
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
 
