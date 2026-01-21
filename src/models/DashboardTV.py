@@ -431,6 +431,10 @@ class DashboardTV():
             # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
 
+            df_final.rename(
+                columns={'mes': 'Mês'},
+                inplace=True)
+
             # 5. Montagem do Resultado
             data_dashboard = {
                 '1- Ano:': str(self.codAno),
