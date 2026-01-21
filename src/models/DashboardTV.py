@@ -381,7 +381,7 @@ class DashboardTV():
             '''Metodo responsavel pela Apresentacao do Dashboard'''
             dataHora = self.__obterHoraAtual()
 
-            data_atual = datetime.strptime(dataHora, "%Y-%m-%d %H:%M:%S")
+            data_atual = datetime.strptime(dataHora, "%Y-%m-%d")
 
             self.dataInicio = (data_atual.replace(day=1))
             self.dataFim = data_atual.strftime('%Y-%m-%d')
