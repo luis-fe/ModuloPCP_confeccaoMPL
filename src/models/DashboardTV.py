@@ -353,7 +353,7 @@ class DashboardTV():
 
             # 1. Obter os tipos de nota (sugestão: renomear para df_tipo_nota para clareza)
             df_tipo_nota = self.obterTipoNotasConsiderado().copy()
-            df_tipo_nota = df_tipo_nota[df_tipo_nota['consideraTotalizador']=='false']
+            df_tipo_nota = df_tipo_nota[df_tipo_nota['consideraTotalizador']=='true']
 
             # 2. Limpar a coluna 'tipoNota' (pegar apenas o código antes do '-')
             # O .strip() remove espaços em branco indesejados
@@ -396,7 +396,7 @@ class DashboardTV():
             '''Metodo que obtem os backups via arquivo csv'''
 
             tipoNota = self.obterTipoNotasConsiderado()
-            tipoNota = tipoNota[tipoNota['consideraTotalizador']=='false']
+            tipoNota = tipoNota[tipoNota['consideraTotalizador']=='true']
 
             if self.codEmpresa == 'Todas':
                 caminhoAbsoluto = configApp.localProjeto
