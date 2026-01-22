@@ -446,7 +446,7 @@ class DashboardTV():
             # 2. Criar um DataFrame de uma linha para o Total
             # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
             df_total = pd.DataFrame({
-                'mes': ['✈TOTA'],
+                'mes': ['✈TOTAL'],
                 'faturado': [total_faturamento],
                 'meta': formatar_real(total_meta),
                 'Fat.Acumulado': [total_faturamento],
