@@ -362,7 +362,7 @@ class DashboardTV():
             nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
             tipoNota = self.obterTipoNotasConsiderado()
 
-
+            print(nome)
             consulta = pd.read_csv(nome)
             print(consulta)
 
