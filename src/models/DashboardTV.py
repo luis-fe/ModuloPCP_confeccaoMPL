@@ -430,10 +430,12 @@ class DashboardTV():
             df_final['Fat.Acumulado'] = df_final['faturado'].cumsum()
             # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
+            df_final['Fat.Acumulado'] = df_final['Fat.Acumulado'].apply(formatar_real)
 
             metas = self.get_metas_cadastradas_ano_empresa()
             df_final = pd.merge(metas, df_final, on='mes',how='left')
-            df_final['meta acum.'] = ''
+            df_final['meta acum.'] = df_final['meta'].cumsum()
+            df_final['meta acum.'] = df_final['meta acum.'].apply(formatar_real)
 
             df_final.rename(
                 columns={'mes': 'Mês','faturado':"Faturado"},
