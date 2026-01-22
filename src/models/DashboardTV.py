@@ -431,6 +431,8 @@ class DashboardTV():
             # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
             # 1. Calcular os totais das colunas numéricas
             total_faturamento = df_final['faturado'].sum()
+            metas = self.get_metas_cadastradas_ano_empresa()
+            df_final = pd.merge(metas, df_final, on='mes',how='left')
             total_meta = df_final['meta'].sum()
 
             # 2. Criar um DataFrame de uma linha para o Total
@@ -451,8 +453,7 @@ class DashboardTV():
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
             df_final['Fat.Acumulado'] = df_final['Fat.Acumulado'].apply(formatar_real)
 
-            metas = self.get_metas_cadastradas_ano_empresa()
-            df_final = pd.merge(metas, df_final, on='mes',how='left')
+
             #df_final['meta acum.'] = df_final['meta'].cumsum()
             #df_final['meta acum.'] = df_final['meta acum.'].apply(formatar_real)
 
