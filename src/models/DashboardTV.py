@@ -423,6 +423,8 @@ class DashboardTV():
 
             # 4. Consolidação Mensal
             consulta = pd.concat([df_backup, df_mes_atual], ignore_index=True)
+            consulta = consulta[consulta['dataEmissao'].str[:4] == str(self.codAno)]
+
             consulta['dataEmissao'] = pd.to_datetime(consulta['dataEmissao'])
             consulta['mes'] = consulta['dataEmissao'].dt.month.apply(lambda x: meses_nomes[x - 1])
 
@@ -438,7 +440,6 @@ class DashboardTV():
             total_faturamento = df_final['faturado'].sum()
             metas = self.get_metas_cadastradas_ano_empresa()
             df_final = pd.merge(metas, df_final, on='mes',how='left')
-            df_final = df_final[df_final['dataEmissao'].str[:4] == str(self.codAno)]
 
 
             total_meta = df_final['meta'].str.replace('R$', '', regex=False).str.replace(' ', '').\
