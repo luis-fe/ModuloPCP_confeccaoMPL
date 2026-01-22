@@ -353,6 +353,7 @@ class DashboardTV():
 
             # 1. Obter os tipos de nota (sugestão: renomear para df_tipo_nota para clareza)
             df_tipo_nota = self.obterTipoNotasConsiderado().copy()
+            df_tipo_nota = df_tipo_nota[df_tipo_nota['consideraTotalizador']=='false']
 
             # 2. Limpar a coluna 'tipoNota' (pegar apenas o código antes do '-')
             # O .strip() remove espaços em branco indesejados
@@ -394,13 +395,14 @@ class DashboardTV():
         def __obter_backup(self):
             '''Metodo que obtem os backups via arquivo csv'''
 
+            tipoNota = self.obterTipoNotasConsiderado()
+            tipoNota = tipoNota[tipoNota['consideraTotalizador']=='false']
 
             if self.codEmpresa == 'Todas':
                 caminhoAbsoluto = configApp.localProjeto
                 nome1 = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + '1'+ '.csv'
                 nome4 = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + '4' + '.csv'
 
-                tipoNota = self.obterTipoNotasConsiderado()
                 consulta1 = pd.read_csv(nome1)
                 consulta4 = pd.read_csv(nome4)
 
@@ -411,7 +413,6 @@ class DashboardTV():
 
                 caminhoAbsoluto = configApp.localProjeto
                 nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
-                tipoNota = self.obterTipoNotasConsiderado()
                 consulta = pd.read_csv(nome)
 
 
@@ -553,7 +554,7 @@ class DashboardTV():
 
             query = """
             select
-                "tipoNota"
+                "tipoNota", "consideraTotalizador"
             from
                 "PCP"."DashbordTV"."confNota"
             """
