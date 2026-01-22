@@ -463,6 +463,7 @@ class DashboardTV():
                 columns={'mes': 'Mês','faturado':"Faturado"},
                 inplace=True)
 
+            df_final['mes'] = df_final['mes'].str.split('-').str[1]
 
             # 5. Montagem do Resultado
             data_dashboard = {
