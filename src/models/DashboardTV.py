@@ -440,6 +440,9 @@ class DashboardTV():
             df_final['meta acum.'] =df_final['meta'].str.replace('R$', '', regex=False).str.replace(' ', '').\
                 str.replace('.', '').str.replace(',', '.').astype(float).cumsum()
 
+
+            df_final['mes'] = df_final['mes'].str.split('-').str[1]
+
             # 2. Criar um DataFrame de uma linha para o Total
             # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
             df_total = pd.DataFrame({
@@ -463,7 +466,6 @@ class DashboardTV():
                 columns={'mes': 'Mês','faturado':"Faturado"},
                 inplace=True)
 
-            df_final['Mês'] = df_final['Mês'].str.split('-').str[1]
 
             # 5. Montagem do Resultado
             data_dashboard = {
