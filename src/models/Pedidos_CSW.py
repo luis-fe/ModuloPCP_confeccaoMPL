@@ -490,7 +490,7 @@ class Pedidos_CSW():
 
             self.codEmpresa = '4'
             dataFrame4 = self.faturamento_periodo_empresa()
-            dataFrame.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_{self.codEmpresa}.csv')
+            dataFrame4.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_{self.codEmpresa}.csv')
 
 
             servicoAutomacao.update_controle_automacao(f'Finalizado Faturamento Acumulado{caminhoAbsoluto}{self.dataInicioFat}_{self.dataFmFat}', dataHora)
