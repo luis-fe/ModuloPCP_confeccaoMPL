@@ -433,7 +433,8 @@ class DashboardTV():
             total_faturamento = df_final['faturado'].sum()
             metas = self.get_metas_cadastradas_ano_empresa()
             df_final = pd.merge(metas, df_final, on='mes',how='left')
-            total_meta = df_final['meta'].sum()
+
+            total_meta = df_final['meta'].astype(float).sum()
 
             # 2. Criar um DataFrame de uma linha para o Total
             # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
