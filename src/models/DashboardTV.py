@@ -447,7 +447,7 @@ class DashboardTV():
                 'faturado': [total_faturamento],
                 'meta': [total_meta],
                 'Fat.Acumulado': [total_faturamento],
-                'Meta Acumulada': [total_meta]
+                'meta acum.': [total_meta]
             })
 
             # 3. Concatenar o total ao final do df_final
