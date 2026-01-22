@@ -445,7 +445,7 @@ class DashboardTV():
             df_total = pd.DataFrame({
                 'mes': ['✈TOTA'],
                 'faturado': [total_faturamento],
-                'meta': formatar_real([total_meta]),
+                'meta': formatar_real(total_meta),
                 'Fat.Acumulado': [total_faturamento],
                 'meta acum.': [total_meta]
             })
