@@ -51,18 +51,39 @@ class DashboardTV():
             mes = pd.DataFrame(dados)[["mes"]]
 
 
-            sql = """
-            select
-                mes, meta
-            from
-                "PCP"."DashbordTV".metas m
-            where 
-                m.ano = %s 
-                and m.empresa = %s
-            order by mes 
-            """
             conn = ConexaoPostgre.conexaoEngine()
-            consulta = pd.read_sql(sql,conn, params=(self.codAno, self.codEmpresa))
+
+
+            if self.codEmpresa == 'Todas':
+                sql = """
+                select
+                    mes, sum(meta) as meta
+                from
+                    "PCP"."DashbordTV".metas m
+                where 
+                    m.ano = %s 
+                    and m.empresa in ('1','4')
+                group by mes
+                order by mes 
+                """
+
+                consulta = pd.read_sql(sql,conn, params=(self.codAno,))
+
+
+            else:
+
+
+                sql = """
+                select
+                    mes, meta
+                from
+                    "PCP"."DashbordTV".metas m
+                where 
+                    m.ano = %s 
+                    and m.empresa = %s
+                order by mes 
+                """
+                consulta = pd.read_sql(sql,conn, params=(self.codAno, self.codEmpresa))
 
             consulta = pd.merge(mes, consulta, on='mes', how='left')
             consulta.fillna('R$0,00',inplace=True)
@@ -342,10 +363,25 @@ class DashboardTV():
             clausula = ", ".join(df_tipo_nota['tipoNota'].unique())
 
             # 4. Instanciar a classe de Pedidos e realizar a consulta
-            pedidos_csw = Pedidos_CSW.Pedidos_CSW(
-                self.codEmpresa, '', '', '', '', '', self.dataInicio, self.dataFim
-            )
-            df_faturamento = pedidos_csw.faturamento_csw_periodo(clausula)
+
+            if self.codEmpresa == 'Todas':
+                pedidos_csw1 = Pedidos_CSW.Pedidos_CSW(
+                    '1', '', '', '', '', '', self.dataInicio, self.dataFim
+                )
+                pedidos_csw4 = Pedidos_CSW.Pedidos_CSW(
+                    '4', '', '', '', '', '', self.dataInicio, self.dataFim
+                )
+                df_faturamento1 = pedidos_csw1.faturamento_csw_periodo(clausula)
+                df_faturamento4 = pedidos_csw4.faturamento_csw_periodo(clausula)
+                df_faturamento = pd.concat([df_faturamento1, df_faturamento4])
+
+
+            else:
+
+                pedidos_csw = Pedidos_CSW.Pedidos_CSW(
+                    self.codEmpresa, '', '', '', '', '', self.dataInicio, self.dataFim
+                )
+                df_faturamento = pedidos_csw.faturamento_csw_periodo(clausula)
 
             # 5. Garantir que as chaves de junção sejam do mesmo tipo e estejam limpas
             df_faturamento['tipoNota'] = df_faturamento['tipoNota'].astype(str).str.strip()
@@ -358,11 +394,27 @@ class DashboardTV():
         def __obter_backup(self):
             '''Metodo que obtem os backups via arquivo csv'''
 
-            caminhoAbsoluto = configApp.localProjeto
-            nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
-            tipoNota = self.obterTipoNotasConsiderado()
 
-            consulta = pd.read_csv(nome)
+            if self.codEmpresa == 'Todas':
+                caminhoAbsoluto = configApp.localProjeto
+                nome1 = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + '1'+ '.csv'
+                nome4 = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + '4' + '.csv'
+
+                tipoNota = self.obterTipoNotasConsiderado()
+                consulta1 = pd.read_csv(nome1)
+                consulta4 = pd.read_csv(nome4)
+
+                consulta = pd.concat([consulta1,consulta4])
+
+
+            else:
+
+                caminhoAbsoluto = configApp.localProjeto
+                nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
+                tipoNota = self.obterTipoNotasConsiderado()
+                consulta = pd.read_csv(nome)
+
+
 
             consulta['tipoNota'] = consulta['tiponota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str).str.split('-').str[0].str.strip()
@@ -412,6 +464,7 @@ class DashboardTV():
                 '01-Janeiro', '02-Fevereiro', '03-Março', '04-Abril', '05-Maio', '06-Junho',
                 '07-Julho', '08-Agosto', '09-Setembro', '10-Outubro', '11-Novembro', '12-Dezembro'
             ]
+
 
             df_backup = self.__obter_backup()
             df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
