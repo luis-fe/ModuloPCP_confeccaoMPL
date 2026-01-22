@@ -444,10 +444,10 @@ class DashboardTV():
             # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
             df_total = pd.DataFrame({
                 'mes': ['✈TOTA'],
-                'faturado': formatar_real([total_faturamento]),
+                'faturado': [total_faturamento],
                 'meta': formatar_real([total_meta]),
-                'Fat.Acumulado': formatar_real([total_faturamento]),
-                'meta acum.': formatar_real([total_meta])
+                'Fat.Acumulado': [total_faturamento],
+                'meta acum.': [total_meta]
             })
 
             # 3. Concatenar o total ao final do df_final
@@ -457,10 +457,7 @@ class DashboardTV():
 
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
             df_final['Fat.Acumulado'] = df_final['Fat.Acumulado'].apply(formatar_real)
-
-
-            #df_final['meta acum.'] = df_final['meta'].cumsum()
-            #df_final['meta acum.'] = df_final['meta acum.'].apply(formatar_real)
+            df_final['meta acum.'] = df_final['meta acum.'].apply(formatar_real)
 
             df_final.rename(
                 columns={'mes': 'Mês','faturado':"Faturado"},
