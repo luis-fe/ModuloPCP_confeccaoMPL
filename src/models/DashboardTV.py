@@ -367,8 +367,8 @@ class DashboardTV():
             consulta['tipoNota'] = consulta['tiponota'].astype(str)
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
-
-
+            print('backup')
+            print(consulta)
             return consulta
 
 
