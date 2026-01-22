@@ -368,7 +368,7 @@ class DashboardTV():
             tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str).str.split('-').str[0].str.strip()
 
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
-            print('backup')
+            print(f'backup{self.codAno}')
             consulta = consulta[consulta['dataEmissao'].str[:4] == str(self.codAno)]
             print(consulta)
 
