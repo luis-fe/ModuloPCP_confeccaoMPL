@@ -438,6 +438,8 @@ class DashboardTV():
             total_faturamento = df_final['faturado'].sum()
             metas = self.get_metas_cadastradas_ano_empresa()
             df_final = pd.merge(metas, df_final, on='mes',how='left')
+            df_final = df_final[df_final['dataEmissao'].str[:4] == str(self.codAno)]
+
 
             total_meta = df_final['meta'].str.replace('R$', '', regex=False).str.replace(' ', '').\
                 str.replace('.', '').str.replace(',', '.').astype(float).sum()
