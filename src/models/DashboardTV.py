@@ -362,12 +362,11 @@ class DashboardTV():
             nome = f'{caminhoAbsoluto}/dados/FaturamentoAcumulado_' + self.codEmpresa + '.csv'
             tipoNota = self.obterTipoNotasConsiderado()
 
-            print(nome)
             consulta = pd.read_csv(nome)
-            print(consulta)
 
             consulta['tipoNota'] = consulta['tiponota'].astype(str)
-            tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str)
+            tipoNota['tipoNota'] = tipoNota['tipoNota'].astype(str).str.split('-').str[0].str.strip()
+
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
             print('backup')
             print(consulta)
