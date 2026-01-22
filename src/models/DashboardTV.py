@@ -429,6 +429,25 @@ class DashboardTV():
             total_geral = df_final['faturado'].sum()
             df_final['Fat.Acumulado'] = df_final['faturado'].cumsum()
             # --- NOVIDADE: Formatação da coluna faturado para a visualização ---
+            # 1. Calcular os totais das colunas numéricas
+            total_faturamento = df_final['Faturamento'].sum()
+            total_meta = df_final['Meta'].sum()
+
+            # 2. Criar um DataFrame de uma linha para o Total
+            # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
+            df_total = pd.DataFrame({
+                'Mes': ['TOTAL'],
+                'Faturamento': [total_faturamento],
+                'Meta': [total_meta],
+                'Faturamento Acumulado': [total_faturamento],
+                'Meta Acumulada': [total_meta]
+            })
+
+            # 3. Concatenar o total ao final do df_final
+            df_final = pd.concat([df_final, df_total], ignore_index=True)
+
+
+
             df_final['faturado'] = df_final['faturado'].apply(formatar_real)
             df_final['Fat.Acumulado'] = df_final['Fat.Acumulado'].apply(formatar_real)
 
