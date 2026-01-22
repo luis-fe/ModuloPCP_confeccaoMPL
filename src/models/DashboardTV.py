@@ -369,7 +369,7 @@ class DashboardTV():
 
             consulta = pd.merge(consulta, tipoNota, on='tipoNota')
             print('backup')
-            consulta = consulta[consulta['dataEmissao'].dt.year == int(self.codAno)]
+            consulta = consulta[consulta['dataEmissao'].consulta.year == int(self.codAno)]
             print(consulta)
 
 
