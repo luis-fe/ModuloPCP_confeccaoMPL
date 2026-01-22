@@ -435,7 +435,10 @@ class DashboardTV():
             df_final = pd.merge(metas, df_final, on='mes',how='left')
 
             total_meta = df_final['meta'].str.replace('R$', '', regex=False).str.replace(' ', '').\
-                str.replace('.', '').astype(float).sum()
+                str.replace('.', '').str.replace(',', '.').astype(float).sum()
+
+            df_final['meta acum.'] =df_final['meta'].str.replace('R$', '', regex=False).str.replace(' ', '').\
+                str.replace('.', '').str.replace(',', '.').astype(float).cumsum()
 
             # 2. Criar um DataFrame de uma linha para o Total
             # As colunas de 'Acumulado' no total geralmente refletem o valor final cheio
