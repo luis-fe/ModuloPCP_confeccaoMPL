@@ -432,8 +432,15 @@ class DashboardTV():
         def __get_retorna(self):
             '''Metodo que busca os pedidos no retorna '''
 
-            pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
-            consulta = pedidosCsw.retorna_csw_empresa()
+            if self.codEmpresa == 'Todas':
+                pedidosCsw1 = Pedidos_CSW.Pedidos_CSW('1','','','','','',self.dataInicio,self.dataFim).retorna_csw_empresa()
+                pedidosCsw4 = Pedidos_CSW.Pedidos_CSW('4','','','','','',self.dataInicio,self.dataFim).retorna_csw_empresa()
+
+                consulta = pd.concat([pedidosCsw1, pedidosCsw4])
+
+            else:
+                pedidosCsw = Pedidos_CSW.Pedidos_CSW(self.codEmpresa,'','','','','',self.dataInicio,self.dataFim)
+                consulta = pedidosCsw.retorna_csw_empresa()
 
             return consulta
 
