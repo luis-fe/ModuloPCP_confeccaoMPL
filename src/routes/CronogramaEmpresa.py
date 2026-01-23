@@ -49,7 +49,7 @@ def upload_image():
             return jsonify({"status": "error", "message": f"Base64 inválido: {str(e)}"}), 400
 
         # 4. Salva
-        filename = f"planilha_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        filename = f"planilha_{'Slide1'}.png"
         filepath = os.path.join(OUTPUT_FOLDER, filename)
 
         with open(filepath, "wb") as f:
