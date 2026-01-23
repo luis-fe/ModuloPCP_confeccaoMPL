@@ -6,6 +6,7 @@ from datetime import datetime
 
 CronogramaEmpresa_routes = Blueprint('CronogramaEmpresa_routes', __name__)
 
+
 def token_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
