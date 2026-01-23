@@ -27,30 +27,40 @@ def token_required(f):
     return decorated_function
 
 
+# ... importações e setup inicial ...
+
 @CronogramaEmpresa_routes.route('/upload', methods=['POST'])
-# @token_required  <-- Se seu VBA não envia o token, comente essa linha para testar
+# @token_required
 def upload_image():
     try:
         data = request.get_json(force=True, silent=True)
 
+        # Validação básica
         if not data or 'image' not in data:
             return jsonify({"status": "error", "message": "JSON inválido"}), 400
 
         image_data = data.get('image')
+
+        # --- MUDANÇA AQUI: Ler o nome da aba enviado pelo Excel ---
+        # Se não vier nome, usa 'Padrao' como segurança
+        nome_aba = data.get('nome_aba', 'Padrao')
+
+        # Limpa caracteres perigosos do nome (espaços, acentos, etc se quiser)
+        nome_aba = nome_aba.strip()
 
         try:
             image_bytes = base64.b64decode(image_data)
         except Exception as e:
             return jsonify({"status": "error", "message": "Base64 inválido"}), 400
 
-        # Nome fixo para sempre mostrar a versão mais recente
-        filename = "planilha_Slide1.png"
+        # Agora o nome do arquivo é DINÂMICO baseado na aba
+        filename = f"planilha_{nome_aba}.png"
         filepath = os.path.join(OUTPUT_FOLDER, filename)
 
         with open(filepath, "wb") as f:
             f.write(image_bytes)
 
-        print(f"Sucesso! Imagem salva em: {filepath}")
+        print(f"Recebido: {nome_aba} -> Salvo em: {filepath}")
         return jsonify({"status": "success", "file": filename}), 200
 
     except Exception as e:
