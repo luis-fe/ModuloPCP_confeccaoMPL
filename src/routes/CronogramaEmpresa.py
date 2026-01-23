@@ -25,26 +25,41 @@ if not os.path.exists(OUTPUT_FOLDER):
 @CronogramaEmpresa_routes.route('/upload', methods=['POST'])
 def upload_image():
     try:
-        data = request.json
-        image_data = data.get('image') # O Excel vai mandar um JSON { "image": "..." }
+        # 1. Tenta pegar o JSON forçando a leitura (ignora se o Content-Type estiver errado)
+        data = request.get_json(force=True, silent=True)
+
+        # 2. Se o JSON veio vazio ou inválido, tenta debugar
+        if not data:
+            print("\n--- ERRO: JSON não reconhecido ---")
+            print(f"Cabeçalhos recebidos: {request.headers}")
+            # Lê os primeiros 100 caracteres para ver se veio lixo
+            raw_preview = request.data[:100]
+            print(f"Início dos dados brutos: {raw_preview}")
+            return jsonify({"status": "error", "message": "JSON inválido ou vazio"}), 400
+
+        image_data = data.get('image')
 
         if not image_data:
-            return jsonify({"status": "error", "message": "Nenhuma imagem recebida"}), 400
+            return jsonify({"status": "error", "message": "Campo 'image' não encontrado"}), 400
 
-        # Decodifica o Base64
-        image_bytes = base64.b64decode(image_data)
+        # 3. Decodifica
+        try:
+            image_bytes = base64.b64decode(image_data)
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Base64 inválido: {str(e)}"}), 400
 
-        # Gera nome único
+        # 4. Salva
         filename = f"planilha_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
         filepath = os.path.join(OUTPUT_FOLDER, filename)
 
-        # Salva o arquivo
         with open(filepath, "wb") as f:
             f.write(image_bytes)
 
-        print(f"Imagem salva em: {filepath}")
+        print(f"Sucesso! Imagem salva: {filepath}")
         return jsonify({"status": "success", "file": filename}), 200
 
     except Exception as e:
-        print(f"Erro: {e}")
+        # Pega erros internos do servidor e imprime no terminal
+        print(f"\n--- ERRO FATAL 500 ---")
+        print(e)
         return jsonify({"status": "error", "message": str(e)}), 500
