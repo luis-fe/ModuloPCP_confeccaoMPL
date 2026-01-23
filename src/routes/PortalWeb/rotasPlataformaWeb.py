@@ -53,3 +53,7 @@ def TiposdeNotas():
 @rotasPlataformaWeb.route('/TelaConfiguracaoMetas.html')
 def TelaConfiguracaoMetas():
     return render_template('TelaConfiguracaoMetas.html')
+
+@rotasPlataformaWeb.route('/Cronograma_Inverno.html')
+def Cronograma_Inverno():
+    return render_template('Cronograma_Inverno')
