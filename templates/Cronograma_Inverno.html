@@ -148,9 +148,7 @@ if (localStorageStatus === "ACUMULADO") {
     onOffSwitch.checked = true;
     statusText.innerText = "MENSAL";
     window.addEventListener('load', async () => {
-    await Faturamento();
-    criarTabelaEmbalagens(DadosFaturamento, 'Faturado', 'meta');
-    createBarChart('Faturado', 'meta');
+
     // Use uma função anônima para realizar o redirecionamento após 30 segundos.
     setTimeout(() => {window.location.href = "Cronograma_Verao.html";},15000);
 
