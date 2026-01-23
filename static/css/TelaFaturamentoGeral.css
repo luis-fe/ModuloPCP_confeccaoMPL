@@ -38,6 +38,12 @@
     background-color: black; /* Fundo preto para container de botões */
 }
 
+/* Faz o menu aparecer quando o mouse está sobre o botão ou sobre o menu */
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* Remove espaço extra para o mouse não "perder" o menu */
+}
+
 #on-off,
 #Outros,
 
