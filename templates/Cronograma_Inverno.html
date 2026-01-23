@@ -31,11 +31,11 @@
                       </button>
 
                       <ul class="dropdown-menu" aria-labelledby="menuCronograma">
-                        <li><a class="dropdown-item" href="/inverno">Inverno</a></li>
+                        <li><a class="dropdown-item" href="/Cronograma_Inverno.html">Inverno</a></li>
 
-                        <li><a class="dropdown-item" href="/verao">Verão</a></li>
+                        <li><a class="dropdown-item" href="/Cronograma_Verao.html">Verão</a></li>
 
-                        <li><a class="dropdown-item" href="/alto-verao">Alto Verão</a></li>
+                        <li><a class="dropdown-item" href="/Cronograma_AltoVerao.html">Alto Verão</a></li>
                       </ul>
                 </div>
  <!-- Espaço entre botões e status/filtro -->
@@ -81,7 +81,6 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/static/js/TelaFaturamentoGeral.js"></script>
 <script>
 const onOffSwitch = document.getElementById("on-off");
 const statusText = document.getElementById("status");
@@ -138,7 +137,7 @@ if (localStorageStatus === "ACUMULADO") {
     createBarChart('Fat.Acumulado', 'meta acum.');
     // Use uma função anônima para realizar o redirecionamento após 30 segundos.
     setTimeout(() => {
-        window.location.href = "TelaFaturamentoMatriz.html";
+        window.location.href = "Cronograma_Verao.html";
     }, 20000);
 });
 
@@ -151,7 +150,7 @@ if (localStorageStatus === "ACUMULADO") {
     criarTabelaEmbalagens(DadosFaturamento, 'Faturado', 'meta');
     createBarChart('Faturado', 'meta');
     // Use uma função anônima para realizar o redirecionamento após 30 segundos.
-    setTimeout(() => {window.location.href = "TelaFaturamentoMatriz.html";},15000);
+    setTimeout(() => {window.location.href = "Cronograma_Verao.html";},15000);
 
 });
 }
