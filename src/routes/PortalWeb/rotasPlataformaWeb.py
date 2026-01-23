@@ -57,3 +57,10 @@ def TelaConfiguracaoMetas():
 @rotasPlataformaWeb.route('/Cronograma_Inverno.html')
 def Cronograma_Inverno():
     return render_template('Cronograma_Inverno.html')
+
+@rotasPlataformaWeb.route('/Cronograma_AltoVerao.html')
+def Cronograma_AltoVerao():
+    return render_template('Cronograma_AltoVerao.html')
+@rotasPlataformaWeb.route('/Cronograma_Verao.html')
+def Cronograma_Verao():
+    return render_template('Cronograma_Verao.html')
