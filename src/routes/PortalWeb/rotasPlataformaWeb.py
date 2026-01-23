@@ -56,4 +56,4 @@ def TelaConfiguracaoMetas():
 
 @rotasPlataformaWeb.route('/Cronograma_Inverno.html')
 def Cronograma_Inverno():
-    return render_template('Cronograma_Inverno')
+    return render_template('Cronograma_Inverno.html')
