@@ -1,14 +1,13 @@
 import os
 from dotenv import load_dotenv, dotenv_values
 import pandas as pd
-
 from src.configApp import configApp
 from src.connection import ConexaoPostgre
 import requests
 import pytz
 from src.models import Pedidos_CSW
 from dateutil.relativedelta import relativedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
@@ -348,6 +347,13 @@ class DashboardTV():
             dia = agora.strftime('%Y-%m-%d')
             return hora_str
 
+        def __obterDiaAtual(self):
+            fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+            agora = datetime.now(fuso_horario)
+            hora_str = agora.strftime('%Y-%m-%d %H:%M:%S')
+            dia = agora.strftime('%Y-%m-%d')
+            return dia
+
         def __dashboard_informacoes_faturamento_csw(self):
             """Método que obtém do CSW o dashboard de faturamento do período atual."""
 
@@ -475,7 +481,38 @@ class DashboardTV():
 
 
             df_backup = self.__obter_backup()
+
             df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
+
+            caminhoAbsoluto = configApp.localProjeto
+            url = f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv'
+            # Verifica se existe (seja arquivo ou pasta)
+            if os.path.exists(url):
+                # 2. Pega a data da última modificação
+                timestamp = os.path.getmtime(url)
+                data_arquivo = datetime.fromtimestamp(timestamp)
+
+                # 3. Pega a data de agora
+                agora = datetime.now()
+
+                # 4. Calcula a diferença
+                diferenca = agora - data_arquivo
+
+                if diferenca > timedelta(minutes=1):
+                    print(f"O arquivo é antigo ({diferenca} atrás). Executando atualização...")
+
+
+                else:
+                    print("O arquivo é recente (menos de 1 minuto). Nenhuma ação necessária.")
+
+            else:
+                df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
+                df_mes_atual['dataHora'] = self.__obterDiaAtual()
+                df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
+
+            df_mes_atual['dataHora'] = self.__obterDiaAtual()
+
+
 
             # Cálculo do faturamento do dia atual
             df_mes_atual['dataEmissao_dt'] = pd.to_datetime(df_mes_atual['dataEmissao'])
