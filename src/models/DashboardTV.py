@@ -503,7 +503,6 @@ class DashboardTV():
                     df_mes_atual['dataHora'] = self.__obterDiaAtual()
                     df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
 
-
                 else:
 
                     df_mes_atual = pd.read_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
