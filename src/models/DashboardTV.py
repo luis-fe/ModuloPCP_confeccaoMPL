@@ -482,7 +482,6 @@ class DashboardTV():
 
             df_backup = self.__obter_backup()
 
-            df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
 
             caminhoAbsoluto = configApp.localProjeto
             url = f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv'
@@ -500,9 +499,14 @@ class DashboardTV():
 
                 if diferenca > timedelta(minutes=1):
                     print(f"O arquivo é antigo ({diferenca} atrás). Executando atualização...")
+                    df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
+                    df_mes_atual['dataHora'] = self.__obterDiaAtual()
+                    df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
 
 
                 else:
+
+                    df_mes_atual = pd.read_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
                     print("O arquivo é recente (menos de 1 minuto). Nenhuma ação necessária.")
 
             else:
