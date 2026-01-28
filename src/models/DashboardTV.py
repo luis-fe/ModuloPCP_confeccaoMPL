@@ -505,7 +505,7 @@ class DashboardTV():
 
                 else:
 
-                    df_mes_atual = pd.read_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
+                    df_mes_atual = pd.read_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
                     print("O arquivo é recente (menos de 1 minuto). Nenhuma ação necessária.")
 
             else:
