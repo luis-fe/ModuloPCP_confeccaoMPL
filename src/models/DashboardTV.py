@@ -501,7 +501,7 @@ class DashboardTV():
                     print(f"O arquivo é antigo ({diferenca} atrás). Executando atualização...")
                     df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
                     df_mes_atual['dataHora'] = self.__obterDiaAtual()
-                    df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
+                    df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
 
                 else:
 
