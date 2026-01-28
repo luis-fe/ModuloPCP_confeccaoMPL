@@ -511,7 +511,7 @@ class DashboardTV():
             else:
                 df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
                 df_mes_atual['dataHora'] = self.__obterDiaAtual()
-                df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}')
+                df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
 
             df_mes_atual['dataHora'] = self.__obterDiaAtual()
 
