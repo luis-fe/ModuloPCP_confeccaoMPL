@@ -1,4 +1,5 @@
 import os
+import tempfile
 from dotenv import load_dotenv, dotenv_values
 import pandas as pd
 from src.configApp import configApp
@@ -484,34 +485,69 @@ class DashboardTV():
 
 
             caminhoAbsoluto = configApp.localProjeto
-            url = f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv'
-            # Verifica se existe (seja arquivo ou pasta)
-            if os.path.exists(url):
-                # 2. Pega a data da última modificação
-                timestamp = os.path.getmtime(url)
-                data_arquivo = datetime.fromtimestamp(timestamp)
+            nome_arquivo = f'FaturamentoDia_empresa_{self.codEmpresa}.csv'
+            caminho_csv = os.path.join(caminhoAbsoluto, 'dados', nome_arquivo)
+            # Flag para controlar se precisa recalcular
+            precisa_atualizar = True
 
-                # 3. Pega a data de agora
-                agora = datetime.now()
+            # 1. Verifica se o arquivo existe e se é válido
+            if os.path.exists(caminho_csv):
+                try:
+                    timestamp = os.path.getmtime(caminho_csv)
+                    data_arquivo = datetime.fromtimestamp(timestamp)
+                    diferenca = datetime.now() - data_arquivo
 
-                # 4. Calcula a diferença
-                diferenca = agora - data_arquivo
+                    if diferenca < timedelta(minutes=1):
+                        precisa_atualizar = False
+                        print(f"Cache válido ({diferenca} atrás). Carregando arquivo...")
+                    else:
+                        print(f"Cache expirado ({diferenca} atrás).")
 
-                if diferenca > timedelta(minutes=1):
-                    print(f"O arquivo é antigo ({diferenca} atrás). Executando atualização...")
+                except OSError:
+                    # Se der erro ao ler a data do arquivo (arquivo corrompido ou bloqueado), força atualização
+                    precisa_atualizar = True
+
+            # 2. Bloco de Atualização (Executa apenas se necessário)
+            if precisa_atualizar:
+                print("Iniciando atualização dos dados...")
+
+                try:
+                    # Gera o DataFrame (Parte pesada)
                     df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
                     df_mes_atual['dataHora'] = self.__obterDiaAtual()
-                    df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
 
-                else:
+                    # --- TÉCNICA DE ESCRITA ATÔMICA ---
+                    # Salva num arquivo temporário primeiro para não corromper o original
+                    # se alguém tentar ler enquanto você escreve.
+                    fd, caminho_temp = tempfile.mkstemp(suffix=".csv", dir=os.path.dirname(caminho_csv))
+                    os.close(fd)  # Fecha o descritor de arquivo de baixo nível
 
-                    df_mes_atual = pd.read_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
-                    print("O arquivo é recente (menos de 1 minuto). Nenhuma ação necessária.")
+                    # Salva no temporário
+                    df_mes_atual.to_csv(caminho_temp, index=False)
 
-            else:
+                    # Substitui o arquivo oficial pelo temporário de forma atômica (instantânea)
+                    # Isso evita que o Pandas leia um arquivo "pela metade"
+                    if os.path.exists(caminho_csv):
+                        os.remove(caminho_csv)  # Necessário no Windows antes de renomear
+                    os.rename(caminho_temp, caminho_csv)
+
+                    print("Arquivo atualizado com sucesso.")
+
+                except Exception as e:
+                    print(f"Erro crítico ao atualizar cache: {e}")
+                    # Se falhar a atualização, tenta carregar o antigo se existir para não quebrar a tela
+                    if not os.path.exists(caminho_csv):
+                        raise e  # Se não tem nem o antigo, estoura o erro
+
+            # 3. Leitura Final
+            try:
+                # Agora é seguro ler
+                df_mes_atual = pd.read_csv(caminho_csv)
+            except Exception as e:
+                print(f"Erro ao ler CSV, tentando regenerar: {e}")
+                # Fallback de emergência: recalcula na memória sem salvar se o arquivo estiver inacessível
                 df_mes_atual = self.__dashboard_informacoes_faturamento_csw()
                 df_mes_atual['dataHora'] = self.__obterDiaAtual()
-                df_mes_atual.to_csv(f'{caminhoAbsoluto}/dados/FaturamentoDia_empresa_{self.codEmpresa}.csv')
 
             df_mes_atual['dataHora'] = self.__obterDiaAtual()
 
