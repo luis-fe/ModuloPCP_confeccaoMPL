@@ -71,7 +71,7 @@ class ServicoAutomacao():
     def obtendo_ultima_atualizacao_rotina(self):
         """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
 
-        consulta = self.obtendo_historico_automacao_servico()
+        consulta = self.obtendo_historico_automacao()
 
         ultimo = consulta.groupby('idServico').agg({'dataAtualizacao':'max',
                                                     'descricaoServico' :'first'
