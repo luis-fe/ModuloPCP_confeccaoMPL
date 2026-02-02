@@ -73,6 +73,18 @@ class ServicoAutomacao():
 
         consulta = self.obtendo_historico_automacao_servico()
 
+        ultimo = consulta.groupby('idServico').agg({'dataAtualizacao':'max',
+                                                    'descricaoServico' :'first'
+                                                    }).reset_index()
+
+        return ultimo
+
+
+    def obtendo_ultima_atualizacao_rotina(self):
+        """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
+
+        consulta = self.obtendo_historico_automacao()
+
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'
         else:
@@ -80,6 +92,7 @@ class ServicoAutomacao():
             ultimo = consulta['dataAtualizacao'][0]
 
         return ultimo
+
 
 
     def obtentendo_intervalo_atualizacao_servico(self):
