@@ -76,6 +76,15 @@ class ServicoAutomacao():
         ultimo = consulta.groupby('idServico').agg({'dataAtualizacao':'max',
                                                     'descricaoServico' :'first'
                                                     }).reset_index()
+        # 2. Converte para datetime (caso ainda não seja)
+        # Isso é essencial para habilitar as funções de data
+        ultimo['dataAtualizacao'] = pd.to_datetime(ultimo['dataAtualizacao'])
+
+        # 3. Cria a coluna DATA no formato BR (Dia/Mês/Ano)
+        ultimo['data'] = ultimo['dataAtualizacao'].dt.strftime('%d/%m/%Y')
+
+        # 4. Cria a coluna HORA (Hora:Minuto:Segundo)
+        ultimo['hora'] = ultimo['dataAtualizacao'].dt.strftime('%H:%M:%S')
 
         return ultimo
 
