@@ -21,7 +21,7 @@ def token_required(f):
 @token_required
 def get_ServicoAutomacao():
 
-    dados = ServicoAutomacao.ServicoAutomacao().obtendo_ultima_atualizacao_rotina()
+    dados = ServicoAutomacao.ServicoAutomacao().obtendo_ultima_atualizacao_()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas

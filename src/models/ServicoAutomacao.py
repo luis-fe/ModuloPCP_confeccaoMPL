@@ -68,7 +68,7 @@ class ServicoAutomacao():
         return consulta
 
 
-    def obtendo_ultima_atualizacao_rotina(self):
+    def obtendo_ultima_atualizacao_(self):
         """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
 
         consulta = self.obtendo_historico_automacao()
