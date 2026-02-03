@@ -120,9 +120,13 @@ class ServicoAutomacao():
 
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'
-        else:
 
-            ultimo = consulta['dataAtualizacao'][0]
+        else:
+            if consulta['dataAtualizacao'][0] == None:
+                ultimo = '2000-01-01 00:00:00'
+            else:
+
+                ultimo = consulta['dataAtualizacao'][0]
 
         return ultimo
 
