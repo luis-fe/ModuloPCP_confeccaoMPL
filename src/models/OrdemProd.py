@@ -12,7 +12,7 @@ class OrdemProd ():
         self.dataInicio = dataInicio
         self.dataFinal = dataFinal
         self.ulimosNdias = ulimosNdias
-        self.intervalo_automacao = int(intervalo_automacao),
+        self.intervalo_automacao = int(intervalo_automacao)
         self.limitePostgre = limitePostgre
 
 
