@@ -83,7 +83,7 @@ class ServicoAutomacao():
                     pcp."ServicoAutomacao" s
                 on 
                     s."idServico" = c."idServico"
-                    group by idServico, descricaoServico
+                    group by "idServico", "descricaoServico"
                 order by "dataAtualizacao" desc
         """
 
