@@ -71,22 +71,38 @@ class ServicoAutomacao():
     def obtendo_ultima_atualizacao_(self):
         """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
 
-        consulta = self.obtendo_historico_automacao()
 
-        ultimo = consulta.groupby('idServico').agg({'dataAtualizacao':'max',
-                                                    'descricaoServico' :'first'
-                                                    }).reset_index()
+        sql = """
+                select
+                    c."idServico",
+                    Max("dataAtualizacao") as "dataAtualizacao",
+                    s."descricaoServico" 
+                from
+                    pcp."ControleAutomacao" c
+                inner join 
+                    pcp."ServicoAutomacao" s
+                on 
+                    s."idServico" = c."idServico"
+                    group by idServico, descricaoServico
+                order by "dataAtualizacao" desc
+        """
+
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(sql,conn)
+
         # 2. Converte para datetime (caso ainda não seja)
         # Isso é essencial para habilitar as funções de data
-        ultimo['dataAtualizacao'] = pd.to_datetime(ultimo['dataAtualizacao'])
+        consulta['dataAtualizacao'] = pd.to_datetime(consulta['dataAtualizacao'])
 
         # 3. Cria a coluna DATA no formato BR (Dia/Mês/Ano)
-        ultimo['data'] = ultimo['dataAtualizacao'].dt.strftime('%d/%m/%Y')
+        consulta['data'] = consulta['dataAtualizacao'].dt.strftime('%d/%m/%Y')
 
         # 4. Cria a coluna HORA (Hora:Minuto:Segundo)
-        ultimo['hora'] = ultimo['dataAtualizacao'].dt.strftime('%H:%M:%S')
+        consulta['hora'] = consulta['dataAtualizacao'].dt.strftime('%H:%M:%S')
 
-        return ultimo
+        return consulta
 
 
     def obtendo_ultima_atualizacao_rotina(self):
