@@ -64,7 +64,7 @@ class OrdemProd ():
     def realizado_fases_csw(self):
         '''Metodo que busca o realizado das fases no ERP CSW'''
 
-        self.servicoAutomacao = ServicoAutomacao.ServicoAutomacao('03','AutomacaoRealizadoFases')
+        self.servicoAutomacao = ServicoAutomacao.ServicoAutomacao('05','Dados_CSW_RealizadoFase')
         self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
 
         if self.ultima_atualizacao > self.intervalo_automacao:
