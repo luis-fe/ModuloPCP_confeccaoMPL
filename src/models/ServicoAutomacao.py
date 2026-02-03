@@ -116,7 +116,7 @@ class ServicoAutomacao():
     def obtendo_ultima_atualizacao_rotina(self):
         """Metodo publico que obtem "A ULTIMA" movimentacao do serviço em especifico """
 
-        consulta = self.obtendo_historico_automacao()
+        consulta = self.obtendo_historico_automacao_servico()
 
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'

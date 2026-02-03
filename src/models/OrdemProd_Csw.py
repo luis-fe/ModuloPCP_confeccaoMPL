@@ -7,9 +7,10 @@ from src.connection import ConexaoERP
 
 class OrdemProd_Csw():
 
-    def __init__(self, codEmpresa = '1'):
+    def __init__(self, codEmpresa = '1', dias_buscaCSW = 60):
 
         self.codEmpresa = codEmpresa
+        self.dias_buscaCSW = dias_buscaCSW
 
     def get_fasesCsw(self):
         '''Metodo que retorna as fases do ERP CSW'''
@@ -156,4 +157,49 @@ class OrdemProd_Csw():
             del rows
 
         return opsBaixadas
+
+
+    def buscarProducao_erpCSW(self):
+        '''Metodo privado que procura no ERP CSW a producao de acordo com o numero de dias informado para buscar, atributo :: self.dias_buscaCSW '''
+
+        sql = f"""
+            SELECT
+                f.codEmpresa, 
+                f.numeroop as numeroop, 
+                f.codfase as codfase, 
+                f.seqroteiro, 
+                f.databaixa, 
+                f.nomeFaccionista, 
+                f.codFaccionista,
+                f.horaMov, 
+                f.totPecasOPBaixadas, 
+                f.descOperMov, 
+                (select op.codProduto  from tco.ordemprod op WHERE op.codempresa = f.codempresa and op.numeroop = f.numeroop) as codEngenharia,
+                (select op.codTipoOP  from tco.ordemprod op WHERE op.codempresa = f.codempresa and op.numeroop = f.numeroop) as codtipoop,
+				(select l.descricao from tcl.Lote l WHERE l.codEmpresa = f.codempresa and f.codLote = l.codLote) as descricaolote 
+            FROM 
+                tco.MovimentacaoOPFase f
+            WHERE 
+                f.codEmpresa in (1, 4) and f.databaixa >=  DATEADD(DAY, -{str(self.dias_buscaCSW)}, GETDATE())
+            """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+
+        # Monta a chave
+
+        consulta['chave'] = consulta['codEmpresa'].astype(str) + '||' + consulta['numeroop'] + '||' + consulta['codfase'].astype(str)
+
+
+        return consulta
+
 

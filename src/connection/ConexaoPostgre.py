@@ -53,6 +53,16 @@ def conexaoEngineWms():
     connection_string = f"postgresql://{db_user}:{db_password}@{db_host}:{db_porta}/{db_name}"
     return create_engine(connection_string)
 
+
+def conexaoMatrizWMS():
+    db_name = os.getenv('POSTGRES_DB')
+    db_user =  os.getenv('POSTGRES_USER')
+    db_password = os.getenv('POSTGRES_PASSWORD_SRV1')
+    db_host = os.getenv('POSTGRES_HOST_SRV1')
+    portbanco = os.getenv('POSTGRES_PORT')
+
+    return psycopg2.connect(dbname=db_name, user=db_user, password=db_password, host=db_host, port=portbanco)
+
 def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
     # Configurações de conexão ao banco de dados
     db_name = os.getenv('POSTGRES_DB')
