@@ -23,7 +23,7 @@ if __name__ == '__main__':
     tempo = 60*6*60
     tempo_tags = 60*10
     tempo_tags2 = 60*30
-    tempo_realizadofases = 60*10
+    tempo_realizadofases = 600
 
     Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags, 20).inserindo_informacoes_tag_postgre()
     #Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     pedidosCsw.put_automacao()
 
 
-    ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,tempo_realizadofases)
+    ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,int(tempo_realizadofases))
     ordemProd_Csw.realizado_fases_csw()
 
 
