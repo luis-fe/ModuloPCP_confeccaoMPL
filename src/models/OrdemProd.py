@@ -67,6 +67,8 @@ class OrdemProd ():
         self.servicoAutomacao = ServicoAutomacao.ServicoAutomacao('05','Dados_CSW_RealizadoFase')
         self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
         print(f'ultima_atualizacao: {self.ultima_atualizacao}')
+        print(f'intervalo_automacao: {self.intervalo_automacao}')
+
         if self.ultima_atualizacao > self.intervalo_automacao:
             dataHora = self.servicoAutomacao.obterHoraAtual()
             self.servicoAutomacao.inserindo_automacao(dataHora)
