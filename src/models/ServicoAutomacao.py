@@ -118,6 +118,7 @@ class ServicoAutomacao():
 
         consulta = self.obtendo_historico_automacao_servico()
 
+
         if consulta.empty:
             ultimo = '2000-01-01 00:00:00'
 
