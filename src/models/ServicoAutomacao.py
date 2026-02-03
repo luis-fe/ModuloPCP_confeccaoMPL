@@ -73,18 +73,26 @@ class ServicoAutomacao():
 
 
         sql = """
-                select
+            SELECT 
+                "idServico", 
+                "dataAtualizacao", 
+                "descricaoServico"
+            FROM (
+                SELECT
                     c."idServico",
-                    Max("dataAtualizacao") as "dataAtualizacao",
-                    s."descricaoServico" 
-                from
+                    c."dataAtualizacao",
+                    s."descricaoServico",
+                    ROW_NUMBER() OVER (
+                        PARTITION BY c."idServico" 
+                        ORDER BY c."dataAtualizacao" DESC
+                    ) as rn
+                FROM
                     pcp."ControleAutomacao" c
-                inner join 
-                    pcp."ServicoAutomacao" s
-                on 
-                    s."idServico" = c."idServico"
-                    group by "idServico", "descricaoServico"
-                order by "dataAtualizacao" desc
+                INNER JOIN 
+                    pcp."ServicoAutomacao" s ON c."idServico" = s."idServico"
+            ) t
+            WHERE rn = 1
+            ORDER BY "dataAtualizacao" DESC;
         """
 
 
