@@ -55,10 +55,10 @@ def conexaoEngineWms():
 
 
 def conexaoMatrizWMS():
-    db_name = os.getenv('POSTGRES_DB')
+    db_name = os.getenv('POSTGRES_DB2')
     db_user =  os.getenv('POSTGRES_USER')
-    db_password = os.getenv('POSTGRES_PASSWORD_SRV1')
-    db_host = os.getenv('POSTGRES_HOST_SRV1')
+    db_password = os.getenv('POSTGRES_PASSWORD_SRV2')
+    db_host = os.getenv('POSTGRES_HOST_SRV2')
     portbanco = os.getenv('POSTGRES_PORT')
 
     return psycopg2.connect(dbname=db_name, user=db_user, password=db_password, host=db_host, port=portbanco)
