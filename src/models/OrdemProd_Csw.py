@@ -7,10 +7,11 @@ from src.connection import ConexaoERP
 
 class OrdemProd_Csw():
 
-    def __init__(self, codEmpresa = '1', dias_buscaCSW = 60):
+    def __init__(self, codEmpresa = '1', dias_buscaCSW = 60, codFase = ''):
 
         self.codEmpresa = codEmpresa
         self.dias_buscaCSW = dias_buscaCSW
+        self.codFase = codFase
 
     def get_fasesCsw(self):
         '''Metodo que retorna as fases do ERP CSW'''
@@ -201,5 +202,75 @@ class OrdemProd_Csw():
 
 
         return consulta
+
+
+    def ops_emAberto_movimentacao_fase(self):
+
+        sql = f'''
+                SELECT
+                    m1.numeroop, 
+                    dataBaixa 
+                from
+                    tco.MovimentacaoOPFase m1
+                inner join 
+                    tco.OrdemProd op
+                    on op.codEmpresa = m1.codEmpresa 
+                    and op.numeroOP = m1.numeroOP 
+                WHERE
+                    m1.codempresa = {str(self.codEmpresa)}
+                    and m1.codfase = {str(self.codFase)}
+                    and op.situacao = 3
+            '''
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
+
+    def ordem_Prod_em_aberto(self):
+
+
+        sql = f'''
+        SELECT
+            op.codPrioridadeOP  ,
+            p.descricao as prioridade,
+            op.numeroOP
+        FROM
+            tco.OrdemProd op
+        inner join
+            tcp.PrioridadeOP p 
+            on p.Empresa = op.codEmpresa 
+            and p.codPrioridadeOP = op.codPrioridadeOP 
+        WHERE
+            op.codEmpresa = {str(self.codEmpresa)}
+            and op.situacao = 3
+            '''
+
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
 
 
