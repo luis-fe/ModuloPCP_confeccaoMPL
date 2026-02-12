@@ -39,18 +39,19 @@ class OrdemProd_service():
             '-'  # Texto caso seja falsa (ou mantenha o padrão)
         )
 
-        # 1. Busca as requisições
         df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
 
-        # 2. Agrupa as requisições por numeroOP criando uma lista de valores
-        # (Supondo que a coluna com o número da requisição se chame 'numeroRequisicao')
-        requisicoes_agrupadas = df_requisicoes.groupby('numeroOP')['numeroRequisicao'].apply(list).reset_index()
-        requisicoes_agrupadas.rename(columns={'numeroRequisicao': 'requisicoes'}, inplace=True)
+        # Agrupamos por numeroOP e transformamos o grupo inteiro em uma lista de dicionários
+        requisicoes_agrupadas = (
+            df_requisicoes.groupby('numeroOP')
+            .apply(lambda x: x.to_dict('records'), include_groups=False)
+            .reset_index(name='requisicoes')
+        )
 
-        # 3. Faz o merge com o DataFrame principal
+        # Faz o merge com o DataFrame principal
         ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes_agrupadas, on='numeroOP', how='left')
 
-        # 4. Trata as OPs que não possuem requisições (coloca uma lista vazia ou '-')
+        # Se a OP não tiver requisição, o merge coloca NaN. Trocamos por uma lista vazia.
         ordemProd_aberto['requisicoes'] = ordemProd_aberto['requisicoes'].apply(
             lambda d: d if isinstance(d, list) else [])
 

@@ -276,7 +276,7 @@ class OrdemProd_Csw():
 
         sql = f'''
 	SELECT
-            r.numero as numeroRequisicao,
+            r.numero as requisicoes,
             r.numOPConfec as numeroOP,
             r.sitBaixa,
             R.seqRoteiro,
