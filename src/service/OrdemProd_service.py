@@ -24,7 +24,7 @@ class OrdemProd_service():
         ordemProd_pos_fase['passou_separacao'] = 'sim'
         ordemProd_aberto = pd.merge(ordemProd_aberto, ordemProd_pos_fase, on = 'numeroOP',how='left')
 
-        self.ordemProd_csw.codFase = '429'
+        self.ordemProd_csw.codFase = '428'
         ordemProd_pos_fase2 = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
 
         ordemProd_pos_fase2['passou_costura'] = 'sim'
