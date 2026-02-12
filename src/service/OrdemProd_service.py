@@ -40,6 +40,7 @@ class OrdemProd_service():
         )
 
         df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
+        df_requisicoes.fillna('-',inplace=True)
 
         # Agrupamento compatível com Pandas antigo (Python 3.6)
         requisicoes_agrupadas = (
