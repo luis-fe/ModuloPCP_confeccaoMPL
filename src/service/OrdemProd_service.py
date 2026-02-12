@@ -39,6 +39,8 @@ class OrdemProd_service():
             '-'  # Texto caso seja falsa (ou mantenha o padrão)
         )
 
+        ordemProd_aberto= ordemProd_aberto[ordemProd_aberto['situacaoOP']=='Em Operacao Almoxarifado'].reset_index()
+
         df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
         df_requisicoes.fillna('-',inplace=True)
 
@@ -48,6 +50,7 @@ class OrdemProd_service():
             .apply(lambda x: x.to_dict('records'))
             .reset_index(name='requisicoes')
         )
+
 
         # Merge com o DataFrame principal
         ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes_agrupadas, on='numeroOP', how='left')
