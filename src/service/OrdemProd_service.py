@@ -35,12 +35,29 @@ class OrdemProd_service():
         ordemProd_aberto['situacaoOP'] = np.where(
             (ordemProd_aberto['passou_costura'] == '-') &
             (ordemProd_aberto['passou_separacao'] == 'sim'),
-            'Aguardando Costura',  # Texto caso a condição seja verdadeira
+            'Em Operacao Almoxarifado',  # Texto caso a condição seja verdadeira
             '-'  # Texto caso seja falsa (ou mantenha o padrão)
         )
 
+        # 1. Busca as requisições
+        df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
+
+        # 2. Agrupa as requisições por numeroOP criando uma lista de valores
+        # (Supondo que a coluna com o número da requisição se chame 'numeroRequisicao')
+        requisicoes_agrupadas = df_requisicoes.groupby('numeroOP')['numeroRequisicao'].apply(list).reset_index()
+        requisicoes_agrupadas.rename(columns={'numeroRequisicao': 'requisicoes'}, inplace=True)
+
+        # 3. Faz o merge com o DataFrame principal
+        ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes_agrupadas, on='numeroOP', how='left')
+
+        # 4. Trata as OPs que não possuem requisições (coloca uma lista vazia ou '-')
+        ordemProd_aberto['requisicoes'] = ordemProd_aberto['requisicoes'].apply(
+            lambda d: d if isinstance(d, list) else [])
+
         return ordemProd_aberto
 
 
 
-        return ordemProd_aberto
+
+
+

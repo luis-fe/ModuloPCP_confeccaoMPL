@@ -272,5 +272,39 @@ class OrdemProd_Csw():
         return consulta
 
 
+    def requisicaoes_ops_em_aberto(self):
+
+        sql = f'''
+	SELECT
+            r.numero as numeroRequisicao,
+            r.numOPConfec as numeroOP,
+            r.sitBaixa,
+            R.seqRoteiro,
+            case when r.sitBaixa = 1 then 'BAIXADA' ELSE 'EM ABERTO' END SITUACAO_REQUISICAO
+        FROM
+            tcq.Requisicao r
+        inner join tco.OrdemProd op on
+            op.codEmpresa = r.codEmpresa
+            and op.numeroOP = r.numOPConfec
+        WHERE
+            r.codEmpresa = {str(self.codEmpresa)}
+            and op.situacao = 3
+            and r.seqRoteiro not in (408, 409)
+        '''
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
 
 
