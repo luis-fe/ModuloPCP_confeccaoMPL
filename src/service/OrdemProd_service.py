@@ -41,17 +41,17 @@ class OrdemProd_service():
 
         df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
 
-        # Agrupamos por numeroOP e transformamos o grupo inteiro em uma lista de dicionários
+        # Agrupamento compatível com Pandas antigo (Python 3.6)
         requisicoes_agrupadas = (
             df_requisicoes.groupby('numeroOP')
-            .apply(lambda x: x.to_dict('records'), include_groups=False)
+            .apply(lambda x: x.to_dict('records'))
             .reset_index(name='requisicoes')
         )
 
-        # Faz o merge com o DataFrame principal
+        # Merge com o DataFrame principal
         ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes_agrupadas, on='numeroOP', how='left')
 
-        # Se a OP não tiver requisição, o merge coloca NaN. Trocamos por uma lista vazia.
+        # Tratamento para garantir que seja uma lista (mesmo que vazia) e não NaN
         ordemProd_aberto['requisicoes'] = ordemProd_aberto['requisicoes'].apply(
             lambda d: d if isinstance(d, list) else [])
 
