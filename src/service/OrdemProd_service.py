@@ -71,7 +71,7 @@ class OrdemProd_service():
         df_situacao_calculada = (
             df_requisicoes.groupby('numeroOP')[coluna_status_req]
             .apply(definir_status_geral)
-            .reset_index(name='situacao')
+            .reset_index(name='sitBaixa')
         )
 
         # Faz o merge da nova coluna 'situacao' no DataFrame Pai
