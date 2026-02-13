@@ -97,7 +97,7 @@ class OrdemProd_service():
             lambda d: d if isinstance(d, list) else [])
 
 
-        ordemProd_aberto = ordemProd_aberto[ordemProd_aberto['SITUACAO_REQUISICAO'] == 'BAIXADO'].reset_index(
+        ordemProd_aberto = ordemProd_aberto[ordemProd_aberto['SITUACAO_REQUISICAO'] != 'BAIXADO'].reset_index(
             drop=True)
 
         return ordemProd_aberto
