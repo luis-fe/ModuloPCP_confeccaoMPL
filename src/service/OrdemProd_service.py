@@ -50,7 +50,7 @@ class OrdemProd_service():
         # ---------------------------------------------------------
 
         # Substitua 'situacao' abaixo pelo nome real da coluna de status na sua tabela de requisições
-        coluna_status_req = 'situacao'
+        coluna_status_req = 'sitBaixa'
 
         def definir_status_geral(series):
             # Cria um conjunto com os status únicos encontrados para aquela OP
