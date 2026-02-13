@@ -247,9 +247,12 @@ class OrdemProd_Csw():
             p.descricao as prioridade,
             op.numeroOP,
             op.codProduto,
-            e.descricao
+            e.descricao,
+            op.codFaseAtual,
+            f.nome as FaseAtual
         FROM
             tco.OrdemProd op
+        inner join tcp.fasesproducao f on f.codempresa=1 and op.codfaseatual = f.codfase
         inner join 
             tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
         inner join
