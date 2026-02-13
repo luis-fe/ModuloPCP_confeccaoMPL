@@ -286,7 +286,8 @@ class OrdemProd_Csw():
             r.sitBaixa,
             R.seqRoteiro,
             case when r.sitBaixa = 1 then 'BAIXADA' ELSE 'EM ABERTO' END SITUACAO_REQUISICAO,
-            f.nome
+            f.nome,
+            r.nomeNatEstoque 
         FROM
             tcq.Requisicao r
         inner join tco.OrdemProd op on
