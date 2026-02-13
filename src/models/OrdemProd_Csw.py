@@ -285,12 +285,15 @@ class OrdemProd_Csw():
             r.numOPConfec as numeroOP,
             r.sitBaixa,
             R.seqRoteiro,
-            case when r.sitBaixa = 1 then 'BAIXADA' ELSE 'EM ABERTO' END SITUACAO_REQUISICAO
+            case when r.sitBaixa = 1 then 'BAIXADA' ELSE 'EM ABERTO' END SITUACAO_REQUISICAO,
+            f.descricao
         FROM
             tcq.Requisicao r
         inner join tco.OrdemProd op on
             op.codEmpresa = r.codEmpresa
             and op.numeroOP = r.numOPConfec
+        inner join tcp.fasesProducao f
+        on f.codempresa = 1 and f.codfase = R.seqRoteiro
         WHERE
             r.codEmpresa = {str(self.codEmpresa)}
             and op.situacao = 3
