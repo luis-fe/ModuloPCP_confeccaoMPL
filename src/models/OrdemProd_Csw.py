@@ -209,6 +209,7 @@ class OrdemProd_Csw():
         sql = f'''
                 SELECT
                     m1.numeroop, 
+                    m1.totPecasOPBaixadas as Qtd.Pecas
                     dataBaixa 
                 from
                     tco.MovimentacaoOPFase m1
