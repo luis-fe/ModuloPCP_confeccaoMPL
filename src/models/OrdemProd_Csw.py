@@ -244,9 +244,13 @@ class OrdemProd_Csw():
         SELECT
             op.codPrioridadeOP  ,
             p.descricao as prioridade,
-            op.numeroOP
+            op.numeroOP,
+            op.codProduto,
+            e.descricao
         FROM
             tco.OrdemProd op
+        inner join 
+            tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
         inner join
             tcp.PrioridadeOP p 
             on p.Empresa = op.codEmpresa 
