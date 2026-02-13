@@ -50,7 +50,7 @@ class OrdemProd_service():
         # ---------------------------------------------------------
 
         # Substitua 'situacao' abaixo pelo nome real da coluna de status na sua tabela de requisições
-        coluna_status_req = 'sitBaixa'
+        coluna_status_req = 'SITUACAO_REQUISICAO'
 
         def definir_status_geral(series):
             # Cria um conjunto com os status únicos encontrados para aquela OP
@@ -71,14 +71,14 @@ class OrdemProd_service():
         df_situacao_calculada = (
             df_requisicoes.groupby('numeroOP')[coluna_status_req]
             .apply(definir_status_geral)
-            .reset_index(name='sitBaixa')
+            .reset_index(name='SITUACAO_REQUISICAO')
         )
 
         # Faz o merge da nova coluna 'situacao' no DataFrame Pai
         ordemProd_aberto = pd.merge(ordemProd_aberto, df_situacao_calculada, on='numeroOP', how='left')
 
         # Preenche com algum valor padrão caso a OP não tenha requisições (ex: 'SEM REQUISICAO')
-        ordemProd_aberto['sitBaixa'].fillna('SEM REQUISICAO', inplace=True)
+        ordemProd_aberto['SITUACAO_REQUISICAO'].fillna('SEM REQUISICAO', inplace=True)
 
         # ---------------------------------------------------------
 
