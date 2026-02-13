@@ -78,7 +78,7 @@ class OrdemProd_service():
         ordemProd_aberto = pd.merge(ordemProd_aberto, df_situacao_calculada, on='numeroOP', how='left')
 
         # Preenche com algum valor padrão caso a OP não tenha requisições (ex: 'SEM REQUISICAO')
-        ordemProd_aberto['situacao'].fillna('SEM REQUISICAO', inplace=True)
+        ordemProd_aberto['sitBaixa'].fillna('SEM REQUISICAO', inplace=True)
 
         # ---------------------------------------------------------
 
