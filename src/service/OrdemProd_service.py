@@ -96,6 +96,10 @@ class OrdemProd_service():
         ordemProd_aberto['requisicoes'] = ordemProd_aberto['requisicoes'].apply(
             lambda d: d if isinstance(d, list) else [])
 
+
+        ordemProd_aberto = ordemProd_aberto[ordemProd_aberto['SITUACAO_REQUISICAO'] == 'BAIXADO'].reset_index(
+            drop=True)
+
         return ordemProd_aberto
 
 
