@@ -13,7 +13,6 @@ class OrdemProd_service():
         self.codEmpresa = codEmpresa
         self.ordemProd_csw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa)
 
-
     def ordemProd_requisicao_gerada(self):
         '''Metodo publico que busca as Ordem de Producao com requisicao em aberto '''
 
@@ -22,40 +21,78 @@ class OrdemProd_service():
         self.ordemProd_csw.codFase = '409'
         ordemProd_pos_fase = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
         ordemProd_pos_fase['passou_separacao'] = 'sim'
-        ordemProd_aberto = pd.merge(ordemProd_aberto, ordemProd_pos_fase, on = 'numeroOP',how='left')
+        ordemProd_aberto = pd.merge(ordemProd_aberto, ordemProd_pos_fase, on='numeroOP', how='left')
 
         self.ordemProd_csw.codFase = '428'
         ordemProd_pos_fase2 = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
 
         ordemProd_pos_fase2['passou_costura'] = 'sim'
-        ordemProd_aberto = pd.merge(ordemProd_aberto, ordemProd_pos_fase2, on = 'numeroOP',how='left')
+        ordemProd_aberto = pd.merge(ordemProd_aberto, ordemProd_pos_fase2, on='numeroOP', how='left')
 
-        ordemProd_aberto.fillna('-',inplace=True)
+        ordemProd_aberto.fillna('-', inplace=True)
+
         # Lógica para criar a coluna situacaoOP
         ordemProd_aberto['situacaoOP'] = np.where(
             (ordemProd_aberto['passou_costura'] == '-') &
             (ordemProd_aberto['passou_separacao'] == 'sim'),
-            'Em Operacao Almoxarifado',  # Texto caso a condição seja verdadeira
-            '-'  # Texto caso seja falsa (ou mantenha o padrão)
+            'Em Operacao Almoxarifado',
+            '-'
         )
 
-        ordemProd_aberto= ordemProd_aberto[ordemProd_aberto['situacaoOP']=='Em Operacao Almoxarifado'].reset_index()
+        ordemProd_aberto = ordemProd_aberto[ordemProd_aberto['situacaoOP'] == 'Em Operacao Almoxarifado'].reset_index(
+            drop=True)
 
         df_requisicoes = self.ordemProd_csw.requisicaoes_ops_em_aberto()
-        df_requisicoes.fillna('-',inplace=True)
+        df_requisicoes.fillna('-', inplace=True)
 
-        # Agrupamento compatível com Pandas antigo (Python 3.6)
+        # ---------------------------------------------------------
+        # NOVA LÓGICA: Calcular a Situação Geral da OP
+        # ---------------------------------------------------------
+
+        # Substitua 'situacao' abaixo pelo nome real da coluna de status na sua tabela de requisições
+        coluna_status_req = 'situacao'
+
+        def definir_status_geral(series):
+            # Cria um conjunto com os status únicos encontrados para aquela OP
+            status_unicos = set(series)
+
+            # Remove '-' se houver, para não atrapalhar a lógica (opcional, dependendo da sua regra)
+            status_unicos.discard('-')
+
+            if status_unicos == {'BAIXADA'}:
+                return 'BAIXADO'
+            elif status_unicos == {'EM ABERTO'}:
+                return 'EM ABERTO'
+            else:
+                # Se tiver misturado ou tiver outros status, cai aqui
+                return 'PROCESSANDO'
+
+        # Agrupa por OP e aplica a função de decisão
+        df_situacao_calculada = (
+            df_requisicoes.groupby('numeroOP')[coluna_status_req]
+            .apply(definir_status_geral)
+            .reset_index(name='situacao')
+        )
+
+        # Faz o merge da nova coluna 'situacao' no DataFrame Pai
+        ordemProd_aberto = pd.merge(ordemProd_aberto, df_situacao_calculada, on='numeroOP', how='left')
+
+        # Preenche com algum valor padrão caso a OP não tenha requisições (ex: 'SEM REQUISICAO')
+        ordemProd_aberto['situacao'].fillna('SEM REQUISICAO', inplace=True)
+
+        # ---------------------------------------------------------
+
+        # Agrupamento original para criar a lista de dicionários (Mantido)
         requisicoes_agrupadas = (
             df_requisicoes.groupby('numeroOP')
             .apply(lambda x: x.to_dict('records'))
             .reset_index(name='requisicoes')
         )
 
-
-        # Merge com o DataFrame principal
+        # Merge das listas de requisições com o DataFrame principal
         ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes_agrupadas, on='numeroOP', how='left')
 
-        # Tratamento para garantir que seja uma lista (mesmo que vazia) e não NaN
+        # Tratamento para garantir que seja uma lista
         ordemProd_aberto['requisicoes'] = ordemProd_aberto['requisicoes'].apply(
             lambda d: d if isinstance(d, list) else [])
 
