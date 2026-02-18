@@ -103,6 +103,13 @@ class OrdemProd_service():
         return ordemProd_aberto
 
 
+    def detalhar_requisicao(self, codRequisicao:str = '-'):
+
+        requisicao =  self.ordemProd_csw.explodir_requisicao_op(codRequisicao)
+
+        return requisicao
+
+
 
 
 
