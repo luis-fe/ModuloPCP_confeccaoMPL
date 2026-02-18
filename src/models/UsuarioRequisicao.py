@@ -100,6 +100,7 @@ class Usuario_requisicao():
         from pcp."usuarioReq"
         where 
             "situacao" = 'Ativo'
+        ORDER BY "nomeUsuario"
         """
 
         conn = ConexaoPostgre.conexaoEngine()
