@@ -118,9 +118,8 @@ class OrdemProd_service():
 
     def inserir_usuario_hablitado(self, codMatricula:str):
         descobrirNome = DashboardTV.DashboardTV('','','','',codMatricula).devolver_nome_usuario()
-        print(descobrirNome)
-        nome = descobrirNome[0]
-
+        nome = descobrirNome['nome'][0]
+        print(nome)
         usuario = UsuarioRequisicao.Usuario_requisicao(codMatricula,nome).habilitar_usuario_separacao()
 
         return usuario
