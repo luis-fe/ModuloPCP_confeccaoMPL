@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from src.models import OrdemProd_Csw
+from src.models import OrdemProd_Csw, UsuarioRequisicao
 
 
 
@@ -108,6 +108,12 @@ class OrdemProd_service():
         requisicao =  self.ordemProd_csw.explodir_requisicao_op(codRequisicao)
 
         return requisicao
+
+    def buscar_usuarios_habilitados(self):
+
+        usuario = UsuarioRequisicao.Usuario_requisicao().get_usuarios_habilitados_req()
+
+        return usuario
 
 
 
