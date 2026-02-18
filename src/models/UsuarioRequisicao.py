@@ -84,9 +84,10 @@ class Usuario_requisicao():
         if validador.empty:
 
             insert =  """ insert into pcp."usuarioReq"(
-                        "codMatricula", "situacao"
-                "nomeUsuario", 
-                ) values (%s, %s, 'Ativo' )
+                        "codMatricula", 
+                        "situacao",
+                        "nomeUsuario" 
+                ) values (%s,'Ativo', %s )
             """
 
             with ConexaoPostgre.conexaoInsercao() as conn:
