@@ -97,6 +97,7 @@ class Usuario_requisicao():
         select 
             "codMatricula", 
             "nomeUsuario" 
+        from pcp."usuarioReq"
         where 
             "situacao" = 'Ativo'
         """
