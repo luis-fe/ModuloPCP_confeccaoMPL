@@ -120,7 +120,7 @@ class OrdemProd_service():
         descobrirNome = DashboardTV.DashboardTV('','','','',codMatricula).devolver_nome_usuario().reset_index()
 
         if descobrirNome.empty:
-            return  pd.DataFrame[{'Mensagem':'Matricula nao encontrada', 'status':False}]
+            return  pd.DataFrame([{'Mensagem':'Matricula nao encontrada', 'status':False}])
 
         else:
             nome = descobrirNome['nome'][0]
