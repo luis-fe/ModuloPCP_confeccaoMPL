@@ -79,17 +79,23 @@ class Usuario_requisicao():
 
     def habilitar_usuario_separacao(self):
 
-        insert =  """ insert into pcp."usuarioReq"(
-                    "codMatricula",
-            "nomeUsuario", 
-            ) values (%s, %s )
-        """
+        validador = self.consulta_usuario_individual()
 
-        with ConexaoPostgre.conexaoInsercao() as conn:
-            with conn.cursor() as curr:
+        if validador.empty:
 
-                curr.execute(insert,(self.codMatricula, self.nomeUsuario,))
-                conn.commit()
+            insert =  """ insert into pcp."usuarioReq"(
+                        "codMatricula", "situacao"
+                "nomeUsuario", 
+                ) values (%s, %s, 'Ativo' )
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert,(self.codMatricula, self.nomeUsuario,))
+                    conn.commit()
+
+        return pd.DataFrame([{'Mensagem':'Usuario Cadastrado com sucesso','status':True}])
 
     def get_usuarios_habilitados_req(self):
 
@@ -107,6 +113,37 @@ class Usuario_requisicao():
         consulta = pd.read_sql(select, conn)
 
         return consulta
+
+    def update_usuario_Ativo(self):
+
+        insert = """
+          update from pcp."usuarioReq"
+              set "situacao" = %s
+          where 
+              "codMatricula" = %s 
+          """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(insert, ('Ativo', self.codMatricula,))
+                conn.commit()
+
+    def consulta_usuario_individual(self):
+
+        select = """
+               select 
+                   "codMatricula",
+                   "nomeUsuario"
+               from pcp."usuarioReq"
+               where 
+               "codMatricula" = %s
+           """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(select, conn, params=(self.codMatricula,))
+
+        return consulta
+
 
 
 

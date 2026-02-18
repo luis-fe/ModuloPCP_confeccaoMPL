@@ -103,3 +103,29 @@ def get_UsuarioHabilitadoAviamento():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+
+
+@OrdemProd_routes.route('/pcp/api/inserir_usuario_hablitado', methods=['POST'])
+@token_required
+def POST_inserir_usuario_hablitado():
+    data = request.get_json()
+
+    codMatricula = data.get('codMatricula')
+    codEmpresa = data.get('codEmpresa','1')
+
+
+    dados = OrdemProd_service.OrdemProd_service(codEmpresa).inserir_usuario_hablitado(codMatricula)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+

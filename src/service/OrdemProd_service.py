@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from src.models import OrdemProd_Csw, UsuarioRequisicao
+from src.models import OrdemProd_Csw, UsuarioRequisicao, DashboardTV
 
 
 
@@ -115,6 +115,13 @@ class OrdemProd_service():
 
         return usuario
 
+
+    def inserir_usuario_hablitado(self, codMatricula:str):
+        descobrirNome = DashboardTV.DashboardTV('','','','',codMatricula).devolver_nome_usuario()
+
+        usuario = UsuarioRequisicao.Usuario_requisicao(codMatricula,descobrirNome).habilitar_usuario_separacao()
+
+        return usuario
 
 
 
