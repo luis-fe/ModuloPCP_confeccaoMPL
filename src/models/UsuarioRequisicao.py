@@ -64,6 +64,22 @@ class Usuario_requisicao():
         return consulta
 
 
+    def get_consulta_usuario_op(self):
+
+        select = """
+            select 
+                "codMatricula",
+                "nomeUsuario",
+                "numeroOP"
+            from pcp."usuarioReqOP"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(select,conn, params=(self.numeroOP,))
+
+        return consulta
+
+
     def inserir_atualizar_usuario_op(self):
 
         validador = self.consulta_usuario_op()

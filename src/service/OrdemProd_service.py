@@ -100,6 +100,14 @@ class OrdemProd_service():
         ordemProd_aberto = ordemProd_aberto[ordemProd_aberto['SITUACAO_REQUISICAO'] != 'BAIXADO'].reset_index(
             drop=True)
 
+
+        # buscar Usuarios atribuidos
+
+        usuarioReq = UsuarioRequisicao.Usuario_requisicao().consulta_usuario_op()
+
+        ordemProd_aberto = pd.merge(ordemProd_aberto, usuarioReq, on='numeroOP', how='left')
+        ordemProd_aberto.fillna('-',inplace=True)
+
         return ordemProd_aberto
 
 
