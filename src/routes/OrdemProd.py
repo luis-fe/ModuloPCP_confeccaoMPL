@@ -129,3 +129,31 @@ def POST_inserir_usuario_hablitado():
     return jsonify(OP_data)
 
 
+
+@OrdemProd_routes.route('/pcp/api/atribuir_op_aviamentador', methods=['POST'])
+@token_required
+def POST_atribuir_op_aviamentador():
+    data = request.get_json()
+
+    codMatricula = data.get('codMatricula')
+    codEmpresa = data.get('codEmpresa','1')
+    nomeUsuario = data.get('nomeUsuario','-')
+    arrayOPs = data.get('arrayOPs')
+
+
+
+    dados = OrdemProd_service.OrdemProd_service(codEmpresa,codMatricula,nomeUsuario).inserir_separador_na_op(arrayOPs)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+

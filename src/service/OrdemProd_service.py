@@ -8,10 +8,14 @@ from src.models import OrdemProd_Csw, UsuarioRequisicao, DashboardTV
 
 
 class OrdemProd_service():
-    def __init__(self, codEmpresa):
+    def __init__(self, codEmpresa, matricula, nomeUsuario):
 
         self.codEmpresa = codEmpresa
         self.ordemProd_csw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa)
+
+
+        self.matricula = matricula
+        self.nomeUsuario = nomeUsuario
 
     def ordemProd_requisicao_gerada(self):
         '''Metodo publico que busca as Ordem de Producao com requisicao em aberto '''
@@ -135,6 +139,15 @@ class OrdemProd_service():
             usuario = UsuarioRequisicao.Usuario_requisicao(codMatricula,nome).habilitar_usuario_separacao()
 
             return usuario
+
+
+    def inserir_separador_na_op(self, arrayOps :[str]):
+
+        for numeroOP in arrayOps:
+            usuario = UsuarioRequisicao.Usuario_requisicao(self.matricula, self.nomeUsuario, numeroOP).inserir_usuario_op()
+
+        return pd.DataFrame([{'Mensagem':'Ops atribuidas com sucesso', 'status':True}])
+
 
 
 
