@@ -34,7 +34,7 @@ class Usuario_requisicao():
 
 
         insert = """
-        update from pcp."usuarioReqOP"
+        update  pcp."usuarioReqOP"
             set "numeroOP" = %s
         where 
             "codMatricula" = %s 
