@@ -8,7 +8,7 @@ from src.models import OrdemProd_Csw, UsuarioRequisicao, DashboardTV
 
 
 class OrdemProd_service():
-    def __init__(self, codEmpresa, matricula, nomeUsuario):
+    def __init__(self, codEmpresa, matricula = '', nomeUsuario = ''):
 
         self.codEmpresa = codEmpresa
         self.ordemProd_csw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa)
