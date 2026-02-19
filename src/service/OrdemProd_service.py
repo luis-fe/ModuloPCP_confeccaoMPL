@@ -144,7 +144,7 @@ class OrdemProd_service():
     def inserir_separador_na_op(self, arrayOps :[str]):
 
         for numeroOP in arrayOps:
-            usuario = UsuarioRequisicao.Usuario_requisicao(self.matricula, self.nomeUsuario, numeroOP).inserir_usuario_op()
+            usuario = UsuarioRequisicao.Usuario_requisicao(self.matricula, self.nomeUsuario, numeroOP).inserir_atualizar_usuario_op()
 
         return pd.DataFrame([{'Mensagem':'Ops atribuidas com sucesso', 'status':True}])
 
