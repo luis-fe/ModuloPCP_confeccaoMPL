@@ -103,7 +103,7 @@ class OrdemProd_service():
 
         # buscar Usuarios atribuidos
 
-        usuarioReq = UsuarioRequisicao.Usuario_requisicao().consulta_usuario_op()
+        usuarioReq = UsuarioRequisicao.Usuario_requisicao().get_consulta_usuario_op()
 
         ordemProd_aberto = pd.merge(ordemProd_aberto, usuarioReq, on='numeroOP', how='left')
         ordemProd_aberto.fillna('-',inplace=True)
