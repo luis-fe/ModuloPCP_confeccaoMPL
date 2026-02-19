@@ -35,15 +35,15 @@ class Usuario_requisicao():
 
         insert = """
         update  pcp."usuarioReqOP"
-            set "numeroOP" = %s
+            set "codMatricula" = %s , "nomeUsuario" = %s
         where 
-            "codMatricula" = %s 
+            "numeroOP" = %s 
         """
 
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
 
-                curr.execute(insert,(self.numeroOP, self.codMatricula, ))
+                curr.execute(insert,(self.codMatricula, self.nomeUsuario, self.numeroOP ))
                 conn.commit()
 
 
