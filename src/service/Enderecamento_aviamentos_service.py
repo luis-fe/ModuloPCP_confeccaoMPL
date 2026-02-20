@@ -48,7 +48,7 @@ class Enderecamento_aviamento():
         quadra_f = self.quadra.zfill(2) if isinstance(self.quadra, str) and self.quadra.isdigit() else self.quadra
 
 
-        endereco_f = f'{rua_f}-{posicao_f}-{quadra_f}'
+        endereco_f = f'{rua_f}-{quadra_f}-{posicao_f}'
 
 
         enderecamento = Endereco_aviamento.Endereco_aviamento(endereco_f, rua_f, posicao_f, quadra_f)
