@@ -62,3 +62,32 @@ def POST_inserir_endereco_aviamento():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/inserir_endereco_aviamento_em_massa', methods=['POST'])
+@token_required
+def POST_inserir_endereco_aviamento_em_massa():
+    data = request.get_json()
+
+    ruaInicial = data.get('ruaInicial')
+    posicaoInicial = data.get('posicaoInicial','')
+    quadraInicial = data.get('quadraInicial','')
+    codEmpresa = request.args.get('codEmpresa','1')
+    ruaFinal = data.get('ruaFinal')
+    posicaoFinal = data.get('posicaoFinal','')
+    quadraFinal = data.get('quadraFinal','')
+
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, ruaInicial, quadraInicial, posicaoInicial,ruaFinal,quadraFinal,posicaoFinal).inserir_endereco_massa()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
