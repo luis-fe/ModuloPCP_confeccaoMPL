@@ -29,17 +29,26 @@ class Enderecamento_aviamento():
 
     def _gerar_lista_intervalo(self, inicio, fim):
         '''Metodo auxiliar para criar a lista do 'for', tratando letras ou números'''
-        if not fim:
+
+        # 1. Trata casos onde a variável chega vazia, nula, ou como string "None"
+        if inicio in [None, 'None', 'null', '']:
+            return ['00']  # Retorna um valor padrão seguro para não quebrar o script
+
+        if fim in [None, 'None', 'null', '']:
             fim = inicio  # Se o final vier vazio, roda apenas para o inicial
 
-        inicio_str, fim_str = str(inicio).strip(), str(fim).strip()
+        inicio_str = str(inicio).strip()
+        fim_str = str(fim).strip()
 
+        # 2. Se for número puramente, cria o range numérico e aplica o zfill(2)
         if inicio_str.isdigit() and fim_str.isdigit():
-            # Se for número, cria o range numérico e já aplica o zfill(2)
             return [str(i).zfill(2) for i in range(int(inicio_str), int(fim_str) + 1)]
+
+        # 3. Se for letra (ex: Rua A até D), pega APENAS a 1ª letra para o ord() não falhar
         else:
-            # Se for letra (ex: Rua A até D), converte usando a tabela ASCII
-            return [chr(i) for i in range(ord(inicio_str.upper()), ord(fim_str.upper()) + 1)]
+            char_inicio = inicio_str[0].upper()
+            char_fim = fim_str[0].upper()
+            return [chr(i) for i in range(ord(char_inicio), ord(char_fim) + 1)]
 
     def inserir_endereco(self):
         '''Metodo para inserir um endereco individual '''
@@ -47,9 +56,7 @@ class Enderecamento_aviamento():
         posicao_f = self.posicao.zfill(2) if isinstance(self.posicao, str) and self.posicao.isdigit() else self.posicao
         quadra_f = self.quadra.zfill(2) if isinstance(self.quadra, str) and self.quadra.isdigit() else self.quadra
 
-
         endereco_f = f'{rua_f}-{quadra_f}-{posicao_f}'
-
 
         enderecamento = Endereco_aviamento.Endereco_aviamento(endereco_f, rua_f, posicao_f, quadra_f)
         verifica = enderecamento.consulta_endereco_individual()
@@ -63,7 +70,7 @@ class Enderecamento_aviamento():
     def inserir_endereco_massa(self):
         '''Metodo para inserir os enderecos em massa usando cruzamento de laços for'''
 
-        # 1. Gera as listas iteráveis para Rua, Quadra e Posição
+        # 1. Gera as listas iteráveis para Rua, Quadra e Posição usando a função segura
         ruas = self._gerar_lista_intervalo(self.rua, self.rua_final)
         quadras = self._gerar_lista_intervalo(self.quadra, self.quadra_final)
         posicoes = self._gerar_lista_intervalo(self.posicao, self.posicao_final)
@@ -79,7 +86,7 @@ class Enderecamento_aviamento():
                     # Monta o endereço formatado da iteração atual
                     endereco_atual = f'{r}-{q}-{p}'
 
-                    # Mantive a sua ordem original de envio: (endereco, rua, posicao, quadra)
+                    # Envia: (endereco, rua, posicao, quadra)
                     enderecamento = Endereco_aviamento.Endereco_aviamento(endereco_atual, r, p, q)
                     verifica = enderecamento.consulta_endereco_individual()
 
