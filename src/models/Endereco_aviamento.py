@@ -31,7 +31,7 @@ class Endereco_aviamento():
 
         consulta = """
         select * from "PCP".pcp."EnderecoReq" ur 
-        where ur."codEndereco" = %s
+        where ur."endereco" = %s
         """
 
         conn = ConexaoPostgre.conexaoEngine()
