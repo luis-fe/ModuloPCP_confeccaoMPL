@@ -54,7 +54,7 @@ class Endereco_aviamento():
 
 
 
-                curr.exectute(insert, self.endereco, self.rua, self.quadra, self.posicao)
+                curr.exectute(insert, (self.endereco, self.rua, self.quadra, self.posicao))
                 conn.commit()
 
     def reposicao_item_endereco(self):
