@@ -3,12 +3,16 @@ import pandas as pd
 
 class Endereco_aviamento():
 
-    def __init__(self, endereco : str = '', rua : str = '', posicao : str = '', quadra :str = ''):
+    def __init__(self, endereco : str = '', rua : str = '', posicao : str = '', quadra :str = '', codItem : str = '',
+                 dataHora : str = '' , qtd : int = 0):
 
         self.endereco = endereco
         self.rua = rua
         self.posicao = posicao
         self.quadra = quadra
+        self.codItem = codItem
+        self.dataHora = dataHora
+        self.qtd = qtd
 
 
     def get_enderecos(self):
@@ -21,6 +25,21 @@ class Endereco_aviamento():
         consulta = pd.read_sql(consulta, conn)
 
         return consulta
+
+
+    def consulta_endereco_individual(self):
+
+        consulta = """
+        select * from "PCP".pcp."EnderecoReq" ur 
+        where ur."codEndereco" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn, params=(self.endereco,))
+
+        return consulta
+
+
 
 
     def insert_endereco(self):
@@ -37,5 +56,23 @@ class Endereco_aviamento():
 
                 curr.exectute(insert, self.endereco, self.rua, self.quadra, self.posicao)
                 conn.commit()
+
+    def reposicao_item_endereco(self):
+
+        insert = """
+        insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "dataHora", "qtd" )
+        values ( %s, %s, %s, %s)
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+
+
+                curr.exectute(insert, self.endereco, self.codItem, self.dataHora, self.qtd)
+                conn.commit()
+
+
+
 
 

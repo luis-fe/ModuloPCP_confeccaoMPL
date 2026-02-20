@@ -25,6 +25,7 @@ from src.routes.Dashboard_faturamento import dashboard_fat_routes
 from src.routes.Analise_2_qualidade import Analise_2_qualidade_routes
 from src.routes.CronogramaEmpresa import CronogramaEmpresa_routes
 from src.routes.ServicoAutomacao import ServicoAutomacao_routes
+from src.routes.Enderecamento_aviamentos import Enderecamento_routes
 
 
 # Importacao das rotas para o blueprint:
@@ -46,3 +47,4 @@ routes_blueprint.register_blueprint(dashboard_fat_routes)
 routes_blueprint.register_blueprint(Analise_2_qualidade_routes)
 routes_blueprint.register_blueprint(CronogramaEmpresa_routes)
 routes_blueprint.register_blueprint(ServicoAutomacao_routes)
+routes_blueprint.register_blueprint(Enderecamento_routes)

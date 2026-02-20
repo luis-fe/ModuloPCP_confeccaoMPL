@@ -132,6 +132,59 @@ class Produtos_CSW():
         return consulta
 
 
+
+    def estoqueNat_aviamentos(self):
+        '''metodo que consulta o estoque da natureza 05 '''
+
+        sql = f"""
+    SELECT
+        d.codItem as codReduzido,
+        i.nome,
+        i2.codEditado,
+        d.estoqueAtual,
+        i.unidadeMedida
+    FROM
+        est.DadosEstoque d
+    inner join cgi.item i on i.codigo = d.codItem
+    inner join cgi.item2 i2 on i2.codItem = d.codItem and Empresa = 1
+    WHERE
+        d.codEmpresa = {self.codEmpresa}
+        and d.codNatureza = 1
+        and d.estoqueAtual > 0
+        union 
+            SELECT
+                d.codItem as codReduzido,
+                i.nome,
+                d.estoqueAtual,
+                i2.codEditado ,
+                i.unidadeMedida 
+            FROM
+                est.DadosEstoque d
+            inner join cgi.item i on i.codigo = d.codItem
+            inner join cgi.item2 i2 on i2.codItem = d.codItem and Empresa = 1
+            WHERE
+                d.codEmpresa = {self.codEmpresa}
+                and d.codNatureza = 2
+                and d.estoqueAtual > 0
+                and 
+                (i2.codEditado like '2503%'or i2.codEditado like '2504%'
+                or i2.codEditado like '2511%')
+        """
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+            # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
     def get_tamanhos(self):
         '''Metodo que retorna os tamanhos do tcp do csw '''
 
