@@ -30,15 +30,18 @@ class Enderecamento_aviamento():
 
     def inserir_endereco(self):
         '''Metodo para inserir os enderecos '''
-        enderecamento = Endereco_aviamento.Endereco_aviamento(self.endereco,self.rua, self.posicao, self.quadra)
+
+        # Formata os parâmetros: se for número, garante que tenha 2 dígitos (ex: "5" -> "05")
+        rua_f = self.rua.zfill(2) if isinstance(self.rua, str) and self.rua.isdigit() else self.rua
+        posicao_f = self.posicao.zfill(2) if isinstance(self.posicao, str) and self.posicao.isdigit() else self.posicao
+        quadra_f = self.quadra.zfill(2) if isinstance(self.quadra, str) and self.quadra.isdigit() else self.quadra
+
+        # Passa as variáveis formatadas (_f) para a classe
+        enderecamento = Endereco_aviamento.Endereco_aviamento(self.endereco, rua_f, posicao_f, quadra_f)
         verifica = enderecamento.consulta_endereco_individual()
 
         if verifica.empty:
-
             enderecamento.insert_endereco()
-
-            return pd.DataFrame([{'Mensagem':'Endereco Incluido com sucesso','status':True}])
-
+            return pd.DataFrame([{'Mensagem': 'Endereco Incluido com sucesso', 'status': True}])
         else:
-
-            return pd.DataFrame([{'Mensagem':'Endereco ja existe ','status':False}])
+            return pd.DataFrame([{'Mensagem': 'Endereco ja existe ', 'status': False}])
