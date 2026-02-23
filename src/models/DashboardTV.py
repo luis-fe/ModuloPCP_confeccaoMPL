@@ -713,7 +713,7 @@ class DashboardTV():
                 "PCP"."DashbordTV"."confNota" aut 
             where
                 empresa = %s
-            order by "tipoNota":int desc
+            order by "tipoNota" desc
             """
 
             conn = ConexaoPostgre.conexaoEngine()
