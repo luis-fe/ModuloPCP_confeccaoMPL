@@ -713,7 +713,7 @@ class DashboardTV():
                 "PCP"."DashbordTV"."confNota" aut 
             where
                 empresa = %s
-            order by "tipoNota" desc
+            order by (trim(split_part(cn."tipoNota", '-', 1)))::INTEGER desc
             """
 
             conn = ConexaoPostgre.conexaoEngine()
