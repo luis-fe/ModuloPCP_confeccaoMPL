@@ -185,6 +185,7 @@ class Produtos_CSW():
         informacoes_componente = self.informacoesComponente()
 
         consulta = pd.merge(consulta, informacoes_componente, on='CodComponente', how='left')
+        consulta = consulta.drop_duplicates()
 
         return consulta
 
