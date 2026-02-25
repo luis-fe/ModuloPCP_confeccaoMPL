@@ -1,5 +1,5 @@
 import pandas as pd
-from src.models import Endereco_aviamento, Produtos_CSW
+from src.models import Endereco_aviamento, Produtos_CSW, MateriaPrima
 
 
 class Enderecamento_aviamento():
@@ -19,7 +19,39 @@ class Enderecamento_aviamento():
 
     def fila_itens_enderecar(self):
         '''Metodo que obtem do ERP a Fila de Itens a serem enderecados '''
+
+
         fila = Produtos_CSW.Produtos_CSW(self.codEmpresa).estoqueNat_aviamentos()
+
+        # Verificando categorias
+        categorias = MateriaPrima.Materia_prima_aviamento(self.codEmpresa).configuracao_de_para_descricao()
+
+        # 2. Preparando os dados (Removendo acentos para não dar falha na busca)
+        # ==========================================
+        # Cria uma coluna temporária removendo acentos e deixando tudo maiúsculo
+        fila['nome_limpo'] = fila['nome'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode(
+            'utf-8').str.upper()
+
+        fila['categoria'] = 'Outros'
+
+        # ==========================================
+        # 3. Aplicando as regras de categorização
+        # ==========================================
+        for _, regra in categorias.iterrows():
+            gatilho = regra['descricao_contem'].upper()  # Garante que a regra está em maiúsculo
+            categoria_destino = regra['categoria']
+
+            # Se a coluna 'nome_limpo' contiver o gatilho, atualiza a coluna 'categoria'
+            mascara_contem_gatilho = fila['nome_limpo'].str.contains(gatilho, na=False)
+
+            fila.loc[mascara_contem_gatilho, 'categoria'] = categoria_destino
+
+        # Remove a coluna temporária, já que não precisamos mais dela
+        fila = fila.drop(columns=['nome_limpo'])
+
+        fila.fillna('-',inplace=True)
+
+
         return fila
 
     def get_enderecos(self):

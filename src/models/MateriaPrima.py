@@ -54,7 +54,7 @@ class Materia_prima_aviamento():
 
 
 
-    def _configuracao_de_para_descricao(self):
+    def configuracao_de_para_descricao(self):
 
         sql = """
         select 
