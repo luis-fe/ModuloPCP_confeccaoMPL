@@ -138,7 +138,7 @@ class Produtos_CSW():
 
         sql = f"""
     SELECT
-        d.codItem as codReduzido,
+        d.codItem as CodComponente,
         i.nome,
         i2.codEditado,
         d.estoqueAtual,
@@ -181,6 +181,10 @@ class Produtos_CSW():
             # Libera memória manualmente
         del rows
         gc.collect()
+
+        informacoes_componente = self.informacoesComponente()
+
+        consulta = pd.merge(consulta, informacoes_componente, on='CodComponente', how='left')
 
         return consulta
 
