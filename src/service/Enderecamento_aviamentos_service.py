@@ -49,23 +49,44 @@ class Enderecamento_aviamento():
         # Remove a coluna temporária, já que não precisamos mais dela
         fila = fila.drop(columns=['nome_limpo'])
 
-        # 2. Criando a função que formata o número
-        def formatar_milhar(valor):
+        def formatar_inteiro_milhar(valor):
             try:
-                # Converte para float para entender os decimais e depois para int para removê-los
                 valor_inteiro = int(float(valor))
-
-                # Formata com vírgula no milhar (padrão americano) e depois troca por ponto
+                # Formata com vírgula e substitui por ponto
                 return f"{valor_inteiro:,}".replace(',', '.')
             except (ValueError, TypeError):
-                # Caso venha algum dado corrompido ou nulo, retorna o valor original
                 return valor
 
-        # 3. Aplicando a regra APENAS onde a unidadeMedida for 'UM'
-        mascara = fila['unidadeMedida'] == 'UM'
+        # Função para as demais unidades (Com casas decimais no padrão PT-BR)
+        def formatar_decimal_ptbr(valor):
+            try:
+                valor_float = float(valor)
 
-        # Usa o .loc para alterar apenas as linhas filtradas na coluna 'estoqueAtual'
-        fila.loc[mascara, 'estoqueAtual'] = fila.loc[mascara, 'estoqueAtual'].apply(formatar_milhar)
+                # Formata no padrão americano mantendo 3 casas decimais (ex: 1,500.500)
+                # Se quiser menos casas, basta mudar o '.3f' para '.2f', por exemplo
+                formatado = f"{valor_float:,.3f}"
+
+                # Inverte ponto e vírgula
+                formatado = formatado.replace(',', '_')  # Troca a vírgula do milhar por '_'
+                formatado = formatado.replace('.', ',')  # Troca o ponto decimal por ','
+                formatado = formatado.replace('_', '.')  # Troca o '_' pelo ponto do milhar
+
+                return formatado
+            except (ValueError, TypeError):
+                return valor
+
+        # ==========================================
+        # 3. Aplicando as Regras
+        # ==========================================
+
+        # Máscara para "UM"
+        mascara_um = fila['unidadeMedida'] == 'UM'
+
+        # Aplica a regra para "UM"
+        fila.loc[mascara_um, 'estoqueAtual'] = fila.loc[mascara_um, 'estoqueAtual'].apply(formatar_inteiro_milhar)
+
+        # Aplica a regra para o resto (onde a unidade NÃO É "UM")
+        fila.loc[~mascara_um, 'estoqueAtual'] = fila.loc[~mascara_um, 'estoqueAtual'].apply(formatar_decimal_ptbr)
 
         fila.fillna('-',inplace=True)
 
