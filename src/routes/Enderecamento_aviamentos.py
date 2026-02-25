@@ -39,7 +39,7 @@ def get_enderecos():
 
 @Enderecamento_routes.route('/pcp/api/Fila_recebimento_Aviamentos', methods=['GET'])
 @token_required
-def get_enderecos():
+def get_Fila_recebimento_Aviamentos():
     codEmpresa = request.args.get('codEmpresa','1')
 
     dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa).fila_itens_enderecar()
