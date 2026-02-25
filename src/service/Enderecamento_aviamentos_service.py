@@ -49,6 +49,24 @@ class Enderecamento_aviamento():
         # Remove a coluna temporária, já que não precisamos mais dela
         fila = fila.drop(columns=['nome_limpo'])
 
+        # 2. Criando a função que formata o número
+        def formatar_milhar(valor):
+            try:
+                # Converte para float para entender os decimais e depois para int para removê-los
+                valor_inteiro = int(float(valor))
+
+                # Formata com vírgula no milhar (padrão americano) e depois troca por ponto
+                return f"{valor_inteiro:,}".replace(',', '.')
+            except (ValueError, TypeError):
+                # Caso venha algum dado corrompido ou nulo, retorna o valor original
+                return valor
+
+        # 3. Aplicando a regra APENAS onde a unidadeMedida for 'UM'
+        mascara = fila['unidadeMedida'] == 'UM'
+
+        # Usa o .loc para alterar apenas as linhas filtradas na coluna 'estoqueAtual'
+        fila.loc[mascara, 'estoqueAtual'] = fila.loc[mascara, 'estoqueAtual'].apply(formatar_milhar)
+
         fila.fillna('-',inplace=True)
 
 
