@@ -88,6 +88,9 @@ class Enderecamento_aviamento():
         # Aplica a regra para o resto (onde a unidade NÃO É "UM")
         fila.loc[~mascara_um, 'estoqueAtual'] = fila.loc[~mascara_um, 'estoqueAtual'].apply(formatar_decimal_ptbr)
 
+        fila['unidadeMedida'] = fila['unidadeMedida'].replace('UM','Unid')
+        fila['unidadeMedida'] = fila['unidadeMedida'].replace('UN','Unid')
+
         fila.fillna('-',inplace=True)
 
 
