@@ -84,6 +84,7 @@ class Automacao:
 
             # Formatação segura da cláusula IN
             clausula_in = f"IN ({', '.join([f'{val}' for val in ops_unicas])})"
+            print(clausula_in)
 
             logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
             requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
