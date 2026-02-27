@@ -84,14 +84,10 @@ class Automacao:
 
             # Formatação segura da cláusula IN
             clausula_in = f"IN ({', '.join([f'{val}' for val in ops_unicas])})"
-            print(clausula_in)
 
             logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
             requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
 
-            if requisicoes is None or requisicoes.empty:
-                logger.warning("Nenhuma requisição retornada para as OPs filtradas.")
-                return
 
             # 7. Merge final com as requisições e preparo para o Banco de Dados
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
