@@ -51,8 +51,13 @@ class Automacao ():
         # 2. Formata como uma string separada por vírgula e aspas
         clausula_in = f"""IN ({', '.join([f"'{val}'" for val in valores_unicos])})"""
 
+        requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
+
         print(clausula_in)
 
+        ordemProd_aberto = pd.merge(ordemProd_aberto, requisicoes, on ='numeroOP' , how='left')
+
+        ordemProd_aberto.fillna('-',inplace=True)
 
         ConexaoPostgre.Funcao_InserirPCPMatriz(ordemProd_aberto, ordemProd_aberto['numeroOP'].size, 'AviamentosDisponiveis', 'replace')
 

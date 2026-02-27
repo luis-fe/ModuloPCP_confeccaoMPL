@@ -355,5 +355,41 @@ class OrdemProd_Csw():
         return consulta
 
 
+    def explodir_requisicao_opS(self, clausula :str = '-'):
+
+
+        sql = f"""
+        SELECT
+            r.numero,
+            r.numOPConfec as numeroOP,
+            ri.codMaterialEdt, 
+            ri.nomeMaterial ,
+            ri.qtdeRequisitada,
+            ri.localizacao 
+        FROM
+            tcq.Requisicao r
+        inner join
+            tcq.RequisicaoItem ri on ri.codEmpresa = {self.codEmpresa}
+            and ri.codRequisicao = r.numero 
+        WHERE
+            r.codEmpresa = {self.codEmpresa}
+            and r.numOPConfec = {clausula}
+        """
+
+
+        with ConexaoERP.ConexaoInternoMPL() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                consulta = pd.DataFrame(rows, columns=colunas)
+
+        # Libera memória manualmente
+        del rows
+        gc.collect()
+
+        return consulta
+
+
 
 
