@@ -4,7 +4,7 @@ import pandas as pd
 class Endereco_aviamento():
 
     def __init__(self, endereco : str = '', rua : str = '', posicao : str = '', quadra :str = '', codItem : str = '',
-                 dataHora : str = '' , qtd : int = 0):
+                 dataHora : str = '' , qtd : int = 0, qtdConferida : int = 0, numeroOP : str = ''):
 
         self.endereco = endereco
         self.rua = rua
@@ -13,6 +13,9 @@ class Endereco_aviamento():
         self.codItem = codItem
         self.dataHora = dataHora
         self.qtd = qtd
+        self.qtdConferida = qtdConferida
+        self.numeroOP = numeroOP
+
 
 
     def get_enderecos(self):
@@ -72,6 +75,84 @@ class Endereco_aviamento():
                 curr.execute(insert, self.endereco, self.codItem, self.dataHora, self.qtd)
                 conn.commit()
 
+
+    def get_item_qtd_op_CONFERENCIA(self):
+        '''Metodo que busca se um item ja foi conferido'''
+
+
+        consulta = """
+        select * from pcp."AviamentoConfOP"
+        where numeroOP = %s and "codMaterial" = %s and "qtd" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(self.numeroOP, self.codItem, self.qtdConferida))
+
+        return consulta
+
+
+    def get_item_CONFERENCIA(self):
+        '''Metodo que busca se um item ja foi conferido'''
+
+
+        consulta = """
+        select * from pcp."AviamentoConfOP"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(self.numeroOP, self.codItem, self.qtdConferida))
+
+        return consulta
+
+
+    def validar_conferencia_item_etiquetado(self):
+        '''Metdo publico que avalia se um item foi etiquetado '''
+
+        verificar  = self.get_item_qtd_op_CONFERENCIA()
+
+        if verificar.empty:
+            return pd.DataFrame([{'Mensagem':'Item ainda nao conferido', 'status':False}])
+
+        else:
+
+            return pd.DataFrame([{'Mensagem':'Item ainda já conferido !', 'status':True}])
+
+
+    def inserir_conferencia_item_op(self):
+        '''Metodo publico que insere um intem no banco '''
+
+        insert = '''insert into pcp."AviamentoConfOP" (
+        "numeroOP",
+        "codMaterial",
+        "qtd" ,
+        "dataHora" 
+        ) values (%s, %s, %s, now())'''
+
+        verificar = self.get_item_qtd_op_CONFERENCIA()
+
+        if verificar.empty:
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(insert,(self.numeroOP, self.codItem, self.qtd))
+                    conn.commit()
+
+
+    def delete_item_conferecia_op(self):
+
+        delete = """
+        delete from pcp."AviamentoConfOP"
+        where numeroOP = %s and "codMaterial" = %s and "qtd" = %s
+        """
+
+        verificar = self.get_item_qtd_op_CONFERENCIA()
+
+        if not verificar.empty:
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(delete, (self.numeroOP, self.codItem, self.qtd))
+                    conn.commit()
 
 
 
