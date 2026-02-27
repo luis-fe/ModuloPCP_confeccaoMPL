@@ -37,7 +37,8 @@ if __name__ == '__main__':
     #ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,int(tempo_realizadofases))
     #ordemProd_Csw.realizado_fases_csw()
 
-    Automacao_Service
+
+    Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
 
     os.system('clear')
 
