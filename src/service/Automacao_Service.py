@@ -54,7 +54,7 @@ class Automacao ():
         print(clausula_in)
 
 
-        ConexaoPostgre.Funcao_InserirOFF_srvWMS(ordemProd_aberto, ordemProd_aberto['numeroOP'].size, 'AviamentosDisponiveis', 'replace')
+        ConexaoPostgre.Funcao_InserirPCPMatriz(ordemProd_aberto, ordemProd_aberto['numeroOP'].size, 'AviamentosDisponiveis', 'replace')
 
 
 
