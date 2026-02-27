@@ -94,7 +94,7 @@ class Automacao:
             df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
 
             # 8. Carga de dados no PostgreSQL
-            qtd_linhas = len(df_entrega)
+            qtd_linhas = df_entrega['numeroOP'].size
             logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
 
             df_entrega['dataHora_informacao'] = self.__obter_data_hora()
