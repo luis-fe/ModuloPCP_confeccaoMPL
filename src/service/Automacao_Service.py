@@ -58,6 +58,8 @@ class Automacao:
 
             logger.info("Iniciando rotina: Disposição de Aviamentos no status A Aviamentar")
 
+            self.servicoAutomacao.inserindo_automacao(self.__obter_data_hora())
+
             try:
                 # 1. Buscando as informações das OPs em aberto
                 df_aberto = self.ordemProd_csw.ordem_Prod_em_aberto()
@@ -117,11 +119,16 @@ class Automacao:
                     'replace'
                 )
 
+                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos', self.__obter_data_hora())
+
+
                 logger.info("Rotina finalizada com sucesso!")
 
             except Exception as e:
                 # Captura qualquer erro de banco, rede ou código, e registra a linha exata (exc_info=True)
                 logger.error(f"Erro crítico ao processar rotina de aviamentos: {e}", exc_info=True)
+                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos', self.__obter_data_hora())
+
 
 
 
