@@ -7,6 +7,7 @@ import pytz
 
 from src.models import OrdemProd_Csw
 from src.connection import ConexaoPostgre
+from src.models.ServicoAutomacao import ServicoAutomacao
 
 # Configuração do Logger (Você pode salvar isso em um arquivo .log depois)
 logging.basicConfig(
@@ -35,9 +36,10 @@ class Automacao:
     FASE_SEPARACAO = '409'
     FASE_COSTURA = '428'
 
-    def __init__(self, codEmpresa='1'):
+    def __init__(self, codEmpresa='1', intervalo_automacao : int = 600):
         self.codEmpresa = codEmpresa
         self.ordemProd_csw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa)
+        self.intervalo_automacao = intervalo_automacao
 
     def buscar_informacao_aviamentos_disponiveis_CSW(self):
         '''
@@ -45,72 +47,81 @@ class Automacao:
         e alimenta o Postgres no disparo da Automação, atendendo ao item:
             4- Disposição de Aviamentos no status A Aviamentar;
         '''
-        logger.info("Iniciando rotina: Disposição de Aviamentos no status A Aviamentar")
-
-        try:
-            # 1. Buscando as informações das OPs em aberto
-            df_aberto = self.ordemProd_csw.ordem_Prod_em_aberto()
-
-            if df_aberto is None or df_aberto.empty:
-                logger.warning("Nenhuma OP em aberto encontrada no CSW.")
-                return
-
-            # 2. Buscando OPs que passaram pela fase de Separação (409)
-            self.ordemProd_csw.codFase = self.FASE_SEPARACAO
-            df_separacao = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
-            df_separacao['passou_separacao'] = 'sim'
-
-            # 3. Buscando OPs que passaram pela fase de Costura (428)
-            self.ordemProd_csw.codFase = self.FASE_COSTURA
-            df_costura = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
-            df_costura['passou_costura'] = 'sim'
-
-            # 4. Cruzamento de dados (Merge)
-            # Trazemos apenas as colunas necessárias das outras tabelas para manter o df leve
-            df_final = pd.merge(df_aberto, df_separacao[['numeroOP', 'passou_separacao']], on='numeroOP', how='left')
-            df_final = pd.merge(df_final, df_costura[['numeroOP', 'passou_costura']], on='numeroOP', how='left')
-
-            # 5. Lógica de Filtragem Direta: Passou pela separação, mas ainda NÃO passou pela costura
-            mask = (df_final['passou_costura'].isna()) & (df_final['passou_separacao'] == 'sim')
-            df_filtrado = df_final[mask].copy()
-            df_filtrado['situacaoOP'] = 'Em Operacao Almoxarifado'
-
-            if df_filtrado.empty:
-                logger.info("Nenhuma OP atende aos critérios para processamento de aviamentos no momento.")
-                return
-
-            # 6. Preparar a consulta de requisições para as OPs filtradas
-            ops_unicas = df_filtrado['numeroOP'].dropna().unique()
-
-            # Formatação segura da cláusula IN
-            clausula_in = f"IN ({', '.join([f'{val}' for val in ops_unicas])})"
-
-            logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
-            requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
 
 
-            # 7. Merge final com as requisições e preparo para o Banco de Dados
-            df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
-            df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
+        self.servicoAutomacao = ServicoAutomacao('004','Disposição de Aviamentos no status A Aviamentar')
+        self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
 
-            # 8. Carga de dados no PostgreSQL
-            qtd_linhas = df_entrega['numeroOP'].size
-            logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
+        if self.ultima_atualizacao > self.intervalo_automacao:
 
-            df_entrega['dataHora_informacao'] = self.__obter_data_hora()
 
-            ConexaoPostgre.Funcao_InserirPCPMatriz(
-                df_entrega,
-                qtd_linhas,
-                'AviamentosDisponiveis',
-                'replace'
-            )
 
-            logger.info("Rotina finalizada com sucesso!")
+            logger.info("Iniciando rotina: Disposição de Aviamentos no status A Aviamentar")
 
-        except Exception as e:
-            # Captura qualquer erro de banco, rede ou código, e registra a linha exata (exc_info=True)
-            logger.error(f"Erro crítico ao processar rotina de aviamentos: {e}", exc_info=True)
+            try:
+                # 1. Buscando as informações das OPs em aberto
+                df_aberto = self.ordemProd_csw.ordem_Prod_em_aberto()
+
+                if df_aberto is None or df_aberto.empty:
+                    logger.warning("Nenhuma OP em aberto encontrada no CSW.")
+                    return
+
+                # 2. Buscando OPs que passaram pela fase de Separação (409)
+                self.ordemProd_csw.codFase = self.FASE_SEPARACAO
+                df_separacao = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
+                df_separacao['passou_separacao'] = 'sim'
+
+                # 3. Buscando OPs que passaram pela fase de Costura (428)
+                self.ordemProd_csw.codFase = self.FASE_COSTURA
+                df_costura = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
+                df_costura['passou_costura'] = 'sim'
+
+                # 4. Cruzamento de dados (Merge)
+                # Trazemos apenas as colunas necessárias das outras tabelas para manter o df leve
+                df_final = pd.merge(df_aberto, df_separacao[['numeroOP', 'passou_separacao']], on='numeroOP', how='left')
+                df_final = pd.merge(df_final, df_costura[['numeroOP', 'passou_costura']], on='numeroOP', how='left')
+
+                # 5. Lógica de Filtragem Direta: Passou pela separação, mas ainda NÃO passou pela costura
+                mask = (df_final['passou_costura'].isna()) & (df_final['passou_separacao'] == 'sim')
+                df_filtrado = df_final[mask].copy()
+                df_filtrado['situacaoOP'] = 'Em Operacao Almoxarifado'
+
+                if df_filtrado.empty:
+                    logger.info("Nenhuma OP atende aos critérios para processamento de aviamentos no momento.")
+                    return
+
+                # 6. Preparar a consulta de requisições para as OPs filtradas
+                ops_unicas = df_filtrado['numeroOP'].dropna().unique()
+
+                # Formatação segura da cláusula IN
+                clausula_in = f"IN ({', '.join([f'{val}' for val in ops_unicas])})"
+
+                logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
+                requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
+
+
+                # 7. Merge final com as requisições e preparo para o Banco de Dados
+                df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
+                df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
+
+                # 8. Carga de dados no PostgreSQL
+                qtd_linhas = df_entrega['numeroOP'].size
+                logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
+
+                df_entrega['dataHora_informacao'] = self.__obter_data_hora()
+
+                ConexaoPostgre.Funcao_InserirPCPMatriz(
+                    df_entrega,
+                    qtd_linhas,
+                    'AviamentosDisponiveis',
+                    'replace'
+                )
+
+                logger.info("Rotina finalizada com sucesso!")
+
+            except Exception as e:
+                # Captura qualquer erro de banco, rede ou código, e registra a linha exata (exc_info=True)
+                logger.error(f"Erro crítico ao processar rotina de aviamentos: {e}", exc_info=True)
 
 
 
