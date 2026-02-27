@@ -373,7 +373,7 @@ class OrdemProd_Csw():
             and ri.codRequisicao = r.numero 
         WHERE
             r.codEmpresa = {self.codEmpresa}
-            and r.numOPConfec = {clausula}
+            and r.numOPConfec  {clausula}
         """
 
 
