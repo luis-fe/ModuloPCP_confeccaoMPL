@@ -1,6 +1,10 @@
 import logging
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
+import pytz
+
 from src.models import OrdemProd_Csw
 from src.connection import ConexaoPostgre
 
@@ -96,6 +100,8 @@ class Automacao:
             qtd_linhas = len(df_entrega)
             logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
 
+            df_entrega['dataHora_informacao'] = self.__obter_data_hora()
+
             ConexaoPostgre.Funcao_InserirPCPMatriz(
                 df_entrega,
                 qtd_linhas,
@@ -108,3 +114,12 @@ class Automacao:
         except Exception as e:
             # Captura qualquer erro de banco, rede ou código, e registra a linha exata (exc_info=True)
             logger.error(f"Erro crítico ao processar rotina de aviamentos: {e}", exc_info=True)
+
+
+
+    def __obter_data_hora(self):
+        """Metodo privado para obter a dataHora do Sistema Operacional em fuso-br """
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+        return agora
