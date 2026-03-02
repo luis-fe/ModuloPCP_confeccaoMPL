@@ -20,7 +20,7 @@ def obterHoraAtual():
 if __name__ == '__main__':
     PID = os.getpid()
     data = obterHoraAtual()
-    print(f'inicio servico automacao - {data}')
+    print(f'inicio servico automacao - {data} modificado 02_03_2026')
     tempo = 60*6*60
     tempo_tags = 60*10
     tempo_tags2 = 60*30
