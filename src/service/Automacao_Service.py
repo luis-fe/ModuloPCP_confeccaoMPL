@@ -102,6 +102,7 @@ class Automacao:
                 requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
 
 
+
                 # 7. Merge final com as requisições e preparo para o Banco de Dados
                 df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
                 df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco

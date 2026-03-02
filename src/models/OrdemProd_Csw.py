@@ -376,7 +376,7 @@ class OrdemProd_Csw():
             r.codEmpresa = {self.codEmpresa}
             and r.numOPConfec  {clausula}
         """
-
+        print(f'Printando o SQL para teste da tabela disponibilidade Aviamentos \n{sql}')
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
