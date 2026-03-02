@@ -6,6 +6,7 @@ import psutil
 import pytz
 
 from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw, Pedidos_CSW, OrdemProd
+from src.service import Automacao_Service
 
 
 def obterHoraAtual():
@@ -37,7 +38,7 @@ if __name__ == '__main__':
     ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,int(tempo_realizadofases))
     ordemProd_Csw.realizado_fases_csw()
 
-
+    Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
 
     os.system('clear')
 
