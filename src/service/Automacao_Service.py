@@ -110,11 +110,12 @@ class Automacao:
                 qtd_linhas = df_entrega['numeroOP'].size
                 logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
 
+
                 df_entrega['dataHora_informacao'] = self.__obter_data_hora()
 
                 ConexaoPostgre.Funcao_InserirPCPMatriz(
-                    df_entrega,
-                    qtd_linhas,
+                    requisicoes,
+                    requisicoes['numeroOP'].size,
                     'AviamentosDisponiveis',
                     'replace'
                 )

@@ -369,7 +369,8 @@ class OrdemProd_Csw():
         FROM
             tcq.Requisicao r
         inner join
-            tcq.RequisicaoItem ri on ri.codEmpresa = {self.codEmpresa}
+            tcq.RequisicaoItem ri on 
+            ri.codEmpresa = {self.codEmpresa}
             and ri.codRequisicao = r.numero 
         WHERE
             r.codEmpresa = {self.codEmpresa}
