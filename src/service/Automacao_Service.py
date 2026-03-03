@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytz
 
-from src.models import OrdemProd_Csw
+from src.models import OrdemProd_Csw, Endereco_aviamento
 from src.connection import ConexaoPostgre
 from src.models.ServicoAutomacao import ServicoAutomacao
 
@@ -54,7 +54,7 @@ class Automacao:
 
         if self.ultima_atualizacao > self.intervalo_automacao:
 
-
+            endereco_aviamento = Endereco_aviamento.Endereco_aviamento()
 
             logger.info("Iniciando rotina: Disposição de Aviamentos no status A Aviamentar")
 
@@ -106,6 +106,13 @@ class Automacao:
             # 7. Merge final com as requisições e preparo para o Banco de Dados
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
             df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
+
+
+
+            # verificar daos ja imputados
+
+
+
 
             # 8. Carga de dados no PostgreSQL
             qtd_linhas = df_entrega['numeroOP'].size

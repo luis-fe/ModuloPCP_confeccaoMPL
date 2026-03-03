@@ -155,5 +155,33 @@ class Endereco_aviamento():
                     conn.commit()
 
 
+    def get_consulta_AviamentosDisponiveis(self):
+        '''Metodo que busca a lista de AviamentosDisponiveis '''
+
+        consulta = """
+        select * from pcp."AviamentosDisponiveis" ad 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn)
+
+        return consulta
+
+    def get_chaves_consulta_AviamentosDisponiveis(self):
+        '''Metodo que busca a lista de AviamentosDisponiveis '''
+
+        consulta = """
+        select * from pcp."AviamentosDisponiveis" ad 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta, conn)
+
+        return consulta
+
+
+
 
 
