@@ -13,7 +13,10 @@ class Conferencia_itens_separados():
     def carregar_itens_para_conferencia(self):
         '''Metodo que carrega os itens disponivel para conferencia'''
 
-        consulta = Endereco_aviamento.Endereco_aviamento().get_item_qtd_op_CONFERENCIA()
+
+        consulta = Endereco_aviamento.Endereco_aviamento().get_ops_paraConferir()
+
+        return consulta
 
     def inserir_conferencia(self):
         '''Metodo responsavel pela insercao do qrCode conferido'''

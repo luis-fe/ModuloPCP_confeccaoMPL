@@ -91,12 +91,12 @@ class Endereco_aviamento():
         return consulta
 
 
-    def get_item_CONFERENCIA(self):
+    def get_ops_paraConferir(self):
         '''Metodo que busca se um item ja foi conferido'''
 
 
         consulta = """
-        select * from pcp."AviamentoConfOP"
+        select distinct "numeroOP", "codProduto" from pcp."AviamentosDisponiveis"
         """
 
         conn = ConexaoPostgre.conexaoEngine()
