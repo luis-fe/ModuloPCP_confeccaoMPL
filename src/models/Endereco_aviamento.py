@@ -96,7 +96,7 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select distinct "numeroOP", "codProduto", "FaseAtual" , "prioriodade", "separador" from pcp."AviamentosDisponiveis"
+        select distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador" from pcp."AviamentosDisponiveis"
         """
 
         conn = ConexaoPostgre.conexaoEngine()
