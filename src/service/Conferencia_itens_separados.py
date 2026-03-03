@@ -1,3 +1,5 @@
+import pandas as pd
+
 from src.models import Endereco_aviamento
 
 
@@ -5,12 +7,13 @@ class Conferencia_itens_separados():
     '''Classe de servico responsavel por gerenciar a tela de COnferecnia'''
 
 
-    def __init__(self, codEmpresa :str = '1', codMaterial: str = '' ):
+    def __init__(self, codEmpresa :str = '1', codMaterial: str = '', numeroOP: str = '' ):
 
         self.codEmpresa = codEmpresa
         self.codMaterial = codMaterial
+        self.numeroOP = numeroOP
 
-    def carregar_itens_para_conferencia(self):
+    def carregar_ordens_para_conferencia(self):
         '''Metodo que carrega os itens disponivel para conferencia'''
 
 
@@ -19,8 +22,20 @@ class Conferencia_itens_separados():
 
         return consulta
 
+
+    def carregar_itens_para_conferir(self):
+        '''Metodo que explode os itens a serem conferidos'''
+        consulta = Endereco_aviamento.Endereco_aviamento('','','','','','',0,0,self.numeroOP).get_itens_paraConferir()
+        consulta.fillna('-',inplace=True)
+
+        return consulta
+
     def inserir_conferencia(self):
         '''Metodo responsavel pela insercao do qrCode conferido'''
+        consulta = Endereco_aviamento.Endereco_aviamento('','','','',self.codMaterial,'',0,0,self.numeroOP).update_conferencia_item_op()
+
+        return pd.DataFrame([{'status':True, 'Mensagem':'Item conferido com sucesso'}])
+
 
 
     def estornar_conferencia(self):

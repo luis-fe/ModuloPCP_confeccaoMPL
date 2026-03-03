@@ -100,7 +100,24 @@ class Endereco_aviamento():
         """
 
         conn = ConexaoPostgre.conexaoEngine()
-        consulta = pd.read_sql(consulta,conn,params=(self.numeroOP, self.codItem, self.qtdConferida))
+        consulta = pd.read_sql(consulta,conn)
+
+        return consulta
+
+
+    def get_itens_paraConferir(self):
+        '''Metodo que busca se um item ja foi conferido'''
+
+
+        consulta = """
+        select  "numeroOP", "codProduto", "FaseAtual" , "prioriodade", "separador", "qtdeRequisitada", "codMaterialEdt",
+        "nomeMaterial" 
+        from pcp."AviamentosDisponiveis"
+        where "numeroOP" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(self.numeroOP,))
 
         return consulta
 
