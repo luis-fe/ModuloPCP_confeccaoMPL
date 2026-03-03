@@ -111,9 +111,10 @@ class Automacao:
 
 
             # verificar daos ja imputados
-            consulta = endereco_aviamento.get_chaves_consulta_AviamentosDisponiveis()
-            df_entrega = pd.merge(df_entrega, consulta , on = ['numeroOP', 'codMaterialEdt'], how='left')
-            df_entrega = df_entrega[df_entrega['situacao']!='ok'].reset_index()
+            consultaChaves = endereco_aviamento.get_chaves_consulta_AviamentosDisponiveis()
+            df_entrega = pd.merge(df_entrega, consultaChaves , on = ['numeroOP', 'codMaterialEdt'], how='left')
+            df_entrega['situacao'] = df_entrega['situacao'].fillna('-',inplace=True)
+            df_entrega = df_entrega[df_entrega['situacao']!='ok']
 
 
             df_entrega.drop('situacao', axis=1, inplace=True)
