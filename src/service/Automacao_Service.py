@@ -110,9 +110,12 @@ class Automacao:
 
 
             # verificar daos ja imputados
+            consulta = endereco_aviamento.get_chaves_consulta_AviamentosDisponiveis()
+            df_entrega = pd.merge(df_entrega, consulta , on = ['numeroOP', 'codMaterialEdt'], how='left')
+            df_entrega = df_entrega[df_entrega['situacao']!='ok'].reset_index()
 
 
-
+            df_entrega.drop('situacao', axis=1, inplace=True)
 
             # 8. Carga de dados no PostgreSQL
             qtd_linhas = df_entrega['numeroOP'].size
@@ -128,7 +131,7 @@ class Automacao:
                 'replace'
             )
 
-            self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos', self.__obter_data_hora())
+            self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
 
 
             logger.info("Rotina finalizada com sucesso!")

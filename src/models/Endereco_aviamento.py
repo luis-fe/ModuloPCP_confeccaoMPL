@@ -172,11 +172,14 @@ class Endereco_aviamento():
         '''Metodo que busca a lista de AviamentosDisponiveis '''
 
         consulta = """
-        select * from pcp."AviamentosDisponiveis" ad 
+        select  
+        	"numeroOP",
+	        "codMaterialEdt", 'ok' situacao
+        from 
+            pcp."AviamentosDisponiveis" ad 
         """
 
         conn = ConexaoPostgre.conexaoEngine()
-
         consulta = pd.read_sql(consulta, conn)
 
         return consulta
