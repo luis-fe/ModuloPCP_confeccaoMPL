@@ -130,7 +130,7 @@ class Automacao:
                     df_entrega,
                     df_entrega['numeroOP'].size,
                     'AviamentosDisponiveis',
-                    'replace'
+                    'append'
                 )
 
                 self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
