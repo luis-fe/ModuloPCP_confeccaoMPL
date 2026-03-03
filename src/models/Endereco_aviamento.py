@@ -81,8 +81,8 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select * from pcp."AviamentoConfOP"
-        where numeroOP = %s and "codMaterial" = %s and "qtd" = %s
+        select * from pcp."AviamentosDisponiveis"
+        where "numeroOP" = %s and "codMaterialEdt" = %s and "situacaoConferencia" <> 'Conferido'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -118,15 +118,13 @@ class Endereco_aviamento():
             return pd.DataFrame([{'Mensagem':'Item ainda já conferido !', 'status':True}])
 
 
-    def inserir_conferencia_item_op(self):
+    def update_conferencia_item_op(self):
         '''Metodo publico que insere um intem no banco '''
 
-        insert = '''insert into pcp."AviamentoConfOP" (
-        "numeroOP",
-        "codMaterial",
-        "qtd" ,
-        "dataHora" 
-        ) values (%s, %s, %s, now())'''
+        update = '''update  pcp."AviamentoConfOP" (
+            set "situacaoConfencia" = 'Conferido'
+             "numeroOP" = %s and "codMaterialEdt" = %s
+        '''
 
         verificar = self.get_item_qtd_op_CONFERENCIA()
 
@@ -135,7 +133,7 @@ class Endereco_aviamento():
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
-                    curr.execute(insert,(self.numeroOP, self.codItem, self.qtd))
+                    curr.execute(update,(self.numeroOP, self.codItem,))
                     conn.commit()
 
 
