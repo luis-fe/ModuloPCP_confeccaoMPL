@@ -82,7 +82,7 @@ class Endereco_aviamento():
 
         consulta = """
         select * from pcp."AviamentosDisponiveis"
-        where "numeroOP" = %s and "codMaterialEdt" = %s and "situacaoConferencia" <> 'Conferido'
+        where "numeroOP" = %s and "codMaterialEdt" = %s and "statusConferido" <> 'Conferido'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -122,7 +122,7 @@ class Endereco_aviamento():
         '''Metodo publico que insere um intem no banco '''
 
         update = '''update  pcp."AviamentoConfOP" (
-            set "situacaoConfencia" = 'Conferido'
+            set "statusConferido" = 'Conferido'
              "numeroOP" = %s and "codMaterialEdt" = %s
         '''
 
