@@ -100,6 +100,7 @@ class Automacao:
 
             logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
             requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
+            requisicoes['sitbaixa'] = requisicoes['sitbaixa'].astype(str)
 
 
 
