@@ -124,14 +124,18 @@ class Automacao:
 
             df_entrega['dataHora_informacao'] = self.__obter_data_hora()
 
-            ConexaoPostgre.Funcao_InserirPCPMatriz(
-                df_entrega,
-                df_entrega['numeroOP'].size,
-                'AviamentosDisponiveis',
-                'replace'
-            )
+            if not df_entrega.empty:
 
-            self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
+                ConexaoPostgre.Funcao_InserirPCPMatriz(
+                    df_entrega,
+                    df_entrega['numeroOP'].size,
+                    'AviamentosDisponiveis',
+                    'replace'
+                )
+
+                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
+            else:
+                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3, sem dados', self.__obter_data_hora())
 
 
             logger.info("Rotina finalizada com sucesso!")
