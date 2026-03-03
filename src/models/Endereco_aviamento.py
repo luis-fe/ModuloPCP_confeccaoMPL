@@ -110,7 +110,7 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select  "numeroOP", "codProduto", "FaseAtual" , "prioriodade", "separador", "qtdeRequisitada", "codMaterialEdt",
+        select  "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
         "nomeMaterial" 
         from pcp."AviamentosDisponiveis"
         where "numeroOP" = %s
