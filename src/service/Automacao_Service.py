@@ -115,8 +115,8 @@ class Automacao:
             df_entrega['dataHora_informacao'] = self.__obter_data_hora()
 
             ConexaoPostgre.Funcao_InserirPCPMatriz(
-                requisicoes,
-                requisicoes['numeroOP'].size,
+                df_entrega,
+                df_entrega['numeroOP'].size,
                 'AviamentosDisponiveis',
                 'replace'
             )
