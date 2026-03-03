@@ -95,7 +95,7 @@ class Automacao:
             ops_unicas = df_filtrado['numeroOP'].dropna().unique()
 
             # Formatação segura da cláusula IN
-            clausula_in = "IN ('" + "','".join(f"{val}" for val in ops_unicas) + ")"
+            clausula_in = "IN ('" + "','".join(f"{val}" for val in ops_unicas) + " ')"
 
 
             logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")

@@ -15,6 +15,7 @@ class Conferencia_itens_separados():
 
 
         consulta = Endereco_aviamento.Endereco_aviamento().get_ops_paraConferir()
+        consulta.fillna('-',inplace=True)
 
         return consulta
 
