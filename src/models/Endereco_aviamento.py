@@ -113,7 +113,7 @@ class Endereco_aviamento():
         select  distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
         "nomeMaterial" 
         from pcp."AviamentosDisponiveis"
-        where "numeroOP" = %s
+        where "numeroOP" = %s and "codFaseAtual" not in ('408', '409') 
         """
 
         conn = ConexaoPostgre.conexaoEngine()
