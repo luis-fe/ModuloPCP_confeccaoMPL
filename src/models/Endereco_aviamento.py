@@ -96,7 +96,7 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador" from pcp."AviamentosDisponiveis"
+        select distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "descricao" from pcp."AviamentosDisponiveis"
         where "seqRoteiro" not in ('408', '409')
         """
 
@@ -112,7 +112,7 @@ class Endereco_aviamento():
 
         consulta = """
         select  distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
-        "nomeMaterial" 
+        "nomeMaterial", "descricao" 
         from pcp."AviamentosDisponiveis"
         where "numeroOP" = %s and "seqRoteiro" not in ('408', '409') 
         """
