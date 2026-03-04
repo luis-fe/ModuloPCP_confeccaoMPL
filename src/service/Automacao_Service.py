@@ -108,32 +108,39 @@ class Automacao:
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
             df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
 
-
-
-            # verificar daos ja imputados
+            # 1. Obter chaves existentes (certifique-se de trazer apenas o necessário do SQL)
             consultaChaves = endereco_aviamento.get_chaves_consulta_AviamentosDisponiveis()
-            df_entrega = pd.merge(df_entrega, consultaChaves , on = ['numeroOP', 'codMaterialEdt'], how='left')
-            df_entrega['situacao'] = df_entrega['situacao'].fillna('-',inplace=True)
-            df_entrega = df_entrega[df_entrega['situacao']!='ok']
 
+            # 2. Identificar novos registros via Left Join
+            # Indicator=True cria a coluna '_merge' que diz se a chave existe em 'both' ou apenas 'left_only'
+            df_entrega = pd.merge(
+                df_entrega,
+                consultaChaves,
+                on=['numeroOP', 'codMaterialEdt'],
+                how='left',
+                indicator=True
+            )
 
-            df_entrega.drop('situacao', axis=1, inplace=True)
+            # 3. Filtrar apenas o que não existe no banco (left_only)
+            df_novos = df_entrega[df_entrega['_merge'] == 'left_only'].copy()
 
-            # 8. Carga de dados no PostgreSQL
-            qtd_linhas = df_entrega['numeroOP'].size
-            logger.info(f"Iniciando inserção de {qtd_linhas} registros no PostgreSQL.")
+            # 4. Limpeza de colunas auxiliares
+            df_novos.drop(columns=['_merge'], inplace=True)
 
+            # 5. Carga de dados
+            if not df_novos.empty:
+                qtd_linhas = len(df_novos)
+                logger.info(f"Iniciando inserção de {qtd_linhas} novos registros no PostgreSQL.")
 
-            df_entrega['dataHora_informacao'] = self.__obter_data_hora()
-
-            if not df_entrega.empty:
+                df_novos['dataHora_informacao'] = self.__obter_data_hora()
 
                 ConexaoPostgre.Funcao_InserirPCPMatriz(
-                    df_entrega,
-                    df_entrega['numeroOP'].size,
+                    df_novos,
+                    qtd_linhas,
                     'AviamentosDisponiveis',
                     'append'
                 )
+
 
                 self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
             else:
