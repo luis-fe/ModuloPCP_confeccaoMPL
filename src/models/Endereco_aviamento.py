@@ -188,6 +188,7 @@ class Endereco_aviamento():
 
         consulta = """
         select  
+        distinct
         	"numeroOP",
 	        "codMaterialEdt", 'ok' situacao
         from 
