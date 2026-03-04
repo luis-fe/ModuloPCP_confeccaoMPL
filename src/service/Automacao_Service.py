@@ -9,7 +9,7 @@ from src.models import OrdemProd_Csw, Endereco_aviamento
 from src.connection import ConexaoPostgre
 from src.models.ServicoAutomacao import ServicoAutomacao
 
-# Configuração do Logger (Você pode salvar isso em um arquivo .log depois)
+# Configuração do Logger
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -36,7 +36,7 @@ class Automacao:
     FASE_SEPARACAO = '409'
     FASE_COSTURA = '428'
 
-    def __init__(self, codEmpresa='1', intervalo_automacao : int = 600):
+    def __init__(self, codEmpresa='1', intervalo_automacao: int = 600):
         self.codEmpresa = codEmpresa
         self.ordemProd_csw = OrdemProd_Csw.OrdemProd_Csw(self.codEmpresa)
         self.intervalo_automacao = intervalo_automacao
@@ -47,7 +47,6 @@ class Automacao:
         e alimenta o Postgres no disparo da Automação, atendendo ao item:
             4- Disposição de Aviamentos no status A Aviamentar;
         '''
-
 
         self.servicoAutomacao = ServicoAutomacao('004','Disposição de Aviamentos no status A Aviamentar')
         self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
@@ -78,7 +77,6 @@ class Automacao:
             df_costura['passou_costura'] = 'sim'
 
             # 4. Cruzamento de dados (Merge)
-            # Trazemos apenas as colunas necessárias das outras tabelas para manter o df leve
             df_final = pd.merge(df_aberto, df_separacao[['numeroOP', 'passou_separacao']], on='numeroOP', how='left')
             df_final = pd.merge(df_final, df_costura[['numeroOP', 'passou_costura']], on='numeroOP', how='left')
 
@@ -95,24 +93,22 @@ class Automacao:
             ops_unicas = df_filtrado['numeroOP'].dropna().unique()
 
             # Formatação segura da cláusula IN
-            clausula_in = "IN ('" + "','".join(f"{val}" for val in ops_unicas) + " ')"
-
+            clausula_in = "IN ('" + "','".join(f"{val}" for val in ops_unicas) + "')"
 
             logger.info(f"Buscando requisições para {len(ops_unicas)} OPs únicas.")
             requisicoes = self.ordemProd_csw.explodir_requisicao_opS(clausula_in)
             requisicoes['numero'] = requisicoes['numero'].astype(str)
 
-
-
             # 7. Merge final com as requisições e preparo para o Banco de Dados
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
-            df_entrega.fillna('-', inplace=True)  # Preenche vazios apenas no final, antes do banco
+            df_entrega.fillna('-', inplace=True)
 
-            # 1. Obter chaves existentes (certifique-se de trazer apenas o necessário do SQL)
+            # --- INÍCIO DA VALIDAÇÃO DE REGISTROS NOVOS ---
+
+            # 7.1 Obter chaves existentes
             consultaChaves = endereco_aviamento.get_chaves_consulta_AviamentosDisponiveis()
 
-            # 2. Identificar novos registros via Left Join
-            # Indicator=True cria a coluna '_merge' que diz se a chave existe em 'both' ou apenas 'left_only'
+            # 7.2 Identificar novos registros via Left Join
             df_entrega = pd.merge(
                 df_entrega,
                 consultaChaves,
@@ -121,13 +117,15 @@ class Automacao:
                 indicator=True
             )
 
-            # 3. Filtrar apenas o que não existe no banco (left_only)
+            # 7.3 Filtrar apenas o que não existe no banco (left_only)
             df_novos = df_entrega[df_entrega['_merge'] == 'left_only'].copy()
 
-            # 4. Limpeza de colunas auxiliares
-            df_novos.drop(columns=['_merge'], inplace=True)
+            # 7.4 Limpeza de colunas auxiliares (AQUI RESOLVEMOS O ERRO)
+            # errors='ignore' garante que o código não quebre caso a coluna já não exista
+            colunas_indesejadas = ['_merge', 'situacao']
+            df_novos.drop(columns=colunas_indesejadas, inplace=True, errors='ignore')
 
-            # 5. Carga de dados
+            # 8. Carga de dados
             if not df_novos.empty:
                 qtd_linhas = len(df_novos)
                 logger.info(f"Iniciando inserção de {qtd_linhas} novos registros no PostgreSQL.")
@@ -141,24 +139,16 @@ class Automacao:
                     'append'
                 )
 
-
                 self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3', self.__obter_data_hora())
             else:
-                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3, sem dados', self.__obter_data_hora())
-
+                self.servicoAutomacao.update_controle_automacao('Finalizado Disponibilidade Aviamentos v3, sem dados novos', self.__obter_data_hora())
+                logger.info("Nenhum registro novo para inserir no PostgreSQL.")
 
             logger.info("Rotina finalizada com sucesso!")
 
-
-
-
-
-
-
-
     def __obter_data_hora(self):
         """Metodo privado para obter a dataHora do Sistema Operacional em fuso-br """
-        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        fuso_horario = pytz.timezone('America/Sao_Paulo')
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d %H:%M:%S')
         return agora
