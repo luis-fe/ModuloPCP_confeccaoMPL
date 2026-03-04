@@ -366,7 +366,8 @@ class OrdemProd_Csw():
             ri.nomeMaterial ,
             ri.qtdeRequisitada,
             ri.localizacao ,
-            sitbaixa
+            sitbaixa,
+            seqRoteiro
         FROM
             tcq.Requisicao r
         inner join
