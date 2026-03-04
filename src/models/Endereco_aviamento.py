@@ -97,6 +97,7 @@ class Endereco_aviamento():
 
         consulta = """
         select distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador" from pcp."AviamentosDisponiveis"
+        where "seqRoteiro" not in ('408', '409)
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -113,7 +114,7 @@ class Endereco_aviamento():
         select  distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
         "nomeMaterial" 
         from pcp."AviamentosDisponiveis"
-        where "numeroOP" = %s and "codFaseAtual" not in ('408', '409') 
+        where "numeroOP" = %s and "seqRoteiro" not in ('408', '409') 
         """
 
         conn = ConexaoPostgre.conexaoEngine()
