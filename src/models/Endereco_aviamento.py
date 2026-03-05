@@ -150,7 +150,7 @@ class Endereco_aviamento():
 
         verificar = self.get_item_qtd_op_CONFERENCIA()
 
-        print(f'verificar:\n{verificar}')
+        print(f'verificar numeroOP{self.numeroOP} and {self.codItem}:\n{verificar}')
 
         if not verificar.empty:
 
