@@ -37,7 +37,6 @@ class Conferencia_itens_separados():
         return pd.DataFrame([{'status':True, 'Mensagem':'Item conferido com sucesso'}])
 
 
-
     def estornar_conferencia(self):
         '''Metodo responsavel pelo estorno do qrCode conferido'''
 
