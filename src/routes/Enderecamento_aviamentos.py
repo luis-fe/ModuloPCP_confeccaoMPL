@@ -126,7 +126,7 @@ def get_ItensConferencia():
 
 @Enderecamento_routes.route('/pcp/api/inserir_endereco_aviamento', methods=['POST'])
 @token_required
-def POST_inserir_endereco_aviamento():
+def POST_inserir_endereco():
     data = request.get_json()
 
     rua = data.get('rua')
