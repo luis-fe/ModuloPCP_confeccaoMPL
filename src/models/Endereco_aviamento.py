@@ -150,6 +150,8 @@ class Endereco_aviamento():
 
         verificar = self.get_item_qtd_op_CONFERENCIA()
 
+        print(f'verificar:\n{verificar}')
+
         if not verificar.empty:
 
             with ConexaoPostgre.conexaoInsercao() as conn:
