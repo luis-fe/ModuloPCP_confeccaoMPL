@@ -111,10 +111,13 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select  distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
-        "nomeMaterial", "descricao" 
-        from pcp."AviamentosDisponiveis"
-        where "numeroOP" = %s and "seqRoteiro" not in ('408', '409') 
+        select  
+            distinct "numeroOP", "codProduto", "FaseAtual" , "prioridade", "separador", "qtdeRequisitada", "codMaterialEdt",
+            "nomeMaterial", "descricao" , "statusConferido"
+        from 
+            pcp."AviamentosDisponiveis"
+        where 
+            "numeroOP" = %s and "seqRoteiro" not in ('408', '409') 
         """
 
         conn = ConexaoPostgre.conexaoEngine()
@@ -139,7 +142,7 @@ class Endereco_aviamento():
     def update_conferencia_item_op(self):
         '''Metodo publico que insere um intem no banco '''
 
-        update = '''update  pcp."AviamentoConfOP" (
+        update = '''update  pcp."AviamentosDisponiveis" (
             set "statusConferido" = 'Conferido'
              "numeroOP" = %s and "codMaterialEdt" = %s
         '''
@@ -200,6 +203,43 @@ class Endereco_aviamento():
         consulta = pd.read_sql(consulta, conn)
 
         return consulta
+
+
+    def update_desconsidera_item_aviamento(self):
+
+        update = """
+        update pcp."AviamentosDisponiveis" set "desconsideraConf" = 'SIM' where "codMaterialEdt" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn :
+            with conn.cursor() as curr:
+
+                curr.execute(update, (self.codItem))
+                conn.commit()
+
+
+    def exluir_desconsidera_item_aviamento(self):
+
+        update = """
+        update pcp."AviamentosDisponiveis" set "desconsideraConf" = '-' where "codMaterialEdt" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn :
+            with conn.cursor() as curr:
+
+                curr.execute(update, (self.codItem))
+                conn.commit()
+    def buscar_nomeMaterial(self):
+
+        select = """select nomeMaterial from pcp."AviamentosDisponiveis"
+        where "codMaterialEdt" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(select, conn)
+
+        return consulta
+
 
 
 

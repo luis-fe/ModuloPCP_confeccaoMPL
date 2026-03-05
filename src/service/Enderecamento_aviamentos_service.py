@@ -4,11 +4,12 @@ from src.models import Endereco_aviamento, Produtos_CSW, MateriaPrima
 
 class Enderecamento_aviamento():
 
-    def __init__(self, codEmpresa='1', rua='', quadra='', posicao='', rua_final='', quadra_final='', posicao_final=''):
+    def __init__(self, codEmpresa='1', rua='', quadra='', posicao='', rua_final='', quadra_final='', posicao_final='', coditem : str = ''):
         self.codEmpresa = codEmpresa
         self.rua = rua
         self.quadra = quadra
         self.posicao = posicao
+        self.codItem = coditem
 
         # Salvando as variáveis finais para uso no método em massa
         self.rua_final = rua_final
@@ -179,3 +180,30 @@ class Enderecamento_aviamento():
         else:
             return pd.DataFrame(
                 [{'Mensagem': f'Nenhum endereço criado. Todos os {ignorados} já existiam na base.', 'status': False}])
+
+
+
+    def procurar_nome_item_considear(self):
+
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).buscar_nomeMaterial()
+
+        if endereco_aviamento.empty:
+            return 'item nao encontrado'
+
+        else:
+            return endereco_aviamento['nomeMaterial'][0]
+
+    def inserirItemDesconsiderar(self):
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).update_desconsidera_item_aviamento()
+
+        return pd.DataFrame([{'Mensagem':'Item desativado com sucesso', 'status':True}])
+
+    def remover_item_considerado(self):
+
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
+                                                                   self.codItem).exluir_desconsidera_item_aviamento()
+
+        return pd.DataFrame([{'Mensagem': 'Item excluido para nao  desconsiderar ', 'status': True}])
+
+
+
