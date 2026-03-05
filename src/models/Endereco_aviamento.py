@@ -142,7 +142,7 @@ class Endereco_aviamento():
     def update_conferencia_item_op(self):
         '''Metodo publico que insere um intem no banco '''
 
-        update = '''update  pcp."AviamentosDisponiveis" (
+        update = '''update  pcp."AviamentosDisponiveis"
             set "statusConferido" = 'Conferido'
             where
              "numeroOP" = %s and "codMaterialEdt" = %s
