@@ -157,7 +157,7 @@ def POST_conferenciaAviamentos_():
 
 
     codEmpresa = data.get('codEmpresa','1')
-    codMaterial = data.get('codMatrial','1')
+    codMaterial = data.get('codMaterial','1')
     numeroOP = data.get('numeroOP','1')
 
 
