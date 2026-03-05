@@ -144,6 +144,7 @@ class Endereco_aviamento():
 
         update = '''update  pcp."AviamentosDisponiveis" (
             set "statusConferido" = 'Conferido'
+            where
              "numeroOP" = %s and "codMaterialEdt" = %s
         '''
 
