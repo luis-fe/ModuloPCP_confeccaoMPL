@@ -82,7 +82,7 @@ class Endereco_aviamento():
 
         consulta = """
         select * from pcp."AviamentosDisponiveis"
-        where "numeroOP" = %s and "codMaterialEdt" = %s and "statusConferido" <> 'Conferido'
+        where "numeroOP" = %s and "codMaterialEdt" = %s
         """
 
         conn = ConexaoPostgre.conexaoEngine()
