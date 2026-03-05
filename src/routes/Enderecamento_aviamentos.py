@@ -156,9 +156,9 @@ def POST_conferenciaAviamentos_():
     data = request.get_json()
 
 
-    codEmpresa = request.args.get('codEmpresa','1')
-    codMaterial = request.args.get('codMatrial','1')
-    numeroOP = request.args.get('numeroOP','1')
+    codEmpresa = data.get('codEmpresa','1')
+    codMaterial = data.get('codMatrial','1')
+    numeroOP = data.get('numeroOP','1')
 
 
     dados = Conferencia_itens_separados.Conferencia_itens_separados(codEmpresa, codMaterial, numeroOP,).inserir_conferencia()
