@@ -247,6 +247,7 @@ class Endereco_aviamento():
 
         select = """
         select
+        DISTINCT
             ad."codMaterialEdt",
             "nomeMaterial"
         from
