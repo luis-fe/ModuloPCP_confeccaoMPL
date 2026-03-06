@@ -217,7 +217,7 @@ class Endereco_aviamento():
         with ConexaoPostgre.conexaoInsercao() as conn :
             with conn.cursor() as curr:
 
-                curr.execute(update, (self.codItem))
+                curr.execute(update, (self.codItem,))
                 conn.commit()
 
 
