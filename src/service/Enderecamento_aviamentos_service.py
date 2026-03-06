@@ -188,7 +188,7 @@ class Enderecamento_aviamento():
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).buscar_nomeMaterial()
 
         if endereco_aviamento.empty:
-            return 'item nao encontrado'
+            return pd.DataFrame([{'nomeMaterial':'Nao encontrado'}])
 
         else:
             return endereco_aviamento['nomeMaterial'][0]
