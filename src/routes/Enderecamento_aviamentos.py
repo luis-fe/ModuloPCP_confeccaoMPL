@@ -231,7 +231,7 @@ def POST_inserir_endereco_aviamento():
     codEmpresa = request.args.get('codEmpresa','1')
 
 
-    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','',codMaterial).inserirItemDesconsiderar()
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','',codMaterial).inserir_endereco()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
