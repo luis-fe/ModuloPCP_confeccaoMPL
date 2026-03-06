@@ -252,7 +252,7 @@ class Endereco_aviamento():
         from
             "PCP".pcp."AviamentosDisponiveis" ad
         where
-            "desconsideraConf" = 'Sim'
+            "desconsideraConf" = 'SIM'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
