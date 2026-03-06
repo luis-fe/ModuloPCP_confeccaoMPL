@@ -205,5 +205,13 @@ class Enderecamento_aviamento():
 
         return pd.DataFrame([{'Mensagem': 'Item excluido para nao  desconsiderar ', 'status': True}])
 
+    def get_obter_itens_configurados(self):
+        '''Metetodo que obtem os itens configurados '''
+
+        consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '').obter_itens_configuradados()
+
+        return consulta
+
+
 
 

@@ -243,6 +243,26 @@ class Endereco_aviamento():
 
         return consulta
 
+    def obter_itens_configuradados(self):
+
+        select = """
+        select
+            ad."codMaterialEdt",
+            "nomeMaterial"
+        from
+            "PCP".pcp."AviamentosDisponiveis" ad
+        where
+            "desconsideraConf" = 'Sim'
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(select,conn)
+
+        return consulta
+
+
+
+
 
 
 

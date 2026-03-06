@@ -123,6 +123,51 @@ def get_ItensConferencia():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/get_obter_itens_configurados', methods=['GET'])
+@token_required
+def get_obter_itens_configurados():
+    codEmpresa = request.args.get('codEmpresa','1')
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa,'','','','','','').get_obter_itens_configurados()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+@Enderecamento_routes.route('/pcp/api/procurar_nome_item_considear', methods=['GET'])
+@token_required
+def get_procurar_nome_item_considear():
+    codEmpresa = request.args.get('codEmpresa','1')
+    codMaterial = request.args.get('codMaterial','1')
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa,'','','','','','',codMaterial).procurar_nome_item_considear()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
+
 
 @Enderecamento_routes.route('/pcp/api/inserir_endereco_aviamento', methods=['POST'])
 @token_required
