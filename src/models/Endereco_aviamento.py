@@ -239,7 +239,7 @@ class Endereco_aviamento():
         """
 
         conn = ConexaoPostgre.conexaoEngine()
-        consulta = pd.read_sql(select, conn)
+        consulta = pd.read_sql(select, conn, params =(self.codItem,))
 
         return consulta
 
