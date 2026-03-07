@@ -150,7 +150,7 @@ def get_procurar_nome_item_considear():
     codEmpresa = request.args.get('codEmpresa','1')
     codMaterial = request.args.get('codMaterial','1')
 
-    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa,'','','','','','',codMaterial).procurar_nome_item_considear()
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa,'','','','','','',codMaterial).procurar_nome_item_considerar()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
