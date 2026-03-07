@@ -188,10 +188,10 @@ class Enderecamento_aviamento():
 
         # Verifica se o DataFrame retornou vazio
         if endereco_aviamento.empty:
-            return 'Não encontrado'
-        else:
+            endereco_aviamento['nomeMaterial'] = 'nao encontrado'
             # Usa .iloc[0] para acessar com segurança a primeira linha
-            return endereco_aviamento['nomeMaterial'].iloc[0]
+
+        return endereco_aviamento['nomeMaterial'].iloc[0]
 
     def inserirItemDesconsiderar(self):
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).update_desconsidera_item_aviamento()
