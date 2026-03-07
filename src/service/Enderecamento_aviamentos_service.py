@@ -191,7 +191,7 @@ class Enderecamento_aviamento():
             endereco_aviamento['nomeMaterial'] = 'nao encontrado'
             # Usa .iloc[0] para acessar com segurança a primeira linha
 
-        return endereco_aviamento['nomeMaterial']
+        return endereco_aviamento
 
     def inserirItemDesconsiderar(self):
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).update_desconsidera_item_aviamento()
