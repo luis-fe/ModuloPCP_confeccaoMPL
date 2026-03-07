@@ -181,17 +181,17 @@ class Enderecamento_aviamento():
             return pd.DataFrame(
                 [{'Mensagem': f'Nenhum endereço criado. Todos os {ignorados} já existiam na base.', 'status': False}])
 
+    def procurar_nome_item_considerar(self):
 
+        # Busca o dataframe com os dados do material
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '', self.codItem).buscar_nomeMaterial()
 
-    def procurar_nome_item_considear(self):
-
-        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).buscar_nomeMaterial()
-
+        # Verifica se o DataFrame retornou vazio
         if endereco_aviamento.empty:
-            return pd.DataFrame([{'nomeMaterial':'Nao encontrado'}])
-
+            return 'Não encontrado'
         else:
-            return endereco_aviamento['nomeMaterial'][0]
+            # Usa .iloc[0] para acessar com segurança a primeira linha
+            return endereco_aviamento['nomeMaterial'].iloc[0]
 
     def inserirItemDesconsiderar(self):
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).update_desconsidera_item_aviamento()
