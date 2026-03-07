@@ -234,7 +234,7 @@ class Endereco_aviamento():
                 conn.commit()
     def buscar_nomeMaterial(self):
 
-        select = """select "nomeMaterial" from pcp."AviamentosDisponiveis"
+        select = """select distinct "nomeMaterial" from pcp."AviamentosDisponiveis"
         where "codMaterialEdt" = %s
         """
 
