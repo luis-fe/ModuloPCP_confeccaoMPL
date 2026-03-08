@@ -220,6 +220,32 @@ def POST_inserir_material_desconsiderar_conf():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/remover_item_considerado', methods=['DELETE'])
+@token_required
+def remover_item_considerado():
+    data = request.get_json()
+
+
+    codMaterial = data.get('codMaterial','')
+    codEmpresa = request.args.get('codEmpresa','1')
+
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '','','','','','',codMaterial).remover_item_considerado()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
 @Enderecamento_routes.route('/pcp/api/conferenciaAviamentos_', methods=['POST'])
 @token_required
 def POST_conferenciaAviamentos_():
