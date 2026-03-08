@@ -220,7 +220,7 @@ def POST_inserir_material_desconsiderar_conf():
     return jsonify(OP_data)
 
 
-@Enderecamento_routes.route('/pcp/api/remover_item_considerado', methods=['DELETE'])
+@Enderecamento_routes.route('/pcp/api/remover_item_considerado', methods=['POST'])
 @token_required
 def remover_item_considerado():
     data = request.get_json()
