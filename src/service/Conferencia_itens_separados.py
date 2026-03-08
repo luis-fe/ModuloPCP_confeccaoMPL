@@ -25,7 +25,7 @@ class Conferencia_itens_separados():
 
     def carregar_itens_para_conferir(self):
         '''Metodo que explode os itens a serem conferidos'''
-        consulta = Endereco_aviamento.Endereco_aviamento('','','','','','',0,0,self.numeroOP).get_itens_paraConferir()
+        consulta = Endereco_aviamento.Endereco_aviamento('','','','','','',0,0,self.numeroOP).get_carregar_itens_conferir()
         consulta.fillna('-',inplace=True)
 
         return consulta

@@ -106,7 +106,7 @@ class Endereco_aviamento():
         return consulta
 
 
-    def get_itens_paraConferir(self):
+    def get_carregar_itens_conferir(self):
         '''Metodo que busca se um item ja foi conferido'''
 
 
@@ -117,7 +117,8 @@ class Endereco_aviamento():
         from 
             pcp."AviamentosDisponiveis"
         where 
-            "numeroOP" = %s and "seqRoteiro" not in ('408', '409') 
+            "numeroOP" = %s and "seqRoteiro" not in ('408', '409')
+            AND  "desconsideraConf" ='SIM'
         """
 
         conn = ConexaoPostgre.conexaoEngine()
