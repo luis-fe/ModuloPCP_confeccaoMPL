@@ -4,7 +4,8 @@ from src.models import Endereco_aviamento, Produtos_CSW, MateriaPrima
 
 class Enderecamento_aviamento():
 
-    def __init__(self, codEmpresa='1', rua='', quadra='', posicao='', rua_final='', quadra_final='', posicao_final='', coditem : str = ''):
+    def __init__(self, codEmpresa='1', rua='', quadra='', posicao='', rua_final='', quadra_final='', posicao_final='', coditem : str = '',
+                 qtd_reposta: int = 0):
         self.codEmpresa = codEmpresa
         self.rua = rua
         self.quadra = quadra
@@ -17,6 +18,7 @@ class Enderecamento_aviamento():
         self.posicao_final = posicao_final
 
         self.endereco = f'{self.rua}-{self.quadra}-{self.posicao}'
+        self.qtd_reposta = qtd_reposta
 
     def fila_itens_enderecar(self):
         '''Metodo que obtem do ERP a Fila de Itens a serem enderecados '''
@@ -211,6 +213,41 @@ class Enderecamento_aviamento():
         consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '').obter_itens_configuradados()
 
         return consulta
+
+
+    def inserir_endereco_item_reposto_kit(self, enderecoCorrigido):
+        '''Método que inseri o item enderecado'''
+
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
+                                                                   self.codItem,'',self.qtd_reposta).reposicao_item_endereco()
+
+        return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
+
+
+    def inserir_endereco_item_reposto_unidades(self):
+        '''Método que inseri o item enderecado'''
+
+
+    def transferir_endereco(self):
+        '''Metoddo utilizado para transferir endereco dos itens '''
+
+
+    def get_consultar_endereco(self):
+        '''Metodo que consulta o endereco'''
+
+
+    def update_endereco_kit(self):
+        '''Metodo que faz o update no endereco do kit '''
+
+
+    def update_endereco_unidade(self):
+        '''Metodo que faz o update no endereco caso for unidade '''
+
+
+    def inserir_produtividade_repositor(self):
+        '''Método que inseri a produtividade do repositor '''
+
+
 
 
 
