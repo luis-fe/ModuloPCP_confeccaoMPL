@@ -77,6 +77,54 @@ class Endereco_aviamento():
                 conn.commit()
 
 
+    def get_ultima_sequencia_item(self):
+        '''Metodo que busca a ultima sequencia de um kit item armazenado'''
+
+
+        consulta= """
+        select sequencia from pcp."Item_kit_seq"
+        where "codMaterial" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn,params=(self.codItem,))
+
+        return consulta
+
+
+    def atualiza_inserir_item(self, sequencia):
+
+        verifica = self.get_ultima_sequencia_item()
+
+        if verifica.empty:
+
+            inserir = """insert into pcp."Item_kit_seq" (sequencia , "codMaterial")
+            values ( %s , %s )
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(inserir, (sequencia, self.codItem))
+                    conn.commit()
+
+        else:
+            update = """update pcp."Item_kit_seq set sequencia = %s where 
+            "codMaterial" = %s
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(update, (sequencia, self.codItem))
+                    conn.commit()
+
+
+
+    def inserir_produtividade_reposicao(self):
+        '''Metodo que insire na base de dados a produtividade'''
+
+
     def get_item_qtd_op_CONFERENCIA(self):
         '''Metodo que busca se um item ja foi conferido'''
 

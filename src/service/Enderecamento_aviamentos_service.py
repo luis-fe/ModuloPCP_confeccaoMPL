@@ -249,6 +249,22 @@ class Enderecamento_aviamento():
 
 
 
+    def devolver_ultima_sequencia_item(self):
+        '''Metodo que devolve a ultima sequencia de kit de um determinado material'''
+
+        consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '',
+                                                                   self.codItem).get_ultima_sequencia_item()
+
+        if consulta.empty:
+
+            return pd.DataFrame([{'sequencia':0}])
+        else:
+
+            return pd.DataFrame([{'sequencia':int(consulta['sequencia'][0])}])
+
+
+
+
 
 
 
