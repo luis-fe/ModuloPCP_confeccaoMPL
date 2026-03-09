@@ -216,6 +216,7 @@ def POST_inserir_atualizar_sequencia_codMaterial():
 
 
 
+
 @Enderecamento_routes.route('/pcp/api/inserir_endereco_aviamento', methods=['POST'])
 @token_required
 def POST_inserir_endereco():
