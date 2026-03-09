@@ -118,7 +118,7 @@ class Endereco_aviamento():
             pcp."AviamentosDisponiveis"
         where 
             "numeroOP" = %s and "seqRoteiro" not in ('408', '409')
-            AND  "desconsideraConf" <>'SIM'
+            AND  ("desconsideraConf" <> 'SIM' or "desconsideraConf" is null)
         """
 
         conn = ConexaoPostgre.conexaoEngine()
