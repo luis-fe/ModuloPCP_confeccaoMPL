@@ -4,7 +4,7 @@ import pandas as pd
 class Endereco_aviamento():
 
     def __init__(self, endereco : str = '', rua : str = '', posicao : str = '', quadra :str = '', codItem : str = '',
-                 dataHora : str = '' , qtd : int = 0, qtdConferida : int = 0, numeroOP : str = ''):
+                 dataHora : str = '' , qtd : int = 0, qtdConferida : int = 0, numeroOP : str = '', matricula = ''):
 
         self.endereco = endereco
         self.rua = rua
@@ -15,6 +15,7 @@ class Endereco_aviamento():
         self.qtd = qtd
         self.qtdConferida = qtdConferida
         self.numeroOP = numeroOP
+        self.matricula = matricula
 
 
 
@@ -261,6 +262,52 @@ class Endereco_aviamento():
         consulta = pd.read_sql(select,conn)
 
         return consulta
+
+
+    def inserir_finalizacao_confencia(self):
+        '''Metodo que insere quem finalisou uma determinada conferencia '''
+
+        insert = '''
+        insert into pcp."AviamentosConfFinalizacao" ("matricula" , "dataHora", "numeroOP") values ( %s, %s, %s)
+        '''
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(insert,(self.matricula, self.dataHora, self.numeroOP ))
+                conn.commit()
+
+
+    def get_ops_conferidas(self):
+        '''Metodo que obtem todas as Ops conferidas'''
+
+        get = """
+        select distinct "numeroOP", 'conferida' as status from pcp."AviamentosConfFinalizacao"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(get,conn)
+
+        return consulta
+
+
+    def get_conferencia_periodo(self, dataInicio: str, dataFinal :str ):
+        '''Metodo que busca o historico de conferencia finalizada em um determinado periodo'''
+
+        get = """
+        select * from pcp."AviamentosConfFinalizacao"
+        where "dataHora"::Date >= %s and "dataHora"::Date <= %s 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(get, conn, params=(dataInicio, dataFinal))
+
+        return consulta
+
+
+
 
 
 

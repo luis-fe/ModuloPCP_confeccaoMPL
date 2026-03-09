@@ -1,4 +1,7 @@
+from datetime import datetime
+
 import pandas as pd
+import pytz
 
 from src.models import Endereco_aviamento
 
@@ -7,11 +10,15 @@ class Conferencia_itens_separados():
     '''Classe de servico responsavel por gerenciar a tela de COnferecnia'''
 
 
-    def __init__(self, codEmpresa :str = '1', codMaterial: str = '', numeroOP: str = '' ):
+    def __init__(self, codEmpresa :str = '1', codMaterial: str = '', numeroOP: str = '', matricula: str = '' ):
 
         self.codEmpresa = codEmpresa
         self.codMaterial = codMaterial
         self.numeroOP = numeroOP
+
+
+        self.matricula = matricula
+
 
     def carregar_ordens_para_conferencia(self):
         '''Metodo que carrega os itens disponivel para conferencia'''
@@ -43,3 +50,16 @@ class Conferencia_itens_separados():
 
     def finalizar_conferencia(self):
         '''Metodo que finaliza a conferencia da OP_requisicao_aviamento'''
+
+        consulta = Endereco_aviamento.Endereco_aviamento('','','','','',self.__obter_data_hora() ,0,0,self.numeroOP,self.matricula).inserir_finalizacao_confencia()
+
+        return pd.DataFrame([{'status':True, 'Mensagem':'Finalizado com sucesso'}])
+
+
+
+    def __obter_data_hora(self):
+        """Metodo privado para obter a dataHora do Sistema Operacional em fuso-br """
+        fuso_horario = pytz.timezone('America/Sao_Paulo')
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+        return agora
