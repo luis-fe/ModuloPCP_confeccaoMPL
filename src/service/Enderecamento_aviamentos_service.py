@@ -257,10 +257,10 @@ class Enderecamento_aviamento():
 
         if consulta.empty:
 
-            return pd.DataFrame([{'sequencia':0}])
+            return pd.DataFrame([{'sequencia':0, 'teste':''}])
         else:
 
-            return pd.DataFrame([{'sequencia':int(consulta['sequencia'][0])}])
+            return pd.DataFrame([{'sequencia':int(consulta['sequencia'][0]), 'teste':''}])
 
 
 
