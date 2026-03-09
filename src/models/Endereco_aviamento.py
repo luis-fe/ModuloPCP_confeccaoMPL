@@ -61,7 +61,7 @@ class Endereco_aviamento():
                 curr.execute(insert, (self.endereco, self.rua, self.quadra, self.posicao))
                 conn.commit()
 
-    def reposicao_item_endereco(self):
+    def reposicao_item_endereco(self, enderecoCorrigido):
 
         insert = """
         insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd" )
@@ -73,7 +73,7 @@ class Endereco_aviamento():
 
 
 
-                curr.execute(insert, (self.endereco, self.codItem, self.qtd))
+                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd))
                 conn.commit()
 
 

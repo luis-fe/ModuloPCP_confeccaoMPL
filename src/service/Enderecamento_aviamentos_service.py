@@ -219,7 +219,7 @@ class Enderecamento_aviamento():
         '''Método que inseri o item enderecado'''
 
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
-                                                                   self.codItem,'',self.qtd_reposta).reposicao_item_endereco()
+                                                                   self.codItem,'',self.qtd_reposta).reposicao_item_endereco(enderecoCorrigido)
 
         return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
