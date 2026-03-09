@@ -333,7 +333,7 @@ def POST_inserir_endereco_item_reposto_kit():
 
     codMaterial = data.get('codMaterial','')
     qtdReposto = data.get('qtdReposto','')
-    Endereco = data.get('Endereco','')
+    Endereco = data.get('Endereco')
     codEmpresa = data.get('codEmpresa','')
 
 
