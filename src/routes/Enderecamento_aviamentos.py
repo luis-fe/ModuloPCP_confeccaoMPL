@@ -279,11 +279,11 @@ def POST_finalizar_conferencia_():
 
 
     codEmpresa = data.get('codEmpresa','1')
-    matricula = data.get('matricula','1')
+    codMatricula = data.get('codMatricula','1')
     numeroOP = data.get('numeroOP','1')
 
 
-    dados = Conferencia_itens_separados.Conferencia_itens_separados(codEmpresa, '', numeroOP, matricula).finalizar_conferencia()
+    dados = Conferencia_itens_separados.Conferencia_itens_separados(codEmpresa, '', numeroOP, codMatricula).finalizar_conferencia()
 
     # Obtém os nomes das colunas
     column_names = dados.columns
