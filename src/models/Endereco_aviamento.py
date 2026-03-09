@@ -93,7 +93,7 @@ class Endereco_aviamento():
         return consulta
 
 
-    def atualiza_inserir_item(self, sequencia):
+    def atualiza_inserir__sequenciaitem(self, sequencia):
 
         verifica = self.get_ultima_sequencia_item()
 

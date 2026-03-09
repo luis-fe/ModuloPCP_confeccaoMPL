@@ -244,10 +244,13 @@ class Enderecamento_aviamento():
         '''Metodo que faz o update no endereco caso for unidade '''
 
 
-    def inserir_produtividade_repositor(self):
-        '''Método que inseri a produtividade do repositor '''
+    def inserir_atualizar_sequencia_codMaterial(self, sequencia):
+        '''Método que inseri a ultima sequencia do material '''
 
+        consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '',
+                                                                   self.codItem).atualiza_inserir__sequenciaitem(sequencia)
 
+        return pd.DataFrame([{'status': True, 'Mensagem': 'Ultima sequencia inserida com sucesso'}])
 
     def devolver_ultima_sequencia_item(self):
         '''Metodo que devolve a ultima sequencia de kit de um determinado material'''
