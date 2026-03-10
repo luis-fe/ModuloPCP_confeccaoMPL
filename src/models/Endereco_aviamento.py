@@ -134,7 +134,7 @@ class Endereco_aviamento():
             "PCP".pcp."EnderecoReqItem" eri
         where 
             "dataHora"::Date >= %s
-            and "dataHora"::Date <= '%s
+            and "dataHora"::Date <= %s
             group by usuario 
             order by count("codItem") desc 
         """
