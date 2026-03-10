@@ -128,7 +128,6 @@ class Endereco_aviamento():
         select
             usuario,
             count("codItem") as "qtd.Kit Reposto",
-            sum(qtd) as "em unidades",
             count(distinct(endereco)) as "qtd Enderecos"
         from
             "PCP".pcp."EnderecoReqItem" eri
