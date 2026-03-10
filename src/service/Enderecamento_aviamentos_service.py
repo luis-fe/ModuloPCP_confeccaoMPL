@@ -1,4 +1,8 @@
+from datetime import datetime
+
 import pandas as pd
+import pytz
+
 from src.models import Endereco_aviamento, Produtos_CSW, MateriaPrima
 
 
@@ -215,11 +219,11 @@ class Enderecamento_aviamento():
         return consulta
 
 
-    def inserir_endereco_item_reposto_kit(self, enderecoCorrigido):
+    def inserir_endereco_item_reposto_kit(self, enderecoCorrigido, sequencia, usuario, matricula):
         '''Método que inseri o item enderecado'''
 
-        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
-                                                                   self.codItem,'',self.qtd_reposta).reposicao_item_endereco(enderecoCorrigido)
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', self.obterHoraAtual(),
+                                                                   self.codItem,'',self.qtd_reposta).reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula)
 
         return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
@@ -264,6 +268,13 @@ class Enderecamento_aviamento():
         else:
 
             return pd.DataFrame([{'sequencia':int(consulta['sequencia'][0]), 'teste':''}])
+
+
+    def obterHoraAtual(self):
+        fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+        return agora
 
 
 

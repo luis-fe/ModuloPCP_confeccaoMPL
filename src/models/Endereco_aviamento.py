@@ -61,11 +61,11 @@ class Endereco_aviamento():
                 curr.execute(insert, (self.endereco, self.rua, self.quadra, self.posicao))
                 conn.commit()
 
-    def reposicao_item_endereco(self, enderecoCorrigido):
+    def reposicao_item_endereco(self, enderecoCorrigido, sequencia, usuario, matricula):
 
         insert = """
-        insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd" )
-        values ( %s, %s, %s)
+        insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd", "codItem_seq", "dataHora", "usuario", "matricula" )
+        values ( %s, %s, %s, %s, %s, %s, %s)
         """
 
         with ConexaoPostgre.conexaoInsercao() as conn:
@@ -73,7 +73,7 @@ class Endereco_aviamento():
 
 
 
-                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd))
+                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd), sequencia, self.dataHora, usuario, matricula)
                 conn.commit()
 
 

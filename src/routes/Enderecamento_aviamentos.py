@@ -393,9 +393,12 @@ def POST_inserir_endereco_item_reposto_kit():
     qtdReposto = data.get('qtdReposto','')
     Endereco = data.get('Endereco')
     codEmpresa = data.get('codEmpresa','')
+    sequencia = data.get('sequencia','')
+    usuario = data.get('usuario','')
+    matricula = data.get('matricula','')
 
 
-    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','', codMaterial,qtdReposto).inserir_endereco_item_reposto_kit(Endereco)
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','', codMaterial,qtdReposto).inserir_endereco_item_reposto_kit(Endereco, sequencia,usuario,matricula)
 
     # Obtém os nomes das colunas
     column_names = dados.columns
