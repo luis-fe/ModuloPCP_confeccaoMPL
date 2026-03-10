@@ -110,7 +110,7 @@ class Endereco_aviamento():
                     conn.commit()
 
         else:
-            update = """update pcp."Item_kit_seq set sequencia = %s where 
+            update = """update pcp."Item_kit_seq" set sequencia = %s where 
             "codMaterial" = %s
             """
 
