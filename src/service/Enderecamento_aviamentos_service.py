@@ -1,6 +1,5 @@
 import pandas as pd
 from src.models import Endereco_aviamento, Produtos_CSW, MateriaPrima
-from flask import jsonify
 
 
 class Enderecamento_aviamento():
@@ -244,16 +243,14 @@ class Enderecamento_aviamento():
     def update_endereco_unidade(self):
         '''Metodo que faz o update no endereco caso for unidade '''
 
+
     def inserir_atualizar_sequencia_codMaterial(self, sequencia):
         '''Método que inseri a ultima sequencia do material '''
 
         consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '',
-                                                         self.codItem).atualiza_inserir__sequenciaitem(sequencia)
+                                                                   self.codItem).atualiza_inserir__sequenciaitem(sequencia)
 
-        # CORREÇÃO: Transformar o DataFrame em um dicionário e retornar como JSON
-        df = pd.DataFrame([{'status': True, 'Mensagem': 'Ultima sequencia inserida com sucesso'}])
-
-        return jsonify(df.to_dict(orient='records')[0])
+        return pd.DataFrame([{'status': True, 'Mensagem': 'Ultima sequencia inserida com sucesso'}])
 
     def devolver_ultima_sequencia_item(self):
         '''Metodo que devolve a ultima sequencia de kit de um determinado material'''
