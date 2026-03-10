@@ -195,7 +195,7 @@ def POST_inserir_atualizar_sequencia_codMaterial():
 
 
     codMaterial = data.get('codMaterial','')
-    codEmpresa = request.args.get('codEmpresa','1')
+    codEmpresa = data.get('codEmpresa','1')
     sequencia = data.get('sequencia','0')
 
     dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '', '', '', '', codMaterial).inserir_atualizar_sequencia_codMaterial(sequencia)
