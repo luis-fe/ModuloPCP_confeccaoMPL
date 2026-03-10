@@ -100,7 +100,7 @@ class Endereco_aviamento():
         if verifica.empty:
 
             inserir = """insert into pcp."Item_kit_seq" (sequencia , "codMaterial")
-            values ( %s , %s )
+            values ( %s, %s )
             """
 
             with ConexaoPostgre.conexaoInsercao() as conn:
