@@ -73,7 +73,7 @@ class Endereco_aviamento():
 
 
 
-                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd), sequencia, self.dataHora, usuario, matricula)
+                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd, sequencia, self.dataHora, usuario, matricula))
                 conn.commit()
 
 
