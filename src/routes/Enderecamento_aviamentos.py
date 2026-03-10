@@ -191,11 +191,19 @@ def get_devolver_ultima_sequencia_item():
 @Enderecamento_routes.route('/pcp/api/inserir_atualizar_sequencia_codMaterial', methods=['POST'])
 @token_required
 def POST_inserir_atualizar_sequencia_codMaterial():
-    data = request.get_json()
+    # O silent=True evita erro 400 se o corpo estiver vazio
+    # O force=True ignora se o Content-Type não for application/json
+    data = request.get_json(silent=True, force=True)
+
+    # Verifica se data é None antes de prosseguir
+    if data is None:
+        return jsonify({"status": False, "Mensagem": "Requisição inválida: JSON não encontrado"}), 400
 
     codMaterial = data.get('codMaterial', '')
-    codEmpresa = data.get('codEmpresa', '1')
-    sequencia = data.get('sequencia', '0')
+    codEmpresa = data.get('codEmpresa', '')
+
+    sequencia = data.get('sequencia', '')
+
 
     dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '', '', '', '',
                                                                      codMaterial).inserir_atualizar_sequencia_codMaterial(
