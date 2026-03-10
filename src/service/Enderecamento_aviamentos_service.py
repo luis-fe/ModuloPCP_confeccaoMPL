@@ -270,6 +270,15 @@ class Enderecamento_aviamento():
             return pd.DataFrame([{'sequencia':int(consulta['sequencia'][0]), 'teste':''}])
 
 
+    def produtividade_aviamentos(self,dataInicio, dataFim):
+
+        '''Metodo que busca a produtividade do wms aviamentos '''
+
+        consulta = Endereco_aviamento.Endereco_aviamento().produtividade_reposicao(dataInicio, dataFim)
+
+        return consulta
+
+
     def obterHoraAtual(self):
         fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
         agora = datetime.now(fuso_horario)

@@ -121,8 +121,28 @@ class Endereco_aviamento():
 
 
 
-    def inserir_produtividade_reposicao(self):
-        '''Metodo que insire na base de dados a produtividade'''
+    def produtividade_reposicao(self, dataInicio, dataFim):
+        '''Metodo que busca na base de dados a produtividade'''
+
+        consulta = """
+        select
+            usuario,
+            count("codItem") as "qtd.Kit Reposto",
+            sum(qtd) as "em unidades",
+            count(distinct(endereco)) as "qtd Enderecos"
+        from
+            "PCP".pcp."EnderecoReqItem" eri
+        where 
+            "dataHora"::Date >= %s
+            and "dataHora"::Date <= '%s
+            group by usuario 
+            order by count("codItem") desc 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn,params=(dataInicio, dataFim))
+
+        return consulta
 
 
     def get_item_qtd_op_CONFERENCIA(self):
