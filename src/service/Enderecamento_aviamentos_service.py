@@ -274,9 +274,12 @@ class Enderecamento_aviamento():
 
         '''Metodo que busca a produtividade do wms aviamentos '''
 
-        consulta = Endereco_aviamento.Endereco_aviamento().produtividade_reposicao(dataInicio, dataFim)
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento()
 
-        consulta2 = Endereco_aviamento.Endereco_aviamento().get_conferencia_periodo(dataInicio, dataFim)
+        consulta = endereco_aviamento.produtividade_reposicao(dataInicio, dataFim)
+
+        consulta2 = endereco_aviamento.get_conferencia_periodo(dataInicio, dataFim)
+
 
         dados = {
             '01-ProdutividadeReposicao': consulta.to_dict(orient='records'),

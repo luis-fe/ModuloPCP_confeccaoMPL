@@ -385,7 +385,8 @@ class Endereco_aviamento():
         '''Metodo que busca o historico de conferencia finalizada em um determinado periodo'''
 
         get = """
-        select * from pcp."AviamentosConfFinalizacao"
+        select * from pcp."AviamentosConfFinalizacao" a
+        inner join pcp."usuarioReq" ur on ur."codMatricula" = a.matricula
         where "dataHora"::Date >= %s and "dataHora"::Date <= %s 
         """
 
