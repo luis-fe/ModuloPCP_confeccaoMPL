@@ -103,6 +103,12 @@ class Automacao:
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
             df_entrega.fillna('-', inplace=True)
 
+
+
+
+            itens_restricao = endereco_aviamento.update_desconsidera_item_aviamento2()
+
+
             # --- INÍCIO DA VALIDAÇÃO DE REGISTROS NOVOS ---
 
             # 7.1 Obter chaves existentes

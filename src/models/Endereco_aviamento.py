@@ -290,6 +290,28 @@ class Endereco_aviamento():
                 conn.commit()
 
 
+    def update_desconsidera_item_aviamento2(self):
+
+        update = """
+        update pcp."AviamentosDisponiveis" set "desconsideraConf" = 'SIM' where "codMaterialEdt" in
+        (
+                select
+        DISTINCT
+            ad."codMaterialEdt"        
+            from
+            "PCP".pcp."AviamentosDisponiveis" ad
+        where
+            "desconsideraConf" = 'SIM'
+            )
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn :
+            with conn.cursor() as curr:
+
+                curr.execute(update)
+                conn.commit()
+
+
     def exluir_desconsidera_item_aviamento(self):
 
         update = """
