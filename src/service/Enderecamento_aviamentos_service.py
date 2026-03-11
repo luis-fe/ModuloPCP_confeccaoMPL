@@ -276,7 +276,16 @@ class Enderecamento_aviamento():
 
         consulta = Endereco_aviamento.Endereco_aviamento().produtividade_reposicao(dataInicio, dataFim)
 
-        return consulta
+        consulta2 = Endereco_aviamento.Endereco_aviamento().get_conferencia_periodo(dataInicio, dataFim)
+
+        dados = {
+            '01-ProdutividadeReposicao': consulta.to_dict(orient='records'),
+            '02-ProdutividadeConferente': consulta2.to_dict(orient='records')}
+
+
+        return pd.DataFrame([dados])
+
+
 
 
     def obterHoraAtual(self):
