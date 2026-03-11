@@ -385,9 +385,11 @@ class Endereco_aviamento():
         '''Metodo que busca o historico de conferencia finalizada em um determinado periodo'''
 
         get = """
-        select * from pcp."AviamentosConfFinalizacao" a
+        select a.nomeUsuario, count(numeroOP) as "Ops Coferidas" from pcp."AviamentosConfFinalizacao" a
         inner join pcp."usuarioReq" ur on ur."codMatricula" = a.matricula
         where "dataHora"::Date >= %s and "dataHora"::Date <= %s 
+        group by a.nomeUsuario
+        order by count(numeroOP) desc
         """
 
         conn = ConexaoPostgre.conexaoEngine()
