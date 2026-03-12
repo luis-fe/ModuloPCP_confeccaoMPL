@@ -31,7 +31,7 @@ def ConexaoInternoMPL():
         conn = jaydebeapi.connect(
             'com.intersys.jdbc.CacheDriver',
             f'jdbc:Cache://{host}/CONSISTEM',
-            {'user': user, 'password': password},
+            {'user': user, 'password': 'ccscache'},
             caminho_jar  # <-- Colocamos a nossa variável inteligente aqui
         )
         yield conn
