@@ -22,6 +22,9 @@ def ConexaoInternoMPL():
     # 2. Junta essa pasta com o nome do arquivo .jar (criando o caminho absoluto perfeito)
     caminho_jar = os.path.join(diretorio_atual, 'CacheDB.jar')
 
+    # Adicione esta linha exata:
+    print(f"DEBUG -> USER: {user} | HOST: {host} | SENHA: {'OK' if password else 'VAZIA'}", flush=True)
+
     conn = None
 
     try:
