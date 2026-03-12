@@ -23,7 +23,7 @@ def ConexaoInternoMPL():
             'com.intersys.jdbc.CacheDriver',
             f'jdbc:Cache://{host}/CONSISTEM',
             {'user': user, 'password': password},
-            '/src/connection/CacheDB.jar'
+            './src/connection/CacheDB.jar'
         )
         yield conn
     finally:
