@@ -408,6 +408,21 @@ class Endereco_aviamento():
 
 
 
+    def get_consultar_endereco(self, endereco):
+        '''Metodo que consulta os itens de um endereco'''
+
+        consulta = """
+        select * from "PCP".pcp."EnderecoReqItem" eri
+        where endereco = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn,params=(endereco,))
+
+        return consulta
+
+
 
 
 
