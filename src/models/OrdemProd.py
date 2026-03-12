@@ -180,3 +180,40 @@ class OrdemProd ():
 
 
         return consulta
+
+
+
+    def get_leadTime_completo(self):
+        '''Metodo que consulta o lead time de producao'''
+
+
+        consulta = """
+        select
+            substring(rf.numeroop, 1, 6) as "numeroOP",
+            "dataBaixa",
+            consulta2."dataInicio",
+            "totPecasOPBaixadas" as "qtdPecas"
+        from
+            "Reposicao".pcp.realizado_fase rf
+        left join (
+                select
+                    substring(numeroop, 1, 6) as numeroop,
+                    "dataBaixa" as "dataInicio"
+                from
+                    "Reposicao".pcp.realizado_fase rf2
+                where rf2.codfase = '401'
+                    ) as consulta2 on substring(rf.numeroop, 1, 6) = consulta2.numeroop
+        where
+            rf.codfase = '449'
+            and rf."dataBaixa" >= %s
+            and rf."dataBaixa" <= %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta,conn, params=(self.dataInicio, self.dataFinal))
+
+        return consulta
+
+
+
+
