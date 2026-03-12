@@ -241,7 +241,7 @@ class Enderecamento_aviamento():
 
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento().get_consultar_endereco(endereco)
 
-        return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
+        return endereco_aviamento
 
 
 
