@@ -210,6 +210,28 @@ def get_produtividade_aviamentos():
     return jsonify(OP_data)
 
 
+
+@Enderecamento_routes.route('/pcp/api/get_consultar_endereco', methods=['GET'])
+@token_required
+def get_consultar_endereco():
+    endereco = request.args.get('endereco','1')
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento().get_consultar_endereco(endereco)
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
 @Enderecamento_routes.route('/pcp/api/inserir_atualizar_sequencia_codMaterial', methods=['POST'])
 @token_required
 def POST_inserir_atualizar_sequencia_codMaterial():

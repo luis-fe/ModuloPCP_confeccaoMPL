@@ -236,10 +236,10 @@ class Enderecamento_aviamento():
         '''Metoddo utilizado para transferir endereco dos itens '''
 
 
-    def get_consultar_endereco(self):
+    def get_consultar_endereco(self, endereco):
         '''Metodo que consulta o endereco'''
 
-        endereco_aviamento = Endereco_aviamento.Endereco_aviamento().get_consultar_endereco(enderecoCorrigido)
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento().get_consultar_endereco(endereco)
 
         return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
