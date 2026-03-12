@@ -1,5 +1,5 @@
 # Use a imagem oficial do Python como base
-FROM python:3.11-slim
+FROM python:3.11-slim-bullseye
 
 # Instale as dependências do sistema necessárias e o OpenJDK 11
 RUN apt-get update && apt-get install -y \
