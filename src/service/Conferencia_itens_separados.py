@@ -55,6 +55,13 @@ class Conferencia_itens_separados():
 
         return pd.DataFrame([{'status':True, 'Mensagem':'Finalizado com sucesso'}])
 
+    def finalizar_conferencia_comPendencia(self):
+        '''Metodo que finaliza a conferencia da OP_requisicao_aviamento'''
+
+        consulta = Endereco_aviamento.Endereco_aviamento('','','','','',self.__obter_data_hora() ,0,0,self.numeroOP,self.matricula).inserir_finalizacao_confencia('pendente')
+
+        return pd.DataFrame([{'status':True, 'Mensagem':'Finalizado com sucesso'}])
+
 
 
     def __obter_data_hora(self):

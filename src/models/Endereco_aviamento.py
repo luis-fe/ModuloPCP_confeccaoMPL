@@ -353,11 +353,11 @@ class Endereco_aviamento():
         return consulta
 
 
-    def inserir_finalizacao_confencia(self):
+    def inserir_finalizacao_confencia(self, situacao = 'ok'):
         '''Metodo que insere quem finalisou uma determinada conferencia '''
 
-        insert = '''
-        insert into pcp."AviamentosConfFinalizacao" ("matricula" , "dataHora", "numeroOP") values ( %s, %s, %s)
+        insert = f'''
+        insert into pcp."AviamentosConfFinalizacao" ("matricula" , "dataHora", "numeroOP", "situacao") values ( %s, %s, %s, {situacao})
         '''
 
         with ConexaoPostgre.conexaoInsercao() as conn:

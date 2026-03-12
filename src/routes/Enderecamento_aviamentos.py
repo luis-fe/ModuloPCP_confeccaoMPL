@@ -377,6 +377,31 @@ def POST_finalizar_conferencia_():
     del dados
     return jsonify(OP_data)
 
+@Enderecamento_routes.route('/pcp/api/finalizar_conferencia_comPendencia', methods=['POST'])
+@token_required
+def POST_finalizar_conferencia_comPendencia_():
+    data = request.get_json()
+
+
+    codEmpresa = data.get('codEmpresa','1')
+    codMatricula = data.get('codMatricula','1')
+    numeroOP = data.get('numeroOP','1')
+
+
+    dados = Conferencia_itens_separados.Conferencia_itens_separados(codEmpresa, '', numeroOP, codMatricula).finalizar_conferencia_comPendencia()
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
 
 @Enderecamento_routes.route('/pcp/api/inserir_endereco_aviamento', methods=['POST'])
 @token_required
