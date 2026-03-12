@@ -185,7 +185,7 @@ class Endereco_aviamento():
         from 
             pcp."AviamentosDisponiveis"
         where 
-            "numeroOP" = %s and "seqRoteiro" not in ('408', '409')
+            "numeroOP" = %s and "seqRoteiro" not in ('408', '409','426')
             AND  ("desconsideraConf" <> 'SIM' or "desconsideraConf" is null)
         """
 
