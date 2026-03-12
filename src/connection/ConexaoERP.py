@@ -16,20 +16,22 @@ def ConexaoInternoMPL():
     password = os.getenv('CSW_PASSWORD')
     host = os.getenv('CSW_HOST')
 
-    conn = None  # <- IMPORTANTE
+    # 1. Pega o caminho exato da pasta onde ESTE arquivo (ConexaoERP.py) está rodando agora
+    diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+
+    # 2. Junta essa pasta com o nome do arquivo .jar (criando o caminho absoluto perfeito)
+    caminho_jar = os.path.join(diretorio_atual, 'CacheDB.jar')
+
+    conn = None
 
     try:
         conn = jaydebeapi.connect(
             'com.intersys.jdbc.CacheDriver',
             f'jdbc:Cache://{host}/CONSISTEM',
             {'user': user, 'password': password},
-            './src/connection/CacheDB.jar'
+            caminho_jar  # <-- Colocamos a nossa variável inteligente aqui
         )
         yield conn
     finally:
         if conn is not None:
             conn.close()
-
-
-####### TESTE NO INICIO DA APLICACAO,
-
