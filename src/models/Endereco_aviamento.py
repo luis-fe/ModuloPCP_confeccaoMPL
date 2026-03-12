@@ -357,7 +357,7 @@ class Endereco_aviamento():
         '''Metodo que insere quem finalisou uma determinada conferencia '''
 
         insert = f'''
-        insert into pcp."AviamentosConfFinalizacao" ("matricula" , "dataHora", "numeroOP", "situacao") values ( %s, %s, %s, {situacao})
+        insert into pcp."AviamentosConfFinalizacao" ("matricula" , "dataHora", "numeroOP", "situacao") values ( %s, %s, %s, '{situacao}')
         '''
 
         with ConexaoPostgre.conexaoInsercao() as conn:
