@@ -1212,7 +1212,7 @@ class MonitorPedidosOP():
 
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
-        monitorDetalhadoOps.to_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/detalhadoops{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps.to_csv(f'/detalhadoops{self.descricaoArquivo}.csv')
 
         monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
                                         ascending=[False]).reset_index()
@@ -1271,7 +1271,7 @@ class MonitorPedidosOP():
         sql = pd.read_sql(sql, conn)
 
         # 1 - ler o arquivo csv do monitor de ops
-        monitorDetalhadoOps = pd.read_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps = pd.read_csv(f'/monitorOps{self.descricaoArquivo}.csv')
 
         #monitorDetalhadoOps2 = monitorDetalhadoOps[
             #(monitorDetalhadoOps['id_op2'] == 'Atendeu') & (monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
@@ -1316,7 +1316,7 @@ class MonitorPedidosOP():
 
     def ops_tamanho_cor(self):
         '''Metodo para explodir por tam e cor o monitor'''
-        monitor = pd.read_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitor = pd.read_csv(f'/monitorOps{self.descricaoArquivo}.csv')
         monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
 
 
@@ -1359,7 +1359,7 @@ class MonitorPedidosOP():
 
         monitorDetalhadoOps = monitor2.groupby(['numeroop', 'codProduto']).agg({"QtdSaldo": "sum"}).reset_index()
 
-        monitorDetalhadoOps.to_csv(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/detalhadoops{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps.to_csv(f'/detalhadoops{self.descricaoArquivo}.csv')
 
         monitor1 = monitor1.sort_values(by=['Ocorrencia Pedidos'],
                                         ascending=[False]).reset_index()

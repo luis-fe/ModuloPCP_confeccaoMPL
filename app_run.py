@@ -20,7 +20,7 @@ port = int(os.environ.get('PORT', int(porta_escolhida)))
 app.register_blueprint(routes_blueprint)
 
 if __name__ == '__main__':
-
+    'versao 13.0.26'
 
 
     app.run(host='0.0.0.0', port=port)
