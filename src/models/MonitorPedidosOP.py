@@ -1177,7 +1177,6 @@ class MonitorPedidosOP():
         consulta3 = self.consultaIdOPReservada()
         monitor = pd.merge(monitor, consulta3, on='Op Reservada2', how='left')
         monitor.to_csv(f'/dados/monitorOps{self.descricaoArquivo}.csv')
-
         data = monitor[
             (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
