@@ -30,4 +30,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 9000
 
 # Comando para rodar a aplicação Flask
-CMD ["python", "run_2.py"]
+CMD ["python", "app_run.py"]
