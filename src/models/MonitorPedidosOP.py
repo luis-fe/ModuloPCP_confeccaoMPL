@@ -672,7 +672,7 @@ class MonitorPedidosOP():
 
 
 
-        fp.write(f'{caminhoAbsoluto}/monitor{self.descricaoArquivo}.parquet', pedidos)
+        fp.write(f'/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         #except:
             #print(pedidos.columns.tolist())
@@ -889,13 +889,13 @@ class MonitorPedidosOP():
 
         # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
         try:
-            parquet_file = fp.ParquetFile(f'monitor{self.descricaoArquivo}.parquet')
+            parquet_file = fp.ParquetFile(f'/monitor{self.descricaoArquivo}.parquet')
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'monitor_filtro_{self.empresa}.parquet', monitor)
+            fp.write(f'/monitor_filtro_{self.empresa}.parquet', monitor)
         except:
-            parquet_file = fp.ParquetFile(f'/home/grupompl/ModuloPCP_confeccaoMPL/dados/monitor_filtro_{self.empresa}.parquet')
+            parquet_file = fp.ParquetFile(f'/monitor_filtro_{self.empresa}.parquet')
             monitor = parquet_file.to_pandas()
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
