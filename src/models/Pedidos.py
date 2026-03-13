@@ -89,7 +89,7 @@ class Pedidos():
     def listagemPedidosSku(self, detalhaSku = '', iniVendas = '', fimVendas = '', iniFat = '' , fimFat = '', padrao_monitor = False):
 
 
-        caminho_arquivo = f"{configApp.localArquivoParquet}/pedidos.parquet"
+        caminho_arquivo = f"{configApp.localArquivoParquet}/dados/pedidos.parquet"
 
         # Carrega apenas os registros com codProduto == self.codReduzido, se aplicável
         if detalhaSku != '':
