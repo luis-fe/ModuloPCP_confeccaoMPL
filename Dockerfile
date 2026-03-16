@@ -30,4 +30,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 9000
 
 # Comando para rodar a aplicação com Gunicorn (3 workers)
-CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:9000", "app_run:app"]
+CMD ["gunicorn", "--workers=3", "--timeout=120", "--bind=0.0.0.0:9000", "app_run:app"]
