@@ -14,8 +14,8 @@ WORKDIR /app
 # Copie o arquivo de requisitos para o diretório de trabalho
 COPY requirements.txt requirements.txt
 
-# Instale as dependências do Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Instale as dependências do Python E o Gunicorn
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copie o arquivo .jar e o código do aplicativo para o diretório de trabalho
 COPY . .
@@ -27,7 +27,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Exponha a porta em que a aplicação Flask estará rodando
-EXPOSE 8000
+EXPOSE 9000
 
-# Comando para rodar a aplicação Flask
-CMD ["python", "run_2.py"]
+# Comando para rodar a aplicação com Gunicorn (3 workers)
+CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:9000", "app_run:app"]
