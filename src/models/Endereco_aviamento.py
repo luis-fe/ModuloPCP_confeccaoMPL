@@ -427,7 +427,7 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select er.endereco,  "QtdItens" from "PCP".pcp."EnderecoReq" er 
+        select er.endereco,  "QtdItens"::varchar from "PCP".pcp."EnderecoReq" er 
             left join (
                 select "endereco", count(distinct "codItem") as "QtdItens"
                 from "PCP".pcp."EnderecoReqItem" eri 
