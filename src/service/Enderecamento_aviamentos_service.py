@@ -221,6 +221,7 @@ class Enderecamento_aviamento():
     def get_mapa_enderecos(self):
 
         consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '').get_mapa_endereco()
+        consulta.fillna('0',inplace=True)
 
         return consulta
 
