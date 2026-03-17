@@ -144,6 +144,28 @@ def get_obter_itens_configurados():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/get_mapa_enderecos', methods=['GET'])
+@token_required
+def get_mapa_enderecos():
+    codEmpresa = request.args.get('codEmpresa','1')
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa,'','','','','','').get_mapa_enderecos()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
 @Enderecamento_routes.route('/pcp/api/procurar_nome_item_considear', methods=['GET'])
 @token_required
 def get_procurar_nome_item_considear():

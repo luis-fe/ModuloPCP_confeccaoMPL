@@ -423,6 +423,27 @@ class Endereco_aviamento():
         return consulta
 
 
+    def get_mapa_endereco(self):
+
+
+        consulta = """
+        select er.endereco,  "QtdItens" from "PCP".pcp."EnderecoReq" er 
+            left join (
+                select "endereco", count(distinct "codItem") as "QtdItens"
+                from "PCP".pcp."EnderecoReqItem" eri 
+                group by "endereco"
+            ) ocupacao 
+            on ocupacao.endereco = er.endereco 
+            order by rua desc 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn)
+
+        return consulta
+
+
     def get_consultar_codItem_sequencia(self,sequencia):
         '''Metodo que consulta os itens de um endereco'''
 

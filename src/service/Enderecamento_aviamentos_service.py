@@ -218,6 +218,14 @@ class Enderecamento_aviamento():
 
         return consulta
 
+    def get_mapa_enderecos(self):
+
+        consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '').get_mapa_endereco()
+
+        return consulta
+
+
+
 
     def inserir_endereco_item_reposto_kit(self, enderecoCorrigido, sequencia, usuario, matricula):
         '''Método que inseri o item enderecado'''
