@@ -242,6 +242,7 @@ class Enderecamento_aviamento():
             item_pesquisado = consulta['codItem'][0]
 
             if item_pesquisado == self.codItem:
+                endereco_aviamento.reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula)
 
                 return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 

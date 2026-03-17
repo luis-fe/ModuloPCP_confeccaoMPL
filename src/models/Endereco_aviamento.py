@@ -423,6 +423,20 @@ class Endereco_aviamento():
         return consulta
 
 
+    def get_consultar_codItem_sequencia(self,sequencia):
+        '''Metodo que consulta os itens de um endereco'''
+
+        consulta = """
+        select "codItem" from "PCP".pcp."EnderecoReqItem" eri
+        where "codItem" = %s and "codItem_seq" = %s
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn,params=(self.codItem, sequencia))
+
+        return consulta
+
 
 
 
