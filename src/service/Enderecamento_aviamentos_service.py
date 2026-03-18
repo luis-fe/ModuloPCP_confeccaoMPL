@@ -279,8 +279,15 @@ class Enderecamento_aviamento():
             return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
         else:
+            item_pesquisado = consulta['codItem'][0]
+            if item_pesquisado == self.codItem:
+                endereco_aviamento.reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula,
+                                                           'por unidade')
 
-            return pd.DataFrame([{'Mensagem': 'Endereco Oculpado com outro item ', 'status': False}])
+                return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
+            else:
+
+                return pd.DataFrame([{'Mensagem': 'Endereco Oculpado com outro item ', 'status': False}])
 
 
     def transferir_endereco(self):
