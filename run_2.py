@@ -38,7 +38,7 @@ if __name__ == '__main__':
     ordemProd_Csw.realizado_fases_csw()
 
 
-    #Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
+    Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
 
     os.system('clear')
 
