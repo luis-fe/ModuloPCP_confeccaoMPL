@@ -290,8 +290,11 @@ class Endereco_aviamento():
 
 
 
-            conn = ConexaoPostgre.conexaoEngine()
-            consulta = pd.read_sql(consulta, conn)
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+
+                    curr.execute(consulta,())
+                    conn.commit()
 
             return consulta
 
