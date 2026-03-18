@@ -286,6 +286,10 @@ class Endereco_aviamento():
             	"numeroOP" {clausula}
             """
 
+            print(consulta)
+
+
+
             conn = ConexaoPostgre.conexaoEngine()
             consulta = pd.read_sql(consulta, conn)
 
