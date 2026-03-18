@@ -61,20 +61,35 @@ class Endereco_aviamento():
                 curr.execute(insert, (self.endereco, self.rua, self.quadra, self.posicao))
                 conn.commit()
 
-    def reposicao_item_endereco(self, enderecoCorrigido, sequencia, usuario, matricula):
-
-        insert = """
-        insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd", "codItem_seq", "dataHora", "usuario", "matricula" )
-        values ( %s, %s, %s, %s, %s, %s, %s)
-        """
-
-        with ConexaoPostgre.conexaoInsercao() as conn:
-            with conn.cursor() as curr:
+    def reposicao_item_endereco(self, enderecoCorrigido, sequencia, usuario, matricula, controle = 'kit'):
 
 
+        if controle == 'kit':
 
-                curr.execute(insert, (enderecoCorrigido, self.codItem, self.qtd, sequencia, self.dataHora, usuario, matricula))
-                conn.commit()
+            insert = """
+            insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd", "codItem_seq", "dataHora", "usuario", "matricula","tipoControle" )
+            values ( %s, %s, %s, %s, %s, %s, %s , %s)
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(insert, (
+                    enderecoCorrigido, self.codItem, self.qtd, sequencia, self.dataHora, usuario, matricula,'por kit'))
+                    conn.commit()
+        else:
+
+            insert = """
+            insert into pcp."EnderecoReqItem" ( "endereco", "codItem", "qtd", "codItem_seq", "dataHora", "usuario", "matricula", "tipoControle" )
+            values ( %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+
+            with ConexaoPostgre.conexaoInsercao() as conn:
+                with conn.cursor() as curr:
+                    curr.execute(insert, (
+                    enderecoCorrigido, self.codItem, self.qtd, sequencia, self.dataHora, usuario, matricula, "por unidade"))
+                    conn.commit()
+
+
 
 
     def get_ultima_sequencia_item(self):
