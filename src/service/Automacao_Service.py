@@ -76,6 +76,15 @@ class Automacao:
             df_costura = self.ordemProd_csw.ops_emAberto_movimentacao_fase()
             df_costura['passou_costura'] = 'sim'
 
+            # 3.1. Excluindo da fila de Disponibilidade as OPs processadas pela fase 428
+            ops_processadas = df_costura['numeroOP'].dropna().unique()
+
+            # Formatação segura da cláusula IN
+            clausula_in_ops_processadas = "IN ('" + "','".join(f"{val}" for val in ops_processadas) + "')"
+            endereco_aviamento.delete_ops_processadas_AviamentosDisponives(clausula_in_ops_processadas)
+
+
+
             # 4. Cruzamento de dados (Merge)
             df_final = pd.merge(df_aberto, df_separacao[['numeroOP', 'passou_separacao']], on='numeroOP', how='left')
             df_final = pd.merge(df_final, df_costura[['numeroOP', 'passou_costura']], on='numeroOP', how='left')

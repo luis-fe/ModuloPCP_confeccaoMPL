@@ -276,6 +276,21 @@ class Endereco_aviamento():
 
         return consulta
 
+    def delete_ops_processadas_AviamentosDisponives(self, clausula):
+            '''Metodo que busca a lista de AviamentosDisponiveis '''
+
+            consulta = f"""
+            delete from  
+            pcp."AviamentosDisponiveis" 
+            where
+            	"numeroOP" {clausula}
+            """
+
+            conn = ConexaoPostgre.conexaoEngine()
+            consulta = pd.read_sql(consulta, conn)
+
+            return consulta
+
 
     def update_desconsidera_item_aviamento(self):
 
