@@ -519,7 +519,7 @@ def post_inserir_endereco_item_reposto_unitario():
     matricula = data.get('matricula','')
 
 
-    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','', codMaterial,qtdReposto).inserir_endereco_item_reposto_unidades(Endereco, sequencia,usuario,matricula)
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '','','','', codMaterial,qtdReposto).inserir_endereco_item_reposto_unidades(Endereco,usuario,matricula, sequencia)
 
     # Obtém os nomes das colunas
     column_names = dados.columns

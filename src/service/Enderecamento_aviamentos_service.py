@@ -274,7 +274,7 @@ class Enderecamento_aviamento():
         consulta = endereco_aviamento.get_consultar_endereco(enderecoCorrigido)
 
         if consulta.empty:
-            endereco_aviamento.reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula)
+            endereco_aviamento.reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula,'por unidade')
 
             return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
