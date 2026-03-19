@@ -90,6 +90,22 @@ class Endereco_aviamento():
                     conn.commit()
 
 
+    def update_item_endereco_controle_unitario(self, enderecoCorrigido, sequencia, usuario, matricula):
+        '''Metodo que atualiza a quantidade do item no controle unitario '''
+
+        update = f"""
+        update pcp."EnderecoReqItem"
+        set "qtd" = "qtd" + {self.qtd}
+        where  "codItem" = %s and "endereco" = %s and "sequencia" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+                curr.execute(update, (
+                self.codItem, enderecoCorrigido, sequencia))
+                conn.commit()
+
+
 
 
     def get_ultima_sequencia_item(self):

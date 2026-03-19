@@ -227,6 +227,31 @@ class Enderecamento_aviamento():
 
 
 
+    def update_endereco_item_kit(self, enderecoCorrigido, sequencia, usuario, matricula):
+
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
+                                                                   self.codItem,self.obterHoraAtual(),self.qtd_reposta)
+
+        # 1 - validade se o endereco está vazio
+
+        consulta = endereco_aviamento.get_consultar_endereco(enderecoCorrigido)
+
+        if not consulta.empty:
+
+            item_pesquisado = consulta['codItem'][0]
+
+            if item_pesquisado == self.codItem:
+                endereco_aviamento.update_item_endereco_controle_unitario(enderecoCorrigido, sequencia, usuario, matricula)
+
+                return pd.DataFrame([{'Mensagem': 'Item atualizado com sucesso ', 'status': True}])
+
+
+
+
+
+
+
+
 
     def inserir_endereco_item_reposto_kit(self, enderecoCorrigido, sequencia, usuario, matricula):
         '''Método que inseri o item enderecado'''
@@ -242,7 +267,7 @@ class Enderecamento_aviamento():
         if consulta.empty:
 
             endereco_aviamento.reposicao_item_endereco(enderecoCorrigido, sequencia, usuario, matricula)
-        
+
 
             return pd.DataFrame([{'Mensagem': 'Item reposto com sucesso ', 'status': True}])
 
