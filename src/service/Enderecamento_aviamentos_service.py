@@ -297,9 +297,20 @@ class Enderecamento_aviamento():
     def get_consultar_endereco(self, endereco):
         '''Metodo que consulta o endereco'''
 
-        endereco_aviamento = Endereco_aviamento.Endereco_aviamento().get_consultar_endereco(endereco)
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento()
 
-        return endereco_aviamento
+        endereco_aviamento.endereco = endereco
+
+        validar =  endereco_aviamento.consulta_endereco_individual()
+
+        if validar.empty:
+
+            return pd.DataFrame([{'Mensagem':'Endereco nao existe', 'status':False}])
+        else:
+
+            endereco_aviamento = endereco_aviamento.get_consultar_endereco(endereco)
+
+            return endereco_aviamento
 
 
 
