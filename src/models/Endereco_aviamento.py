@@ -464,11 +464,14 @@ class Endereco_aviamento():
 
 
         consulta = """
-        select er.endereco,  "QtdItens"::varchar from "PCP".pcp."EnderecoReq" er 
+        select er.endereco,  "QtdItens"::varchar, "tipoControle" from "PCP".pcp."EnderecoReq" er 
             left join (
-                select "endereco", count(distinct "codItem") as "QtdItens"
+                select 
+                	"endereco", 
+                	count(distinct "codItem") as "QtdItens",
+                	"tipoControle"
                 from "PCP".pcp."EnderecoReqItem" eri 
-                group by "endereco"
+                group by "endereco","tipoControle"
             ) ocupacao 
             on ocupacao.endereco = er.endereco 
             order by rua desc 
