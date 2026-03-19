@@ -96,7 +96,7 @@ class Endereco_aviamento():
         update = f"""
         update pcp."EnderecoReqItem"
         set "qtd" = "qtd" + {self.qtd}
-        where  "codItem" = %s and "endereco" = %s and "sequencia" = %s
+        where  "codItem" = %s and "endereco" = %s and "codItem_seq" = %s
         """
 
         with ConexaoPostgre.conexaoInsercao() as conn:

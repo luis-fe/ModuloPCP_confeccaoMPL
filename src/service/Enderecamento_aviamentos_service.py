@@ -227,7 +227,7 @@ class Enderecamento_aviamento():
 
 
 
-    def update_endereco_item_kit(self, enderecoCorrigido, sequencia, usuario, matricula):
+    def update_endereco_item_unitario(self, enderecoCorrigido, sequencia, usuario, matricula):
 
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '',
                                                                    self.codItem,self.obterHoraAtual(),self.qtd_reposta)
