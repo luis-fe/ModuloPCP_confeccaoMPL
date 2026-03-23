@@ -206,7 +206,7 @@ class Automacao:
             # O cálculo deve ser feito ANTES da formatação para string
             fila = pd.merge(fila, consulta, on='codEditado_x', how='left')
 
-            fila['saldoEnderecado'] = fila['saldoEnderecado'].fillna(0, inplace=True)
+            fila['saldoEnderecado'].fillna(0, inplace=True)
 
             # Garante que são números antes da subtração
             fila['estoqueAtual'] = pd.to_numeric(fila['estoqueAtual'], errors='coerce').fillna(0)
