@@ -1,4 +1,4 @@
-
+import pandas as pd
 from src.models import OrdemProd
 
 class LeadTime ():
@@ -20,6 +20,28 @@ class LeadTime ():
         leadTime_df = ordemProd.get_leadTime_completo()
 
         # 1 - encontrando a ponderacao pela qtd da OP
+
+        leadTime_df['dataInicio'] = pd.to_datetime(leadTime_df['dataInicio'])
+        leadTime_df['dataBaixa'] = pd.to_datetime(leadTime_df['dataBaixa'])
+
+        leadTime_df['lead time realizado'] = (leadTime_df['dataBaixa'] - leadTime_df['dataInicio']).dt.days
+
+        leadTime_df['dataInicio'] = leadTime_df['dataInicio'].dt.strftime('%Y-%m-%d')
+        leadTime_df['dataBaixa'] = leadTime_df['dataBaixa'].dt.strftime('%Y-%m-%d')
+
+
+        dados = {
+            'Média Pondereda': True,
+            'Detalhamento Lead Time Geral': leadTime_df.to_dict(orient='records')
+
+        }
+        return pd.DataFrame([dados])
+
+
+
+
+
+
 
 
 

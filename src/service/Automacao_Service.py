@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytz
 
-from src.models import OrdemProd_Csw, Endereco_aviamento
+from src.models import OrdemProd_Csw, Endereco_aviamento, Produtos_CSW, MateriaPrima
 from src.connection import ConexaoPostgre
 from src.models.ServicoAutomacao import ServicoAutomacao
 
@@ -168,3 +168,85 @@ class Automacao:
         agora = datetime.now(fuso_horario)
         agora = agora.strftime('%Y-%m-%d %H:%M:%S')
         return agora
+
+    import pandas as pd
+
+    def recebimento_aviamentos_CSW(self):
+        '''Automação que busca os aviamentos disponíveis para repor'''
+
+        self.servicoAutomacao = ServicoAutomacao('007', 'Fila de Aviamentos a repor')
+        self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
+
+        if self.ultima_atualizacao > self.intervalo_automacao:
+            # 1. Busca de dados
+            fila = Produtos_CSW.Produtos_CSW(self.codEmpresa).estoqueNat_aviamentos()
+            categorias = MateriaPrima.Materia_prima_aviamento(self.codEmpresa).configuracao_de_para_descricao()
+            consulta = Endereco_aviamento.Endereco_aviamento().get_consultar_items_repostos()
+
+            # 2. Categorização
+            fila['nome_limpo'] = fila['nome'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode(
+                'utf-8').str.upper()
+            fila['categoria'] = 'Outros'
+
+            for _, regra in categorias.iterrows():
+                gatilho = regra['descricao_contem'].upper()
+                categoria_destino = regra['categoria']
+                mascara = fila['nome_limpo'].str.contains(gatilho, na=False)
+                fila.loc[mascara, 'categoria'] = categoria_destino
+
+            fila = fila.drop(columns=['nome_limpo'])
+
+            # 3. Cruzamento de Dados (Merge) e Cálculo de Saldo
+            # O cálculo deve ser feito ANTES da formatação para string
+            fila = pd.merge(fila, consulta, on='codEditado_x', how='left')
+
+            fila['saldoEnderecado'] = fila['saldoEnderecado'].fillna(0)
+
+            # Garante que são números antes da subtração
+            fila['estoqueAtual'] = pd.to_numeric(fila['estoqueAtual'], errors='coerce').fillna(0)
+            fila['estoque_calculado'] = fila['estoqueAtual'] - fila['saldoEnderecado']
+
+            # 4. Funções de Formatação
+            def formatar_inteiro_milhar(valor):
+                try:
+                    return f"{int(float(valor)):,}".replace(',', '.')
+                except:
+                    return str(valor)
+
+            def formatar_decimal_ptbr(valor):
+                try:
+                    return f"{float(valor):,.3f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                except:
+                    return str(valor)
+
+            # 5. Aplicação da Formatação Visual
+            mascara_un = fila['unidadeMedida'].isin(['UM', 'UN'])
+
+            # Aplicamos a formatação no estoque calculado
+            fila.loc[mascara_un, 'estoque_final_str'] = fila.loc[mascara_un, 'estoque_calculado'].apply(
+                formatar_inteiro_milhar)
+            fila.loc[~mascara_un, 'estoque_final_str'] = fila.loc[~mascara_un, 'estoque_calculado'].apply(
+                formatar_decimal_ptbr)
+
+            # Padronização de nomes de unidade
+            fila['unidadeMedida'] = fila['unidadeMedida'].replace({'UM': 'Unid', 'UN': 'Unid'})
+
+            # Preenchimento de nulos finais para o Banco de Dados
+            fila = fila.fillna('-')
+
+            # 6. Inserção no Banco
+            # Nota: Usei 'replace' (corrigindo o erro de digitação 'replance')
+            ConexaoPostgre.Funcao_InserirPCPMatriz(
+                fila,
+                len(fila),
+                'FilaAviamentos',
+                'replace'
+            )
+
+
+
+
+
+
+
+

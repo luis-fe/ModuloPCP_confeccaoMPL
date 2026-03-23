@@ -27,7 +27,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Exponha a porta em que a aplicação Flask estará rodando
-EXPOSE 9000
+EXPOSE 8000
 
 # Comando para rodar a aplicação com Gunicorn (3 workers)
-CMD ["gunicorn", "--workers=3", "--timeout=120", "--bind=0.0.0.0:9000", "app_run:app"]
+CMD ["python", "run_2.py"]

@@ -515,6 +515,25 @@ class Endereco_aviamento():
         return consulta
 
 
+    def get_consultar_items_repostos(self):
+
+        consulta = """
+        select
+            "codItem" as "codEditado_x",
+            sum(qtd) as saldoEnderecado
+        from
+            "PCP".pcp."EnderecoReqItem" eri
+        group by
+            "codItem"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn)
+
+        return consulta
+
+
 
 
 

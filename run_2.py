@@ -34,6 +34,8 @@ if __name__ == '__main__':
     #pedidosCsw.put_automacao()
 
 
+    Automacao_Service.Automacao().recebimento_aviamentos_CSW()
+
     ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,int(tempo_realizadofases))
     ordemProd_Csw.realizado_fases_csw()
 
