@@ -378,8 +378,13 @@ class Endereco_aviamento():
                 conn.commit()
     def buscar_nomeMaterial(self):
 
-        select = """select distinct "nomeMaterial" from pcp."AviamentosDisponiveis"
-        where "codMaterialEdt" = %s
+        select = """
+        select distinct "nomeMaterial" from ( 
+                select  "nomeMaterial","codMaterialEdt" from pcp."AviamentosDisponiveis"
+                union 
+                select  "nome","codEditado_x" from pcp."FilaAviamentos") as e
+                where e."codMaterialEdt" = %s
+                limit  1
         """
 
         conn = ConexaoPostgre.conexaoEngine()
