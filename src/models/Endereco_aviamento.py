@@ -520,7 +520,7 @@ class Endereco_aviamento():
         consulta = """
         select
             "codItem" as "codEditado_x",
-            sum(qtd) as saldoEnderecado
+            sum(qtd) as "saldoEnderecado"
         from
             "PCP".pcp."EnderecoReqItem" eri
         group by
