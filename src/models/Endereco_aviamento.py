@@ -533,6 +533,33 @@ class Endereco_aviamento():
 
         return consulta
 
+    def get_consulta_fila_recebimento(self):
+
+        consulta = """
+                select
+                    "CodComponente",
+                    "LeadTime",
+                    "LoteMin",
+                    "categoria",
+                    "codEditado_x",
+                    "codEditado_y",
+                    "estoque_final_str" as "estoqueAtual",
+                    "fatorConversao",
+                    "fornencedorPreferencial",
+                    "loteMut",
+                    "nome",
+                    "novoNome",
+                    "unidadeMedida"
+                from
+                    "PCP".pcp."FilaAviamentos" fa 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        consulta = pd.read_sql(consulta,conn)
+
+        return consulta
+
 
 
 

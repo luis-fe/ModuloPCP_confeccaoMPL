@@ -28,77 +28,7 @@ class Enderecamento_aviamento():
         '''Metodo que obtem do ERP a Fila de Itens a serem enderecados '''
 
 
-        fila = Produtos_CSW.Produtos_CSW(self.codEmpresa).estoqueNat_aviamentos()
-
-        # Verificando categorias
-        categorias = MateriaPrima.Materia_prima_aviamento(self.codEmpresa).configuracao_de_para_descricao()
-
-        # 2. Preparando os dados (Removendo acentos para não dar falha na busca)
-        # ==========================================
-        # Cria uma coluna temporária removendo acentos e deixando tudo maiúsculo
-        fila['nome_limpo'] = fila['nome'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode(
-            'utf-8').str.upper()
-
-        fila['categoria'] = 'Outros'
-
-        # ==========================================
-        # 3. Aplicando as regras de categorização
-        # ==========================================
-        for _, regra in categorias.iterrows():
-            gatilho = regra['descricao_contem'].upper()  # Garante que a regra está em maiúsculo
-            categoria_destino = regra['categoria']
-
-            # Se a coluna 'nome_limpo' contiver o gatilho, atualiza a coluna 'categoria'
-            mascara_contem_gatilho = fila['nome_limpo'].str.contains(gatilho, na=False)
-
-            fila.loc[mascara_contem_gatilho, 'categoria'] = categoria_destino
-
-        # Remove a coluna temporária, já que não precisamos mais dela
-        fila = fila.drop(columns=['nome_limpo'])
-
-        def formatar_inteiro_milhar(valor):
-            try:
-                valor_inteiro = int(float(valor))
-                # Formata com vírgula e substitui por ponto
-                return f"{valor_inteiro:,}".replace(',', '.')
-            except (ValueError, TypeError):
-                return valor
-
-        # Função para as demais unidades (Com casas decimais no padrão PT-BR)
-        def formatar_decimal_ptbr(valor):
-            try:
-                valor_float = float(valor)
-
-                # Formata no padrão americano mantendo 3 casas decimais (ex: 1,500.500)
-                # Se quiser menos casas, basta mudar o '.3f' para '.2f', por exemplo
-                formatado = f"{valor_float:,.3f}"
-
-                # Inverte ponto e vírgula
-                formatado = formatado.replace(',', '_')  # Troca a vírgula do milhar por '_'
-                formatado = formatado.replace('.', ',')  # Troca o ponto decimal por ','
-                formatado = formatado.replace('_', '.')  # Troca o '_' pelo ponto do milhar
-
-                return formatado
-            except (ValueError, TypeError):
-                return valor
-
-        # ==========================================
-        # 3. Aplicando as Regras
-        # ==========================================
-
-        # Máscara para "UM"
-        mascara_um = fila['unidadeMedida'] == 'UM'
-
-        # Aplica a regra para "UM"
-        fila.loc[mascara_um, 'estoqueAtual'] = fila.loc[mascara_um, 'estoqueAtual'].apply(formatar_inteiro_milhar)
-
-        # Aplica a regra para o resto (onde a unidade NÃO É "UM")
-        fila.loc[~mascara_um, 'estoqueAtual'] = fila.loc[~mascara_um, 'estoqueAtual'].apply(formatar_decimal_ptbr)
-
-        fila['unidadeMedida'] = fila['unidadeMedida'].replace('UM','Unid')
-        fila['unidadeMedida'] = fila['unidadeMedida'].replace('UN','Unid')
-
-        fila.fillna('-',inplace=True)
+        fila = Endereco_aviamento.Endereco_aviamento(self.codEmpresa).get_consulta_fila_recebimento()
 
 
         return fila
