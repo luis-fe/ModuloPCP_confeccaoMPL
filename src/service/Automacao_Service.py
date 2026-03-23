@@ -178,6 +178,12 @@ class Automacao:
         self.ultima_atualizacao = self.servicoAutomacao.obtentendo_intervalo_atualizacao_servico()
 
         if self.ultima_atualizacao > self.intervalo_automacao:
+
+            logger.info("Iniciando rotina: 007 Disposição de Aviamentos a repor ")
+
+            self.servicoAutomacao.inserindo_automacao(self.__obter_data_hora())
+
+
             # 1. Busca de dados
             fila = Produtos_CSW.Produtos_CSW(self.codEmpresa).estoqueNat_aviamentos()
             categorias = MateriaPrima.Materia_prima_aviamento(self.codEmpresa).configuracao_de_para_descricao()
@@ -242,6 +248,10 @@ class Automacao:
                 'FilaAviamentos',
                 'replace'
             )
+
+            self.servicoAutomacao.update_controle_automacao('Finalizado Fila Aviamentoss v3',
+                                                            self.__obter_data_hora())
+
 
 
 
