@@ -403,10 +403,10 @@ class Endereco_aviamento():
         acao = """
         delete 
             from
-                "PCP".pcp."EnderecoReqItem" eri
+                "PCP".pcp."EnderecoReqItem"
             where
-                eri."codItem" = %s
-                eri."codItem_seq" = %s 
+                "codItem" = %s
+                and "codItem_seq" = %s 
         """
         with ConexaoPostgre.conexaoInsercao() as conn:
             with conn.cursor() as curr:
