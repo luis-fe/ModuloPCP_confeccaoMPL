@@ -379,11 +379,16 @@ class Endereco_aviamento():
     def buscar_nomeMaterial(self):
 
         select = """
-        select distinct "nomeMaterial" from ( 
-                select  "nomeMaterial","codMaterialEdt" from pcp."AviamentosDisponiveis"
+         select distinct "nomeMaterial", fornecedor,"unidadeMedida"  from ( 
+        		select  "nome" as "nomeMaterial" 
+        		,"codEditado_x", "fornencedorPreferencial" as "fornecedor", "unidadeMedida" from pcp."FilaAviamentos"
                 union 
-                select  "nome","codEditado_x" from pcp."FilaAviamentos") as e
-                where e."codMaterialEdt" = %s
+                select  "nomeMaterial","codMaterialEdt" as "codEditado_x",
+                ''as "fornecedor" ,
+                '' as "unidadeMedida"
+                from pcp."AviamentosDisponiveis"
+                ) as e
+                where e."codEditado_x" = %s
                 limit  1
         """
 
@@ -391,6 +396,41 @@ class Endereco_aviamento():
         consulta = pd.read_sql(select, conn, params =(self.codItem,))
 
         return consulta
+
+
+    def delete_item_reposto(self, sequencia):
+
+        acao = """
+        delete 
+            from
+                "PCP".pcp."EnderecoReqItem" eri
+            where
+                eri."codItem" = %s
+                eri."codItem_seq" = %s 
+        """
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(acao,(self.codItem, sequencia))
+                conn.commit()
+
+    def update_item_fila_repor(self):
+        '''Metodo que acresenta as unidades a repor "de volta" para a fila '''
+
+        acao = f"""
+        update "PCP".pcp."FilaAviamentos"
+        set "estoqueAtual" = "estoqueAtual" + {self.qtd}
+        where 
+            "codEditado_x" = %s
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn:
+            with conn.cursor() as curr:
+
+                curr.execute(acao,(self.codItem,))
+                conn.commit()
+
+
 
     def obter_itens_configuradados(self):
 

@@ -319,6 +319,33 @@ def POST_inserir_endereco():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/desdobro_etiqueta', methods=['POST'])
+@token_required
+def POST_desdobro_etiqueta():
+    data = request.get_json()
+
+    codMaterial = data.get('codMaterial')
+    codEmpresa = request.args.get('codEmpresa','1')
+    sequencia = data.get('sequencia')
+    qtd = data.get('qtd')
+
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento(codEmpresa, '', '', '', '','','',codMaterial,qtd).desdobrar_etiqueta_item(sequencia)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
 @Enderecamento_routes.route('/pcp/api/inserir_material_desconsiderar_conf', methods=['POST'])
 @token_required
 def POST_inserir_material_desconsiderar_conf():

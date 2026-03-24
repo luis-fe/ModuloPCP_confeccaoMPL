@@ -129,6 +129,21 @@ class Enderecamento_aviamento():
 
         return endereco_aviamento
 
+
+    def desdobrar_etiqueta_item(self, sequencia):
+        endereco_aviamento = Endereco_aviamento.Endereco_aviamento('', '', '', '', self.codItem, '',self.qtd_reposta)
+
+        # 1 - excluir etiqueta do estoque reposto
+        endereco_aviamento.delete_item_reposto(sequencia)
+
+        # 2 - incluir de volta na fila
+        endereco_aviamento.update_item_fila_repor()
+
+
+        return pd.DataFrame([{'Mensagem':'item reposto com sucesso', 'status':True}])
+
+
+
     def inserirItemDesconsiderar(self):
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento('','','','',self.codItem).update_desconsidera_item_aviamento()
 
