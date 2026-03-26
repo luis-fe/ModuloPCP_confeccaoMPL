@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 import pytz
+from src.connection import ConexaoPostgre
 
 class Reserva_Enderecos():
 
