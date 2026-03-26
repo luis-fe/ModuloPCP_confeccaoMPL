@@ -11,114 +11,89 @@ class Reserva_Enderecos():
     def carregar_tabela_reserva_enderecos(self):
         endereco_aviamento = Endereco_aviamento.Endereco_aviamento()
 
-        # 1 - Get das requisicoes em aberto
+        # 1 - Get das requisições em aberto e ajuste de tipos
         consulta1 = endereco_aviamento.get_requisicao_itens()
+        consulta1['qtdeRequisitada'] = pd.to_numeric(consulta1['qtdeRequisitada'], errors='coerce').fillna(0)
+        consulta1['qtdeRequisitada_original'] = consulta1['qtdeRequisitada']  # Preserva o original
 
-        # 2 - Get do mapa COMPLETO de enderecos (sem filtrar ainda)
+        # 2 - Get do mapa COMPLETO de endereços (sem filtrar ocorrência ainda)
         mapa_enderecos_completo = endereco_aviamento.get_itens_repostos_para_reserva()
         mapa_enderecos_completo['ocorrencia_acumulada'] = mapa_enderecos_completo.groupby(['codItem']).cumcount() + 1
 
-        # Mapeamos as colunas que vêm do banco para poder limpá-las antes do Ciclo 2
+        # Variáveis de controle para o Loop
         colunas_do_mapa = ['endereco', 'qtd', 'tipoControle', 'ocorrencia_acumulada']
-
-        # ==========================================
-        # CICLO 1: Busca no primeiro endereço
-        # ==========================================
-        mapa_ciclo_1 = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == 1]
-
-        # Primeiro merge
-        consulta = pd.merge(consulta1, mapa_ciclo_1, on='codItem', how='left')
-        consulta.fillna('', inplace=True)
-
-        consulta['qtd'] = pd.to_numeric(consulta['qtd'], errors='coerce').fillna(0)
-        consulta['qtdeRequisitada'] = pd.to_numeric(consulta['qtdeRequisitada'], errors='coerce').fillna(0)
-
-        # Preserva a quantidade original pedida
-        consulta['qtdeRequisitada_original'] = consulta['qtdeRequisitada']
-
-        # Define status de reserva do Ciclo 1
-        consulta['endereco_reservado'] = np.where(
-            consulta['qtdeRequisitada'] >= consulta['qtd'],
-            consulta['endereco'],
-            "Não Reposto"
-        )
-
-        # Prepara uma lista para ir guardando os DataFrames que serão unidos no final
         dfs_para_concatenar = []
 
-        # Verifica onde faltou estoque no Ciclo 1
-        mask_saldo_1 = consulta['qtdeRequisitada'] > consulta['qtd']
+        # df_atual vai guardar sempre o que "falta" ser atendido. Começa com todas as requisições.
+        df_atual = consulta1.copy()
 
-        if mask_saldo_1.any():
-            # ==========================================
-            # PREPARAÇÃO PARA O CICLO 2
-            # ==========================================
-            # 1. Isola as linhas que precisam buscar mais estoque
-            saldo_ciclo_1 = consulta[mask_saldo_1].copy()
+        # ==========================================
+        # LOOP DE BUSCA: Itera até 7 vezes (Endereços 1 a 7)
+        # ==========================================
+        for ciclo in range(1, 8):
+            # Se não houver mais requisições pendentes, encerra o loop mais cedo e economiza processamento
+            if df_atual.empty:
+                break
 
-            # 2. Atualiza a quantidade que ainda precisa ser buscada (Saldo Novo)
-            saldo_ciclo_1['qtdeRequisitada'] = saldo_ciclo_1['qtdeRequisitada'] - saldo_ciclo_1['qtd']
+            # Filtra o mapa de endereços para o ciclo atual (1ª, 2ª, 3ª ocorrência, etc.)
+            mapa_ciclo = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == ciclo]
 
-            # 3. Trava a quantidade da linha do Ciclo 1 para o que de fato tinha lá
-            consulta.loc[mask_saldo_1, 'qtdeRequisitada'] = consulta.loc[mask_saldo_1, 'qtd']
+            # Cruzamento (Merge) do saldo pendente com o endereço do ciclo atual
+            df_merge = pd.merge(df_atual, mapa_ciclo, on='codItem', how='left')
+            df_merge['qtd'] = pd.to_numeric(df_merge['qtd'], errors='coerce').fillna(0)
+            df_merge['endereco'] = df_merge['endereco'].fillna("-")
 
-            # Guarda as linhas prontas do Ciclo 1
-            dfs_para_concatenar.append(consulta)
+            # O endereço fica reservado se tivermos algum estoque nessa iteração
+            df_merge['endereco_reservado'] = np.where(df_merge['qtd'] > 0, df_merge['endereco'], "Não Reposto")
 
-            # 4. LIMPEZA DE COLUNAS: Tira os dados do endereço 1 para receber os dados do endereço 2
-            colunas_para_limpar = colunas_do_mapa + ['endereco_reservado', 'index', 'level_0']
-            saldo_ciclo_1 = saldo_ciclo_1.drop(
-                columns=[col for col in colunas_para_limpar if col in saldo_ciclo_1.columns])
+            # Identifica onde a requisição é maior que o estoque desta gaveta específica
+            mask_saldo = df_merge['qtdeRequisitada'] > df_merge['qtd']
 
-            # ==========================================
-            # CICLO 2: Busca no segundo endereço
-            # ==========================================
-            mapa_ciclo_2 = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == 2]
+            # --- CENÁRIO A: Linhas 100% atendidas neste ciclo ---
+            linhas_atendidas_total = df_merge[~mask_saldo].copy()
+            if not linhas_atendidas_total.empty:
+                dfs_para_concatenar.append(linhas_atendidas_total)
 
-            # Novo merge: cruza o que faltou com o endereço 2
-            consulta_ciclo_2 = pd.merge(saldo_ciclo_1, mapa_ciclo_2, on='codItem', how='left')
+            # --- CENÁRIO B: Linhas que faltaram estoque (Geram saldo para o próximo ciclo) ---
+            if mask_saldo.any():
+                linhas_com_falta = df_merge[mask_saldo].copy()
 
-            consulta_ciclo_2['qtd'] = pd.to_numeric(consulta_ciclo_2['qtd'], errors='coerce').fillna(0)
+                # 1. Salva a parte que conseguimos atender NESTE ciclo (se houver algum estoque > 0)
+                linhas_atendidas_parcial = linhas_com_falta[linhas_com_falta['qtd'] > 0].copy()
+                if not linhas_atendidas_parcial.empty:
+                    linhas_atendidas_parcial['qtdeRequisitada'] = linhas_atendidas_parcial['qtd']
+                    dfs_para_concatenar.append(linhas_atendidas_parcial)
 
-            # Define status de reserva do Ciclo 2
-            consulta_ciclo_2['endereco_reservado'] = np.where(
-                consulta_ciclo_2['qtdeRequisitada'] >= consulta_ciclo_2['qtd'],
-                consulta_ciclo_2['endereco'],
-                "Não Reposto"
-            )
+                # 2. Prepara a linha de SALDO que vai seguir para a próxima iteração do loop
+                saldo_para_proximo = linhas_com_falta.copy()
+                saldo_para_proximo['qtdeRequisitada'] = saldo_para_proximo['qtdeRequisitada'] - saldo_para_proximo[
+                    'qtd']
 
-            # ==========================================
-            # SALDO FINAL (Caso o Ciclo 2 também não dê conta)
-            # ==========================================
-            mask_saldo_2 = consulta_ciclo_2['qtdeRequisitada'] > consulta_ciclo_2['qtd']
-
-            if mask_saldo_2.any():
-                # Isola o que não foi atendido nem no 1º nem no 2º endereço
-                saldo_final = consulta_ciclo_2[mask_saldo_2].copy()
-                saldo_final['qtdeRequisitada'] = saldo_final['qtdeRequisitada'] - saldo_final['qtd']
-                saldo_final['endereco'] = "-"
-                saldo_final['endereco_reservado'] = "Não Reposto"
-
-                # Trava a quantidade do Ciclo 2 para o que de fato tinha lá
-                consulta_ciclo_2.loc[mask_saldo_2, 'qtdeRequisitada'] = consulta_ciclo_2.loc[mask_saldo_2, 'qtd']
-
-                # Guarda as linhas do Ciclo 2 e as linhas do Saldo Final
-                dfs_para_concatenar.extend([consulta_ciclo_2, saldo_final])
+                # Limpa as colunas de endereço que vieram do merge para não dar conflito na próxima volta
+                colunas_para_limpar = [col for col in colunas_do_mapa if col in saldo_para_proximo.columns] + [
+                    'endereco_reservado']
+                df_atual = saldo_para_proximo.drop(columns=colunas_para_limpar)
             else:
-                # Se o Ciclo 2 atendeu tudo o que faltava, guarda só ele
-                dfs_para_concatenar.append(consulta_ciclo_2)
+                # Se tudo foi atendido, esvaziamos o df_atual para o loop quebrar na próxima volta
+                df_atual = pd.DataFrame(columns=df_atual.columns)
 
-        else:
-            # Se o Ciclo 1 já atendeu tudo de primeira, só precisamos dele
-            dfs_para_concatenar.append(consulta)
+        # ==========================================
+        # SALDO FINAL DEFINITIVO (Quebras reais)
+        # ==========================================
+        # Se depois de passar pelas 7 gavetas ainda sobrou algo no df_atual, registramos a quebra definitiva
+        if not df_atual.empty:
+            df_atual['endereco'] = "-"
+            df_atual['qtd'] = 0
+            df_atual['ocorrencia_acumulada'] = "-"
+            df_atual['endereco_reservado'] = "Não Reposto"
+            dfs_para_concatenar.append(df_atual)
 
         # ==========================================
         # MONTAGEM FINAL
         # ==========================================
-        # Junta todos os cenários (Ciclo 1 + Ciclo 2 + Saldos Finais)
         df_final = pd.concat(dfs_para_concatenar, ignore_index=True)
 
-        # Ordena para o operador de separação ver o item agrupado na mesma requisição
+        # Ordena para a tela de separação agrupar pelo pedido e priorizar a ordem dos endereços
         df_final = df_final.sort_values(by=['req', 'codItem', 'ocorrencia_acumulada']).reset_index(drop=True)
 
         return df_final
