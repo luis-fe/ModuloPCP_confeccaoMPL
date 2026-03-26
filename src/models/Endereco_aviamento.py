@@ -414,6 +414,20 @@ class Endereco_aviamento():
                 curr.execute(acao,(self.codItem, sequencia))
                 conn.commit()
 
+
+    def consultar_endereco_unitario(self):
+
+        consulta = """
+        	select
+                "codItem",
+                "tipoControle"
+            from
+                "PCP".pcp."EnderecoReqItem"
+            where
+                endereco = 'F-20-07'
+                and "tipoControle" like 'por unidade'
+        """
+
     def update_item_fila_repor(self):
         '''Metodo que acresenta as unidades a repor "de volta" para a fila '''
 
@@ -604,6 +618,53 @@ class Endereco_aviamento():
         consulta = pd.read_sql(consulta,conn)
 
         return consulta
+
+
+    def get_itens_repostos_para_reserva(self):
+
+
+        consulta = """
+        	select
+		endereco,
+		"codItem",
+		qtd,
+		"tipoControle"
+            from
+                "PCP".pcp."EnderecoReqItem" eri 
+        where "tipoControle" is null
+        or "tipoControle" <> 'por unidade'
+        order by qtd desc, endereco asc
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn)
+
+        return consulta
+
+
+    def get_requisicao_itens(self):
+
+        consulta = """
+        	select
+                "numeroOP",
+                numero as req,
+                "codMaterialEdt" as "codItem" ,
+                "nomeMaterial",
+                "seqRoteiro",
+                separador,
+                ad."qtdeRequisitada" 
+            from
+                "PCP".pcp."AviamentosDisponiveis" ad 
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn)
+
+        return consulta
+
+
+
+
 
 
 

@@ -140,7 +140,7 @@ class Enderecamento_aviamento():
         endereco_aviamento.update_item_fila_repor()
 
 
-        return pd.DataFrame([{'Mensagem':'item reposto com sucesso', 'status':True}])
+        return pd.DataFrame([{'Mensagem':'item estornado com sucesso', 'status':True}])
 
 
 
