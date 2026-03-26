@@ -29,4 +29,6 @@ class Reserva_Enderecos():
             "Não Reposto"  # Valor se Falso
         )
 
+        consulta['qtd'].fillna(0,inplace=True)
+
         return consulta
