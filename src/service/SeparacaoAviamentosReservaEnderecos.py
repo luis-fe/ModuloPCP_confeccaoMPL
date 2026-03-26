@@ -21,6 +21,9 @@ class Reserva_Enderecos():
         # 3 - Ciclo 1 : Primeiro merge
         consulta2 = consulta2[consulta2['ocorrencia_acumulada'] == 1].reset_index()
         consulta = pd.merge(consulta1, consulta2, on='codItem', how='left')
+        consulta.fillna('',inplace=True)
+        consulta = consulta[consulta['ocorrencia_acumulada'] == 1].reset_index()
+
 
         consulta['qtd'].fillna(0,inplace=True)
 
@@ -31,6 +34,5 @@ class Reserva_Enderecos():
             "Não Reposto"  # Valor se Falso
         )
 
-        consulta.fillna('',inplace=True)
 
         return consulta
