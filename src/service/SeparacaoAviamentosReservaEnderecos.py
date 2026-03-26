@@ -2,7 +2,6 @@ from src.models import Endereco_aviamento
 import numpy as np
 import pandas as pd
 
-
 class Reserva_Enderecos():
 
     def __init__(self, codEmpresa='1'):
@@ -68,6 +67,10 @@ class Reserva_Enderecos():
         if not df_atual.empty:
             # Puxa o mapa unitário conforme a sua nova função
             mapa_unitario = endereco_aviamento.get_itens_repostos_para_reserva_unitario()
+
+            # --- CORREÇÃO APLICADA AQUI ---
+            # Cria a coluna de ocorrência acumulada para o endereço unitário antes de usá-la
+            mapa_unitario['ocorrencia_acumulada'] = mapa_unitario.groupby(['codItem']).cumcount() + 1
 
             # Garante que a comparação seja feita como string, caso venha assim do seu banco
             mapa_unitario['ocorrencia_acumulada'] = mapa_unitario['ocorrencia_acumulada'].astype(str)
