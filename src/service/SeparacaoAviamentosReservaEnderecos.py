@@ -5,7 +5,6 @@ import pandas as pd
 class Reserva_Enderecos():
 
     def __init__(self, codEmpresa = '1'):
-
         self.codEmpresa = codEmpresa
 
     def carregar_tabela_reserva_enderecos(self):
@@ -24,9 +23,12 @@ class Reserva_Enderecos():
         consulta.fillna('', inplace=True)
 
         # Convertendo para numérico para garantir que os cálculos funcionem perfeitamente
-        # (o fillna('') acima transforma os nulos em string, o que daria erro na subtração)
         consulta['qtd'] = pd.to_numeric(consulta['qtd'], errors='coerce').fillna(0)
         consulta['qtdeRequisitada'] = pd.to_numeric(consulta['qtdeRequisitada'], errors='coerce').fillna(0)
+
+        # --- PRESERVAÇÃO DA QUANTIDADE ORIGINAL ---
+        # Cria a coluna com o valor original antes de qualquer modificação matemática
+        consulta['qtdeRequisitada_original'] = consulta['qtdeRequisitada']
 
         # --- NOVA LÓGICA COM NUMPY ---
         consulta['endereco_reservado'] = np.where(
@@ -43,17 +45,17 @@ class Reserva_Enderecos():
             # 2. Faz uma cópia dessas linhas específicas
             linhas_saldo = consulta[mask_saldo].copy()
 
-            # 3. Calcula o 'saldo novo' e atualiza a quantidade da nova linha
+            # 3. Calcula o 'saldo novo' para a nova linha
             linhas_saldo['qtdeRequisitada'] = linhas_saldo['qtdeRequisitada'] - linhas_saldo['qtd']
 
             # 4. Limpa o endereço e força o status de reserva da nova linha de saldo
             linhas_saldo['endereco'] = "-"
             linhas_saldo['endereco_reservado'] = "Não Reposto"
 
-            # 5. Ajusta a quantidade da linha original para o que tem de fato no estoque
-            # Descomente a linha abaixo se o seu processo de separação exigir que a linha
-            # original mostre apenas a quantidade parcial que será atendida naquele momento:
-            # consulta.loc[mask_saldo, 'qtdeRequisitada'] = consulta.loc[mask_saldo, 'qtd']
+            # 5. ATUALIZAÇÃO DA LINHA ORIGINAL
+            # A linha original assume o valor de 'qtd' se a requisição for maior ou igual ao estoque
+            condicao_atualizar_original = consulta['qtdeRequisitada'] >= consulta['qtd']
+            consulta.loc[condicao_atualizar_original, 'qtdeRequisitada'] = consulta.loc[condicao_atualizar_original, 'qtd']
 
             # 6. Concatena as novas linhas geradas de volta ao DataFrame principal
             consulta = pd.concat([consulta, linhas_saldo], ignore_index=True)
