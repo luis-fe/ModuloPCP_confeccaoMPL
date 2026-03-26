@@ -8,24 +8,15 @@ class Reserva_Enderecos():
 
         self.codEmpresa = codEmpresa
 
+    import pandas as pd
+    import numpy as np
+
+    # ... (seu código anterior do método) ...
+
     def carregar_tabela_reserva_enderecos(self):
-        endereco_aviamento = Endereco_aviamento.Endereco_aviamento()
+        # ... [código anterior omitido para focar na solução] ...
 
-        # 1 - Get das requisicoes em aberto
-        consulta1 = endereco_aviamento.get_requisicao_itens()
-
-        # 2 - Get do mapa de enderecos a nivel de item e etiqueta ordenado do maior para menor
-        consulta2 = endereco_aviamento.get_itens_repostos_para_reserva()
-        consulta2['ocorrencia_acumulada'] = consulta2.groupby(['codItem']).cumcount() + 1
-
-        # 3 - Ciclo 1 : Primeiro merge
-        consulta2 = consulta2[consulta2['ocorrencia_acumulada'] == 1].reset_index()
-        consulta = pd.merge(consulta1, consulta2, on='codItem', how='left')
-        consulta.fillna('',inplace=True)
-        consulta = consulta[consulta['ocorrencia_acumulada'] == 1].reset_index()
-
-
-        consulta['qtd'].fillna(0,inplace=True)
+        consulta['qtd'].fillna(0, inplace=True)
 
         # --- NOVA LÓGICA COM NUMPY ---
         consulta['endereco_reservado'] = np.where(
@@ -34,5 +25,28 @@ class Reserva_Enderecos():
             "Não Reposto"  # Valor se Falso
         )
 
+        # --- LÓGICA DE CRIAÇÃO DO SALDO NOVO ---
+        # 1. Cria uma máscara booleana para encontrar as linhas onde a requisição é maior que o estoque
+        # ... [código anterior do seu método] ...
+
+        # 1. Cria a máscara booleana para identificar onde falta estoque
+        mask_saldo = consulta['qtdeRequisitada'] > consulta['qtd']
+
+        if mask_saldo.any():
+            # 2. Faz uma cópia dessas linhas específicas
+            linhas_saldo = consulta[mask_saldo].copy()
+
+            # 3. Calcula o 'saldo novo' e atualiza a quantidade da nova linha
+            linhas_saldo['qtdeRequisitada'] = linhas_saldo['qtdeRequisitada'] - linhas_saldo['qtd']
+
+            # 4. Limpa o endereço e força o status de reserva da nova linha de saldo
+            linhas_saldo['endereco'] = "-"
+            linhas_saldo['endereco_reservado'] = "Não Reposto"
+
+            # 5. Opcional: Ajusta a quantidade da linha original para o que realmente tem no estoque
+            # consulta.loc[mask_saldo, 'qtdeRequisitada'] = consulta.loc[mask_saldo, 'qtd']
+
+            # 6. Concatena as novas linhas geradas de volta ao DataFrame principal
+            consulta = pd.concat([consulta, linhas_saldo], ignore_index=True)
 
         return consulta
