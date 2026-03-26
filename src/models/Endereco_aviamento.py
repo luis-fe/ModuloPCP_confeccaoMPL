@@ -641,6 +641,25 @@ class Endereco_aviamento():
 
         return consulta
 
+    def get_itens_repostos_para_reserva_unitario(self):
+        consulta = """
+            select
+        endereco,
+        "codItem",
+        qtd,
+        "tipoControle"
+            from
+                "PCP".pcp."EnderecoReqItem" eri 
+        where "tipoControle" is null
+        or "tipoControle" = 'por unidade'
+        order by qtd desc, endereco asc
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn)
+
+        return consulta
+
 
     def get_requisicao_itens(self):
 

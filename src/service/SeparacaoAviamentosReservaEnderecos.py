@@ -14,85 +14,106 @@ class Reserva_Enderecos():
         # 1 - Get das requisições em aberto e ajuste de tipos
         consulta1 = endereco_aviamento.get_requisicao_itens()
         consulta1['qtdeRequisitada'] = pd.to_numeric(consulta1['qtdeRequisitada'], errors='coerce').fillna(0)
-        consulta1['qtdeRequisitada_original'] = consulta1['qtdeRequisitada']  # Preserva o original
+        consulta1['qtdeRequisitada_original'] = consulta1['qtdeRequisitada']
 
-        # 2 - Get do mapa COMPLETO de endereços (sem filtrar ocorrência ainda)
+        # 2 - Get do mapa de KITS (sem filtrar ocorrência ainda)
         mapa_enderecos_completo = endereco_aviamento.get_itens_repostos_para_reserva()
         mapa_enderecos_completo['ocorrencia_acumulada'] = mapa_enderecos_completo.groupby(['codItem']).cumcount() + 1
 
-        # Variáveis de controle para o Loop
+        # Variáveis de controle
         colunas_do_mapa = ['endereco', 'qtd', 'tipoControle', 'ocorrencia_acumulada']
         dfs_para_concatenar = []
-
-        # df_atual guarda o que "falta" atender. Começa com todas as requisições.
         df_atual = consulta1.copy()
 
         # ==========================================
-        # LOOP DE BUSCA: Itera até 7 vezes (Endereços 1 a 7)
+        # FASE 1: BUSCA EM KITS (Loop de 1 a 7)
         # ==========================================
         for ciclo in range(1, 8):
             if df_atual.empty:
                 break
 
-            # Filtra o mapa de endereços para o ciclo atual
             mapa_ciclo = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == ciclo]
 
-            # Cruzamento (Merge) do saldo pendente com o endereço do ciclo atual
             df_merge = pd.merge(df_atual, mapa_ciclo, on='codItem', how='left')
             df_merge['qtd'] = pd.to_numeric(df_merge['qtd'], errors='coerce').fillna(0)
             df_merge['endereco'] = df_merge['endereco'].fillna("Não Reposto")
 
-            # --- A REGRA DO KIT FECHADO ---
-            # Só podemos reservar se precisarmos de uma quantidade MAIOR OU IGUAL ao kit disponível.
-            # Se o kit (qtd) for maior que a requisição, NÃO podemos quebrar o kit (mask_reserva = False)
+            # REGRA DO KIT FECHADO
             mask_reserva = (df_merge['qtdeRequisitada'] >= df_merge['qtd']) & (df_merge['qtd'] > 0)
 
-            # 1. PROCESSA QUEM PODE RESERVAR NESTA GAVETA
             sucesso = df_merge[mask_reserva].copy()
             if not sucesso.empty:
-                # Linha que vai para a separação (assume o valor do kit inteiro)
                 linha_separacao = sucesso.copy()
                 linha_separacao['qtdeRequisitada'] = linha_separacao['qtd']
                 linha_separacao['endereco_reservado'] = linha_separacao['endereco']
                 dfs_para_concatenar.append(linha_separacao)
 
-                # Calcula o que ainda falta pedir e manda para a próxima iteração
                 saldo_sucesso = sucesso.copy()
                 saldo_sucesso['qtdeRequisitada'] = saldo_sucesso['qtdeRequisitada'] - saldo_sucesso['qtd']
-                saldo_sucesso = saldo_sucesso[
-                    saldo_sucesso['qtdeRequisitada'] > 0]  # Só passa pra frente se sobrar algo
+                saldo_sucesso = saldo_sucesso[saldo_sucesso['qtdeRequisitada'] > 0]
             else:
                 saldo_sucesso = pd.DataFrame(columns=df_merge.columns)
 
-            # 2. PROCESSA QUEM NÃO PODE RESERVAR (Kit muito grande ou sem estoque)
             falha = df_merge[~mask_reserva].copy()
-            # O saldo de quem falhou é a própria requisição intacta, pois não pegamos nada daqui
             saldo_falha = falha.copy()
 
-            # 3. JUNTA OS SALDOS PARA O PRÓXIMO CICLO
             df_proximo_ciclo = pd.concat([saldo_sucesso, saldo_falha], ignore_index=True)
-
-            # Limpa as colunas do endereço atual para não sujar o merge da próxima volta
             colunas_para_limpar = [col for col in colunas_do_mapa if col in df_proximo_ciclo.columns] + [
                 'endereco_reservado']
             df_atual = df_proximo_ciclo.drop(columns=colunas_para_limpar, errors='ignore')
 
         # ==========================================
-        # SALDO FINAL DEFINITIVO (O que não coube em nenhum kit)
+        # FASE 2: BUSCA UNITÁRIA (O que sobrou dos kits)
         # ==========================================
         if not df_atual.empty:
-            df_atual['endereco'] = "Não Reposto"
-            df_atual['qtd'] = 0
-            df_atual['ocorrencia_acumulada'] = "-"
-            df_atual['endereco_reservado'] = "Não Reposto"
-            dfs_para_concatenar.append(df_atual)
+            # Puxa o mapa unitário conforme a sua nova função
+            mapa_unitario = endereco_aviamento.get_itens_repostos_para_reserva_unitario()
+
+            # Garante que a comparação seja feita como string, caso venha assim do seu banco
+            mapa_unitario['ocorrencia_acumulada'] = mapa_unitario['ocorrencia_acumulada'].astype(str)
+            mapa_unitario = mapa_unitario[mapa_unitario['ocorrencia_acumulada'] == '1']
+
+            # Merge do saldo restante com o endereço unitário
+            df_merge_unit = pd.merge(df_atual, mapa_unitario, on='codItem', how='left')
+            df_merge_unit['qtd'] = pd.to_numeric(df_merge_unit['qtd'], errors='coerce').fillna(0)
+            df_merge_unit['endereco'] = df_merge_unit['endereco'].fillna("Não Reposto")
+
+            # REGRA UNITÁRIA: Pegamos o que der (o menor valor entre a requisição e o estoque)
+            df_merge_unit['qtd_atendida_unitaria'] = np.minimum(df_merge_unit['qtdeRequisitada'], df_merge_unit['qtd'])
+
+            # 1. LINHAS ATENDIDAS (Total ou Parcialmente pelo endereço unitário)
+            sucesso_unit = df_merge_unit[df_merge_unit['qtd_atendida_unitaria'] > 0].copy()
+            if not sucesso_unit.empty:
+                linha_sep_unit = sucesso_unit.copy()
+                linha_sep_unit['qtdeRequisitada'] = linha_sep_unit['qtd_atendida_unitaria']
+                linha_sep_unit['endereco_reservado'] = linha_sep_unit['endereco']
+
+                linha_sep_unit = linha_sep_unit.drop(columns=['qtd_atendida_unitaria'])
+                dfs_para_concatenar.append(linha_sep_unit)
+
+            # 2. SALDO FINAL DEFINITIVO (Quebra real - "Não Reposto")
+            df_merge_unit['saldo_final'] = df_merge_unit['qtdeRequisitada'] - df_merge_unit['qtd_atendida_unitaria']
+            quebra_final = df_merge_unit[df_merge_unit['saldo_final'] > 0].copy()
+
+            if not quebra_final.empty:
+                linha_quebra = quebra_final.copy()
+                linha_quebra['qtdeRequisitada'] = linha_quebra['saldo_final']
+                linha_quebra['endereco'] = "Não Reposto"
+                linha_quebra['qtd'] = 0
+                linha_quebra['ocorrencia_acumulada'] = "-"
+                linha_quebra['endereco_reservado'] = "Não Reposto"
+
+                linha_quebra = linha_quebra.drop(columns=['qtd_atendida_unitaria', 'saldo_final'])
+                dfs_para_concatenar.append(linha_quebra)
 
         # ==========================================
         # MONTAGEM FINAL
         # ==========================================
         df_final = pd.concat(dfs_para_concatenar, ignore_index=True)
 
-        # Ordenação final para a tela de separação
+        # Opcional: converte ocorrencia_acumulada para string para não dar erro no sort_values
+        # já que os kits são int (1 a 7) e os unitários ou quebras podem ser strings ('1', '-')
+        df_final['ocorrencia_acumulada'] = df_final['ocorrencia_acumulada'].astype(str)
         df_final = df_final.sort_values(by=['req', 'codItem', 'ocorrencia_acumulada']).reset_index(drop=True)
 
         return df_final
