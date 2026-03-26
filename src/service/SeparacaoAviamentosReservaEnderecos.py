@@ -2,9 +2,10 @@ from src.models import Endereco_aviamento
 import numpy as np
 import pandas as pd
 
+
 class Reserva_Enderecos():
 
-    def __init__(self, codEmpresa = '1'):
+    def __init__(self, codEmpresa='1'):
         self.codEmpresa = codEmpresa
 
     def carregar_tabela_reserva_enderecos(self):
@@ -13,54 +14,111 @@ class Reserva_Enderecos():
         # 1 - Get das requisicoes em aberto
         consulta1 = endereco_aviamento.get_requisicao_itens()
 
-        # 2 - Get do mapa de enderecos a nivel de item e etiqueta ordenado do maior para menor
-        consulta2 = endereco_aviamento.get_itens_repostos_para_reserva()
-        consulta2['ocorrencia_acumulada'] = consulta2.groupby(['codItem']).cumcount() + 1
+        # 2 - Get do mapa COMPLETO de enderecos (sem filtrar ainda)
+        mapa_enderecos_completo = endereco_aviamento.get_itens_repostos_para_reserva()
+        mapa_enderecos_completo['ocorrencia_acumulada'] = mapa_enderecos_completo.groupby(['codItem']).cumcount() + 1
 
-        # 3 - Ciclo 1 : Primeiro merge
-        consulta2 = consulta2[consulta2['ocorrencia_acumulada'] == 1].reset_index()
-        consulta = pd.merge(consulta1, consulta2, on='codItem', how='left')
+        # Mapeamos as colunas que vêm do banco para poder limpá-las antes do Ciclo 2
+        colunas_do_mapa = ['endereco', 'qtd', 'tipoControle', 'ocorrencia_acumulada']
+
+        # ==========================================
+        # CICLO 1: Busca no primeiro endereço
+        # ==========================================
+        mapa_ciclo_1 = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == 1]
+
+        # Primeiro merge
+        consulta = pd.merge(consulta1, mapa_ciclo_1, on='codItem', how='left')
         consulta.fillna('', inplace=True)
 
-        # Convertendo para numérico para garantir que os cálculos funcionem perfeitamente
         consulta['qtd'] = pd.to_numeric(consulta['qtd'], errors='coerce').fillna(0)
         consulta['qtdeRequisitada'] = pd.to_numeric(consulta['qtdeRequisitada'], errors='coerce').fillna(0)
 
-        # --- PRESERVAÇÃO DA QUANTIDADE ORIGINAL ---
-        # Cria a coluna com o valor original antes de qualquer modificação matemática
+        # Preserva a quantidade original pedida
         consulta['qtdeRequisitada_original'] = consulta['qtdeRequisitada']
 
-        # --- NOVA LÓGICA COM NUMPY ---
+        # Define status de reserva do Ciclo 1
         consulta['endereco_reservado'] = np.where(
-            consulta['qtdeRequisitada'] >= consulta['qtd'],  # Condição
-            consulta['endereco'],  # Valor se Verdadeiro
-            "Não Reposto"  # Valor se Falso
+            consulta['qtdeRequisitada'] >= consulta['qtd'],
+            consulta['endereco'],
+            "Não Reposto"
         )
 
-        # --- LÓGICA DE CRIAÇÃO DO SALDO NOVO ---
-        # 1. Cria a máscara booleana para identificar onde falta estoque
-        mask_saldo = consulta['qtdeRequisitada'] > consulta['qtd']
+        # Prepara uma lista para ir guardando os DataFrames que serão unidos no final
+        dfs_para_concatenar = []
 
-        if mask_saldo.any():
-            # 2. Faz uma cópia dessas linhas específicas
-            linhas_saldo = consulta[mask_saldo].copy()
+        # Verifica onde faltou estoque no Ciclo 1
+        mask_saldo_1 = consulta['qtdeRequisitada'] > consulta['qtd']
 
-            # 3. Calcula o 'saldo novo' para a nova linha
-            linhas_saldo['qtdeRequisitada'] = linhas_saldo['qtdeRequisitada'] - linhas_saldo['qtd']
+        if mask_saldo_1.any():
+            # ==========================================
+            # PREPARAÇÃO PARA O CICLO 2
+            # ==========================================
+            # 1. Isola as linhas que precisam buscar mais estoque
+            saldo_ciclo_1 = consulta[mask_saldo_1].copy()
 
-            # 4. Limpa o endereço e força o status de reserva da nova linha de saldo
-            linhas_saldo['endereco'] = "-"
-            linhas_saldo['endereco_reservado'] = "Não Reposto"
+            # 2. Atualiza a quantidade que ainda precisa ser buscada (Saldo Novo)
+            saldo_ciclo_1['qtdeRequisitada'] = saldo_ciclo_1['qtdeRequisitada'] - saldo_ciclo_1['qtd']
 
-            # 5. ATUALIZAÇÃO DA LINHA ORIGINAL
-            # A linha original assume o valor de 'qtd' se a requisição for maior ou igual ao estoque
-            condicao_atualizar_original = consulta['qtdeRequisitada'] >= consulta['qtd']
-            consulta.loc[condicao_atualizar_original, 'qtdeRequisitada'] = consulta.loc[condicao_atualizar_original, 'qtd']
+            # 3. Trava a quantidade da linha do Ciclo 1 para o que de fato tinha lá
+            consulta.loc[mask_saldo_1, 'qtdeRequisitada'] = consulta.loc[mask_saldo_1, 'qtd']
 
-            # 6. Concatena as novas linhas geradas de volta ao DataFrame principal
-            consulta = pd.concat([consulta, linhas_saldo], ignore_index=True)
+            # Guarda as linhas prontas do Ciclo 1
+            dfs_para_concatenar.append(consulta)
 
-            # 7. Ordena o DataFrame para manter o código do item e a requisição agrupados
-            consulta = consulta.sort_values(by=['req', 'codItem']).reset_index(drop=True)
+            # 4. LIMPEZA DE COLUNAS: Tira os dados do endereço 1 para receber os dados do endereço 2
+            colunas_para_limpar = colunas_do_mapa + ['endereco_reservado', 'index', 'level_0']
+            saldo_ciclo_1 = saldo_ciclo_1.drop(
+                columns=[col for col in colunas_para_limpar if col in saldo_ciclo_1.columns])
 
-        return consulta
+            # ==========================================
+            # CICLO 2: Busca no segundo endereço
+            # ==========================================
+            mapa_ciclo_2 = mapa_enderecos_completo[mapa_enderecos_completo['ocorrencia_acumulada'] == 2]
+
+            # Novo merge: cruza o que faltou com o endereço 2
+            consulta_ciclo_2 = pd.merge(saldo_ciclo_1, mapa_ciclo_2, on='codItem', how='left')
+
+            consulta_ciclo_2['qtd'] = pd.to_numeric(consulta_ciclo_2['qtd'], errors='coerce').fillna(0)
+
+            # Define status de reserva do Ciclo 2
+            consulta_ciclo_2['endereco_reservado'] = np.where(
+                consulta_ciclo_2['qtdeRequisitada'] >= consulta_ciclo_2['qtd'],
+                consulta_ciclo_2['endereco'],
+                "Não Reposto"
+            )
+
+            # ==========================================
+            # SALDO FINAL (Caso o Ciclo 2 também não dê conta)
+            # ==========================================
+            mask_saldo_2 = consulta_ciclo_2['qtdeRequisitada'] > consulta_ciclo_2['qtd']
+
+            if mask_saldo_2.any():
+                # Isola o que não foi atendido nem no 1º nem no 2º endereço
+                saldo_final = consulta_ciclo_2[mask_saldo_2].copy()
+                saldo_final['qtdeRequisitada'] = saldo_final['qtdeRequisitada'] - saldo_final['qtd']
+                saldo_final['endereco'] = "-"
+                saldo_final['endereco_reservado'] = "Não Reposto"
+
+                # Trava a quantidade do Ciclo 2 para o que de fato tinha lá
+                consulta_ciclo_2.loc[mask_saldo_2, 'qtdeRequisitada'] = consulta_ciclo_2.loc[mask_saldo_2, 'qtd']
+
+                # Guarda as linhas do Ciclo 2 e as linhas do Saldo Final
+                dfs_para_concatenar.extend([consulta_ciclo_2, saldo_final])
+            else:
+                # Se o Ciclo 2 atendeu tudo o que faltava, guarda só ele
+                dfs_para_concatenar.append(consulta_ciclo_2)
+
+        else:
+            # Se o Ciclo 1 já atendeu tudo de primeira, só precisamos dele
+            dfs_para_concatenar.append(consulta)
+
+        # ==========================================
+        # MONTAGEM FINAL
+        # ==========================================
+        # Junta todos os cenários (Ciclo 1 + Ciclo 2 + Saldos Finais)
+        df_final = pd.concat(dfs_para_concatenar, ignore_index=True)
+
+        # Ordena para o operador de separação ver o item agrupado na mesma requisição
+        df_final = df_final.sort_values(by=['req', 'codItem', 'ocorrencia_acumulada']).reset_index(drop=True)
+
+        return df_final
