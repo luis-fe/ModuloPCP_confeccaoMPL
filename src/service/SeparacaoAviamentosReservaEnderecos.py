@@ -119,4 +119,6 @@ class Reserva_Enderecos():
         df_final['ocorrencia_acumulada'] = df_final['ocorrencia_acumulada'].astype(str)
         df_final = df_final.sort_values(by=['req', 'codItem', 'ocorrencia_acumulada']).reset_index(drop=True)
 
+        df_final.fillna('-',inplace=True)
+
         return df_final
