@@ -126,9 +126,11 @@ class Reserva_Enderecos():
 
         df_final['dataHora_informacao'] = self.__obter_data_hora()
 
+        qtd_linhas = len(df_final)
+
         ConexaoPostgre.Funcao_InserirPCPMatriz(
             df_final,
-            df_final['codItem'].size(),
+            qtd_linhas,
             'ReservaAviamentos',
             'replace'
         )
