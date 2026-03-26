@@ -22,6 +22,8 @@ class Reserva_Enderecos():
         consulta2 = consulta2[consulta2['ocorrencia_acumulada'] == 1].reset_index()
         consulta = pd.merge(consulta1, consulta2, on='codItem', how='left')
 
+        consulta['qtd'].fillna(0,inplace=True)
+
         # --- NOVA LÓGICA COM NUMPY ---
         consulta['endereco_reservado'] = np.where(
             consulta['qtdeRequisitada'] >= consulta['qtd'],  # Condição
@@ -29,6 +31,6 @@ class Reserva_Enderecos():
             "Não Reposto"  # Valor se Falso
         )
 
-        consulta['qtd'].fillna(0,inplace=True)
+        consulta.fillna('',inplace=True)
 
         return consulta
