@@ -1,6 +1,8 @@
 from src.models import Endereco_aviamento
 import numpy as np
 import pandas as pd
+from datetime import datetime
+import pytz
 
 class Reserva_Enderecos():
 
@@ -131,3 +133,13 @@ class Reserva_Enderecos():
         )
 
         return df_final
+
+
+    def __obter_data_hora(self):
+        """Metodo privado para obter a dataHora do Sistema Operacional em fuso-br """
+        fuso_horario = pytz.timezone('America/Sao_Paulo')
+        agora = datetime.now(fuso_horario)
+        agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+        return agora
+
+    import pandas as pd
