@@ -4,7 +4,7 @@ import numpy as np
 
 class Reserva_Enderecos():
 
-    def __init__(self, codEmpresa):
+    def __init__(self, codEmpresa = '1'):
 
         self.codEmpresa = codEmpresa
 

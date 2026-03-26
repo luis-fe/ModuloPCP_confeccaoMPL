@@ -21,7 +21,7 @@ def token_required(f):
 def get_ReservaAviamentos():
     codEmpresa = request.args.get('codEmpresa','1')
 
-    dados = SeparacaoAviamentosReservaEnderecos.SeparacaoAviamentosReservaEnderecos().carregar_tabela_reserva_enderecos()
+    dados = SeparacaoAviamentosReservaEnderecos.Reserva_Enderecos(codEmpresa).carregar_tabela_reserva_enderecos()
     #controle.salvarStatus(rotina, ip, datainicio)
 
     # Obtém os nomes das colunas
