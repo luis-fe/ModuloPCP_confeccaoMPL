@@ -1,6 +1,6 @@
 from src.models import Endereco_aviamento
 import numpy as np
-
+import pandas as pd
 
 class Reserva_Enderecos():
 
