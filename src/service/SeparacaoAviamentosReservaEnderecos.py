@@ -24,7 +24,7 @@ class Reserva_Enderecos():
         colunas_do_mapa = ['endereco', 'qtd', 'tipoControle', 'ocorrencia_acumulada']
         dfs_para_concatenar = []
 
-        # df_atual vai guardar sempre o que "falta" ser atendido. Começa com todas as requisições.
+        # df_atual guarda o que "falta" atender. Começa com todas as requisições.
         df_atual = consulta1.copy()
 
         # ==========================================
@@ -42,43 +42,44 @@ class Reserva_Enderecos():
             df_merge['qtd'] = pd.to_numeric(df_merge['qtd'], errors='coerce').fillna(0)
             df_merge['endereco'] = df_merge['endereco'].fillna("Não Reposto")
 
-            # Identifica onde a requisição é maior que o estoque desta gaveta específica
-            mask_saldo = df_merge['qtdeRequisitada'] > df_merge['qtd']
+            # --- A REGRA DO KIT FECHADO ---
+            # Só podemos reservar se precisarmos de uma quantidade MAIOR OU IGUAL ao kit disponível.
+            # Se o kit (qtd) for maior que a requisição, NÃO podemos quebrar o kit (mask_reserva = False)
+            mask_reserva = (df_merge['qtdeRequisitada'] >= df_merge['qtd']) & (df_merge['qtd'] > 0)
 
-            # --- CENÁRIO A: Linhas 100% atendidas neste ciclo ---
-            linhas_atendidas_total = df_merge[~mask_saldo].copy()
-            if not linhas_atendidas_total.empty:
-                linhas_atendidas_total['endereco_reservado'] = linhas_atendidas_total['endereco']
-                dfs_para_concatenar.append(linhas_atendidas_total)
+            # 1. PROCESSA QUEM PODE RESERVAR NESTA GAVETA
+            sucesso = df_merge[mask_reserva].copy()
+            if not sucesso.empty:
+                # Linha que vai para a separação (assume o valor do kit inteiro)
+                linha_separacao = sucesso.copy()
+                linha_separacao['qtdeRequisitada'] = linha_separacao['qtd']
+                linha_separacao['endereco_reservado'] = linha_separacao['endereco']
+                dfs_para_concatenar.append(linha_separacao)
 
-            # --- CENÁRIO B: Linhas que faltaram estoque ---
-            if mask_saldo.any():
-                linhas_com_falta = df_merge[mask_saldo].copy()
-
-                # 1. Salva a parte que conseguimos atender NESTE ciclo (se houver algum estoque > 0)
-                linhas_atendidas_parcial = linhas_com_falta[linhas_com_falta['qtd'] > 0].copy()
-                if not linhas_atendidas_parcial.empty:
-                    linhas_atendidas_parcial['qtdeRequisitada'] = linhas_atendidas_parcial['qtd']
-                    linhas_atendidas_parcial['endereco_reservado'] = linhas_atendidas_parcial['endereco']
-                    dfs_para_concatenar.append(linhas_atendidas_parcial)
-
-                # 2. Prepara a linha de SALDO que vai seguir para a próxima iteração do loop
-                saldo_para_proximo = linhas_com_falta.copy()
-                saldo_para_proximo['qtdeRequisitada'] = saldo_para_proximo['qtdeRequisitada'] - saldo_para_proximo[
-                    'qtd']
-
-                # Limpa as colunas de endereço para não dar conflito na próxima volta
-                colunas_para_limpar = [col for col in colunas_do_mapa if col in saldo_para_proximo.columns] + [
-                    'endereco_reservado']
-                df_atual = saldo_para_proximo.drop(columns=colunas_para_limpar, errors='ignore')
+                # Calcula o que ainda falta pedir e manda para a próxima iteração
+                saldo_sucesso = sucesso.copy()
+                saldo_sucesso['qtdeRequisitada'] = saldo_sucesso['qtdeRequisitada'] - saldo_sucesso['qtd']
+                saldo_sucesso = saldo_sucesso[
+                    saldo_sucesso['qtdeRequisitada'] > 0]  # Só passa pra frente se sobrar algo
             else:
-                # Se tudo foi atendido, esvaziamos o df_atual para quebrar o loop
-                df_atual = pd.DataFrame(columns=df_atual.columns)
+                saldo_sucesso = pd.DataFrame(columns=df_merge.columns)
+
+            # 2. PROCESSA QUEM NÃO PODE RESERVAR (Kit muito grande ou sem estoque)
+            falha = df_merge[~mask_reserva].copy()
+            # O saldo de quem falhou é a própria requisição intacta, pois não pegamos nada daqui
+            saldo_falha = falha.copy()
+
+            # 3. JUNTA OS SALDOS PARA O PRÓXIMO CICLO
+            df_proximo_ciclo = pd.concat([saldo_sucesso, saldo_falha], ignore_index=True)
+
+            # Limpa as colunas do endereço atual para não sujar o merge da próxima volta
+            colunas_para_limpar = [col for col in colunas_do_mapa if col in df_proximo_ciclo.columns] + [
+                'endereco_reservado']
+            df_atual = df_proximo_ciclo.drop(columns=colunas_para_limpar, errors='ignore')
 
         # ==========================================
-        # SALDO FINAL DEFINITIVO (Quebras reais)
+        # SALDO FINAL DEFINITIVO (O que não coube em nenhum kit)
         # ==========================================
-        # Se depois de passar pelas 7 gavetas ainda sobrou algo, registramos a quebra definitiva
         if not df_atual.empty:
             df_atual['endereco'] = "Não Reposto"
             df_atual['qtd'] = 0
@@ -87,15 +88,9 @@ class Reserva_Enderecos():
             dfs_para_concatenar.append(df_atual)
 
         # ==========================================
-        # MONTAGEM FINAL E APLICAÇÃO DA REGRA DE SEGURANÇA
+        # MONTAGEM FINAL
         # ==========================================
         df_final = pd.concat(dfs_para_concatenar, ignore_index=True)
-
-        # Regra de ouro solicitada: Força o endereço como "Não Reposto" em qualquer linha
-        # onde a quantidade disponível for menor que a quantidade que está sendo requisitada.
-        mask_regra_nao_reposto = df_final['qtd'] < df_final['qtdeRequisitada']
-        df_final.loc[mask_regra_nao_reposto, 'endereco'] = "Não Reposto"
-        df_final.loc[mask_regra_nao_reposto, 'endereco_reservado'] = "Não Reposto"
 
         # Ordenação final para a tela de separação
         df_final = df_final.sort_values(by=['req', 'codItem', 'ocorrencia_acumulada']).reset_index(drop=True)
