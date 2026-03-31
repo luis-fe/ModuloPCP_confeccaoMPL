@@ -255,7 +255,7 @@ class OrdemProd_Csw():
         inner join tcp.fasesproducao f on f.codempresa=1 and op.codfaseatual = f.codfase
         inner join 
             tcp.engenharia e on e.codempresa = 1 and e.codEngenharia = op.codProduto
-        inner join
+        left join
             tcp.PrioridadeOP p 
             on p.Empresa = op.codEmpresa 
             and p.codPrioridadeOP = op.codPrioridadeOP 

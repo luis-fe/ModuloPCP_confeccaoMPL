@@ -682,6 +682,39 @@ class Endereco_aviamento():
         return consulta
 
 
+    def get_consulta_reservas(self):
+
+        consulta = """
+        select
+            endereco,
+            "codItem",
+            req as "Requisicao",
+            "numeroOP",
+            "separador",
+            sum(qtd) as "Total Bipar",
+            avg("qtdeRequisitada_original") as requisitado,
+            "tipoControle"
+        from
+            "PCP".pcp."ReservaAviamentos"
+        group by 
+            endereco,
+            "codItem",
+             "Requisicao",
+            "numeroOP",
+            "separador",
+            "tipoControle"
+        order by 
+            "Requisicao",
+            "codItem" asc,
+            "endereco"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn)
+
+        return consulta
+
+
 
 
 
