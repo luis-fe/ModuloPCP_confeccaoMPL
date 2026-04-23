@@ -14,10 +14,11 @@ WORKDIR /app
 # Copie o arquivo de requisitos para o diretório de trabalho
 COPY requirements.txt requirements.txt
 
-# Instale as dependências do Python E o Gunicorn
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+# Instale as dependências do Python
+# (Removi o gunicorn aqui, a menos que sua automação também dependa dele de alguma forma)
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie o arquivo .jar e o código do aplicativo para o diretório de trabalho
+# Copie o código do aplicativo para o diretório de trabalho
 COPY . .
 
 # Defina a variável de ambiente para não criar bytecode (.pyc) do Python
@@ -26,8 +27,5 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Defina a variável de ambiente para que o output do Python não seja bufferizado
 ENV PYTHONUNBUFFERED=1
 
-# Exponha a porta em que a aplicação Flask estará rodando
-EXPOSE 9000
-
-# Comando para rodar a aplicação com Gunicorn (3 workers)
-CMD ["gunicorn", "--workers=3", "--timeout=120", "--bind=0.0.0.0:9000", "app_run:app"]
+# Comando direto do Python para rodar a automação
+CMD ["python", "run_automacao.py"]

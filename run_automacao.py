@@ -41,3 +41,5 @@ if __name__ == '__main__':
 
 
     Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
+
+
