@@ -30,8 +30,8 @@ if __name__ == '__main__':
     #Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags2, 20,'Tags Pilotos').get_tags_pilotos_csw()
 
 
-    #pedidosCsw = Pedidos_CSW.Pedidos_CSW('1')
-    #pedidosCsw.put_automacao()
+    pedidosCsw = Pedidos_CSW.Pedidos_CSW('1')
+    pedidosCsw.put_automacao()
 
 
     Automacao_Service.Automacao().recebimento_aviamentos_CSW()
