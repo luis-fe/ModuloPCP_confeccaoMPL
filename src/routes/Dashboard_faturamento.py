@@ -258,6 +258,7 @@ def get_informacaoNotasConfigruadas():
         OP_data.append(op_dict)
     del dados
     return jsonify(OP_data)
+    
 @dashboard_fat_routes.route('/pcp/api/dashboarTV', methods=['GET'])
 def dashboarTV():
 

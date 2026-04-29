@@ -9,6 +9,7 @@ import pytz
 from src.models import Pedidos_CSW
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
+
 class DashboardTV():
         ''''Classe responsavel pelo gerenciamento do Dashboard da TV '''
 
@@ -399,6 +400,7 @@ class DashboardTV():
             consulta_final = pd.merge(df_faturamento, df_tipo_nota, on='tipoNota')
 
             return consulta_final
+
         def __obter_backup(self):
             '''Metodo que obtem os backups via arquivo csv'''
 
