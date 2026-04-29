@@ -655,7 +655,7 @@ class MonitorPedidosOP():
 
         env_path = configApp.localProjeto
         load_dotenv(f'{env_path}/_ambiente.env')
-        caminhoAbsoluto = os.getenv('CAMINHO_PARQUET_FAT')
+        caminhoAbsoluto = os.getenv('CAMINHO')
 
         #try:
         pedidos['tipoDesconto'] = pedidos['tipoDesconto'].astype('int64')
