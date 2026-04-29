@@ -110,7 +110,7 @@ class OrdemProd ():
                     );
                         """
 
-                conn1 = ConexaoPostgre.conexaoMatrizWMS()
+                conn1 = ConexaoPostgre.conexaoInsercao()
                 curr = conn1.cursor()
                 curr.execute(sqlDelete, )
                 conn1.commit()
