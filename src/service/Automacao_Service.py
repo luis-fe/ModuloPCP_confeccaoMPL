@@ -111,7 +111,7 @@ class Automacao:
 
             # 7. Merge final com as requisições e preparo para o Banco de Dados
             df_entrega = pd.merge(df_filtrado, requisicoes, on='numeroOP', how='left')
-            df_entrega.fillna('-', inplace=True)
+            #df_entrega.fillna('-', inplace=True)
 
 
 

@@ -1,45 +1,43 @@
 import os
-import sys
 from datetime import datetime
-from src.service import Automacao_Service
-import psutil
 import pytz
 
+# Imports do seu sistema
+from src.service import Automacao_Service
 from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw, Pedidos_CSW, OrdemProd
 
-
-def obterHoraAtual():
-    fuso_horario = pytz.timezone('America/Sao_Paulo')  # Define o fuso horário do Brasil
+def obter_hora_atual() -> str:
+    """Retorna a hora atual no fuso horário de São Paulo formatada."""
+    fuso_horario = pytz.timezone('America/Sao_Paulo')
     agora = datetime.now(fuso_horario)
-    agora = agora.strftime('%Y-%m-%d %H:%M:%S')
-    return agora
+    return agora.strftime('%Y-%m-%d %H:%M:%S')
 
+def main():
+    data = obter_hora_atual()
+    print(f'Inicio servico automacao versao 04.05  - {data}')
 
+    # Correção do Bug: Obtém a variável com um valor padrão seguro ('600') e converte para inteiro
+    try:
+        tempo_realizado_fases = int(os.getenv('freq_seg_realizado_fase', '600'))
+    except ValueError:
+        print("Aviso: 'freq_seg_realizado_fase' não é um número válido. Usaremos padrão 600.")
+        tempo_realizado_fases = 600
 
-if __name__ == '__main__':
-    PID = os.getpid()
-    data = obterHoraAtual()
-    print(f'inicio servico automacao versao 18.03  - {data}')
-    tempo = 60*6*60
-    tempo_tags = 60*10
-    tempo_tags2 = 60*30
-    tempo_realizadofases = 600
-
-    #Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags, 20).inserindo_informacoes_tag_postgre()
-    #Componentes_Csw.Componentes_CSW('1',tempo).inserirComponentesVariaveis()
-    #Tags_apontadas_defeito_Csw.Tags_apontada_defeitos('1',tempo_tags2, 20,'Tags Pilotos').get_tags_pilotos_csw()
-
-
-    pedidosCsw = Pedidos_CSW.Pedidos_CSW('1')
-    pedidosCsw.put_automacao()
-
+    
+    # Execução das rotinas
+    pedidos_csw = Pedidos_CSW.Pedidos_CSW('1')
+    pedidos_csw.put_automacao()
 
     Automacao_Service.Automacao().recebimento_aviamentos_CSW()
 
-    ordemProd_Csw = OrdemProd.OrdemProd('1','','','',100,int(tempo_realizadofases))
-    ordemProd_Csw.realizado_fases_csw()
-
+    # Dica: Substitua os parâmetros mágicos por variáveis explícitas no futuro
+    ordem_prod_csw = OrdemProd.OrdemProd(
+        '1', '', '', '', 100, tempo_realizado_fases
+    )
+    ordem_prod_csw.realizado_fases_csw()
 
     Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
 
 
+if __name__ == '__main__':
+    main()

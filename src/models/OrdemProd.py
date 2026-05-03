@@ -5,7 +5,7 @@ from src.models import OrdemProd_Csw, ServicoAutomacao
 
 class OrdemProd ():
 
-    def __init__(self, codEmpresa = '1', codSku = '', dataInicio = '', dataFinal ='', ulimosNdias=60, intervalo_automacao=200, limitePostgre=5000):
+    def __init__(self, codEmpresa = '1', codSku = '', dataInicio = '', dataFinal ='', ulimosNdias=60, intervalo_automacao=420, limitePostgre=5000):
 
         self.codEmpresa = codEmpresa
         self.codSku = codSku
