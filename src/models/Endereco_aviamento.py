@@ -321,6 +321,7 @@ class Endereco_aviamento():
 
 
 
+
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
