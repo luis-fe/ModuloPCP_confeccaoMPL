@@ -82,10 +82,10 @@ def Funcao_InserirOFF (df_tags, tamanho,tabela, metodo):
 
 def Funcao_InserirOFF_srvWMS (df_tags, tamanho,tabela, metodo):
     # Configurações de conexão ao banco de dados
-    db_name = os.getenv('POSTGRES_DB2')
+    db_name = os.getenv('POSTGRES_DB')
     db_user = os.getenv('POSTGRES_USER')
-    db_password = os.getenv('POSTGRES_PASSWORD_SRV2')
-    db_host = os.getenv('POSTGRES_HOST_SRV2')
+    db_password = os.getenv('POSTGRES_PASSWORD_SRV1')
+    db_host = os.getenv('POSTGRES_HOST_SRV1')
     db_porta = os.getenv('POSTGRES_PORT')
 
 # Cria conexão ao banco de dados usando SQLAlchemy
