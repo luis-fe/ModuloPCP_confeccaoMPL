@@ -317,7 +317,7 @@ class Endereco_aviamento():
             	"numeroOP" {clausula}
             """
 
-            print(consulta)
+            #print(consulta)
 
 
 
