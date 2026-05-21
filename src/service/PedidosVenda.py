@@ -3,7 +3,6 @@ import gc
 import fastparquet as fp
 from src.connection import ConexaoERP
 from src.connection import ConexaoPostgre
-import paramiko
 
 class Pedido_venda():
 
