@@ -234,7 +234,7 @@ class Pedido_venda():
             notas_para_excluir = ['38', '239', '223']  # Deixe como int ou float, dependendo de como vem do banco
             pedidos = pedidos[~pedidos['codTipoNota'].isin(notas_para_excluir)]
 
-            fp.write('app/dados/pedidos.parquet', pedidos)
+            fp.write('/app/dados/pedidos.parquet', pedidos)
 
             #etapa2 = controle.salvarStatus_Etapa2(self.rotina, 'automacao', etapa1, 'Geracao do arquivo parquet no servidor origem')
 
