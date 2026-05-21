@@ -1,5 +1,5 @@
 
 '''ARQUIVO DE CONFIGURACAO DE VARIAVEIS GLOBAIS DO PROJETO PYTHON'''
 
-localProjeto = ""
+localProjeto = "/app"
 localArquivoParquet = ""
