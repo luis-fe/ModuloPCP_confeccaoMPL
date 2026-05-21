@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 
 # Imports do seu sistema
-from src.service import Automacao_Service
+from src.service import Automacao_Service, PedidosVenda
 from src.models import Componentes_Csw, Tags_apontadas_defeito_Csw, Pedidos_CSW, OrdemProd
 
 def obter_hora_atual() -> str:
@@ -24,19 +24,25 @@ def main():
         tempo_realizado_fases = 600
 
     
-    # Execução das rotinas
+    # Automacao no dashboard TV
     pedidos_csw = Pedidos_CSW.Pedidos_CSW('1')
     pedidos_csw.put_automacao()
 
+    # Automacao na fila de recebimento de aviamentos
     Automacao_Service.Automacao().recebimento_aviamentos_CSW()
 
-    # Dica: Substitua os parâmetros mágicos por variáveis explícitas no futuro
+    # Automacao do realizado fases
     ordem_prod_csw = OrdemProd.OrdemProd(
         '1', '', '', '', 100, tempo_realizado_fases
     )
     ordem_prod_csw.realizado_fases_csw()
 
+    # Automacao dos aviamentos disponiveis do csw
     Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
+
+    # Automacao dos pedidos utilizando o arquivo .parquet
+
+    pedido_venda = PedidosVenda.Pedido_venda().incrementarPedidos()
 
 
 if __name__ == '__main__':

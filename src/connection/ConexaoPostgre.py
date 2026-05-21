@@ -96,6 +96,8 @@ def Funcao_InserirOFF_srvWMS (df_tags, tamanho,tabela, metodo):
     for i in range(0, len(df_tags), chunksize):
         df_tags.iloc[i:i + chunksize].to_sql(tabela, engine, if_exists=metodo, index=False , schema='pcp')
 
+
+
 def conexaoInsercao():
     db_name = os.getenv('POSTGRES_DB')
     db_user = os.getenv('POSTGRES_USER')
