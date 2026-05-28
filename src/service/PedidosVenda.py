@@ -5,6 +5,8 @@ from src.connection import ConexaoERP
 from src.connection import ConexaoPostgre
 from src.models import ServicoAutomacao
 from datetime import datetime
+import pytz
+
 class Pedido_venda():
 
 
