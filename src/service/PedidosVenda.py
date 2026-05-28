@@ -20,6 +20,9 @@ class Pedido_venda():
 
         if self.ultima_atualizacao > self.intervalo_automacao:
 
+            self.servicoAutomacao.inserindo_automacao(self.__obter_data_hora())
+
+
 
 
             sqlcswPedidosProdutos = """
@@ -248,5 +251,6 @@ class Pedido_venda():
                 fp.write('/app/dados/pedidos.parquet', pedidos)
 
                 #etapa2 = controle.salvarStatus_Etapa2(self.rotina, 'automacao', etapa1, 'Geracao do arquivo parquet no servidor origem')
+                self.servicoAutomacao.update_controle_automacao('Finalizado', self.__obter_data_hora())
 
                 return pedidos
