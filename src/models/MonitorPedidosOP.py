@@ -672,7 +672,7 @@ class MonitorPedidosOP():
 
 
 
-        fp.write(f'/monitor{self.descricaoArquivo}.parquet', pedidos)
+        fp.write(f'/app/dados/monitor{self.descricaoArquivo}.parquet', pedidos)
 
         #except:
             #print(pedidos.columns.tolist())
@@ -889,13 +889,13 @@ class MonitorPedidosOP():
 
         # Carregar o arquivo Parquet com os parametros do monitor de pedidos, caso o usuario opte por filtrar o monitor, acessa o arquivo monitor_filtro
         try:
-            parquet_file = fp.ParquetFile(f'/monitor{self.descricaoArquivo}.parquet')
+            parquet_file = fp.ParquetFile(f'/app/dados/monitor{self.descricaoArquivo}.parquet')
             # Converter para DataFrame do Pandas
             monitor = parquet_file.to_pandas()
             # disponibiliza um novo arquivo para ser utilizado com filtragem
-            fp.write(f'/monitor_filtro_{self.empresa}.parquet', monitor)
+            fp.write(f'/app/dados/monitor_filtro_{self.empresa}.parquet', monitor)
         except:
-            parquet_file = fp.ParquetFile(f'/monitor_filtro_{self.empresa}.parquet')
+            parquet_file = fp.ParquetFile(f'/app/dados/monitor_filtro_{self.empresa}.parquet')
             monitor = parquet_file.to_pandas()
 
         # Condição para o cálculo da coluna 'NecessodadeOP'
@@ -1271,7 +1271,7 @@ class MonitorPedidosOP():
         sql = pd.read_sql(sql, conn)
 
         # 1 - ler o arquivo csv do monitor de ops
-        monitorDetalhadoOps = pd.read_csv(f'/monitorOps{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps = pd.read_csv(f'app/dados/monitorOps{self.descricaoArquivo}.csv')
 
         #monitorDetalhadoOps2 = monitorDetalhadoOps[
             #(monitorDetalhadoOps['id_op2'] == 'Atendeu') & (monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
@@ -1316,7 +1316,7 @@ class MonitorPedidosOP():
 
     def ops_tamanho_cor(self):
         '''Metodo para explodir por tam e cor o monitor'''
-        monitor = pd.read_csv(f'/monitorOps{self.descricaoArquivo}.csv')
+        monitor = pd.read_csv(f'app/dados/monitorOps{self.descricaoArquivo}.csv')
         monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
 
 
