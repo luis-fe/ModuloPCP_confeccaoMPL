@@ -4,7 +4,7 @@ import fastparquet as fp
 from src.connection import ConexaoERP
 from src.connection import ConexaoPostgre
 from src.models import ServicoAutomacao
-
+from datetime import datetime
 class Pedido_venda():
 
 
@@ -254,3 +254,10 @@ class Pedido_venda():
                 self.servicoAutomacao.update_controle_automacao('Finalizado', self.__obter_data_hora())
 
                 return pedidos
+
+    def __obter_data_hora(self):
+                """Metodo privado para obter a dataHora do Sistema Operacional em fuso-br """
+                fuso_horario = pytz.timezone('America/Sao_Paulo')
+                agora = datetime.now(fuso_horario)
+                agora = agora.strftime('%Y-%m-%d %H:%M:%S')
+                return agora
