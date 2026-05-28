@@ -7,8 +7,7 @@ from src.models import ServicoAutomacao
 
 class Pedido_venda():
 
-    def __int__(self, codempresa = '1', intervalo_automacao = 3600  ):
-
+    def __init__(self, codempresa='1', intervalo_automacao=3600):
         self.codempresa = codempresa
         self.intervalo_automacao = intervalo_automacao
 
