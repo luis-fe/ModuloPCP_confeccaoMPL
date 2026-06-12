@@ -1176,7 +1176,7 @@ class MonitorPedidosOP():
 
         consulta3 = self.consultaIdOPReservada()
         monitor = pd.merge(monitor, consulta3, on='Op Reservada2', how='left')
-        monitor.to_csv(f'app/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitor.to_csv(f'/app/dados/monitorOps{self.descricaoArquivo}.csv')
         data = monitor[
             (monitor['dataPrevAtualizada2'] >= self.dataInicioFat) & (monitor['dataPrevAtualizada2'] <= self.dataFinalFat)]
         # Contar a quantidade de pedidos distintos para cada 'numeroop'
@@ -1271,7 +1271,7 @@ class MonitorPedidosOP():
         sql = pd.read_sql(sql, conn)
 
         # 1 - ler o arquivo csv do monitor de ops
-        monitorDetalhadoOps = pd.read_csv(f'app/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitorDetalhadoOps = pd.read_csv(f'/app/dados/monitorOps{self.descricaoArquivo}.csv')
 
         #monitorDetalhadoOps2 = monitorDetalhadoOps[
             #(monitorDetalhadoOps['id_op2'] == 'Atendeu') & (monitorDetalhadoOps['Op Reservada2'] != '-')].reset_index()
@@ -1316,7 +1316,7 @@ class MonitorPedidosOP():
 
     def ops_tamanho_cor(self):
         '''Metodo para explodir por tam e cor o monitor'''
-        monitor = pd.read_csv(f'app/dados/monitorOps{self.descricaoArquivo}.csv')
+        monitor = pd.read_csv(f'/app/dados/monitorOps{self.descricaoArquivo}.csv')
         monitor['numeroOP||codProduto'] = monitor['numeroop'] + monitor['codProduto'].astype(str)
 
 
