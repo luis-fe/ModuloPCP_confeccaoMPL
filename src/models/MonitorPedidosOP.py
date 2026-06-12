@@ -1314,6 +1314,7 @@ class MonitorPedidosOP():
 
         return monitorDetalhadoOps
 
+
     def ops_tamanho_cor(self):
         '''Metodo para explodir por tam e cor o monitor'''
         monitor = pd.read_csv(f'/app/dados/monitorOps{self.descricaoArquivo}.csv')
