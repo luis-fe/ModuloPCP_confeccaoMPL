@@ -20,7 +20,6 @@ def token_required(f):
 @ServicoAutomacao_routes.route('/pcp/api/ServicoAutomacao', methods=['GET'])
 @token_required
 def get_ServicoAutomacao():
-
     dados = ServicoAutomacao.ServicoAutomacao().obtendo_ultima_atualizacao_()
     #controle.salvarStatus(rotina, ip, datainicio)
 
