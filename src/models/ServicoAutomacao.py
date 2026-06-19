@@ -73,28 +73,30 @@ class ServicoAutomacao():
 
 
         sql = """
-            SELECT 
-                "idServico", 
-                "dataAtualizacao", 
-                "descricaoServico"
-            FROM (
-                SELECT
-                    c."idServico",
-                    c."dataAtualizacao",
-                    s."descricaoServico",
-                    ROW_NUMBER() OVER (
-                        PARTITION BY c."idServico" 
-                        ORDER BY c."dataAtualizacao" DESC
-                    ) as rn
-                FROM
-                    pcp."ControleAutomacao" c
-                INNER JOIN 
-                    pcp."ServicoAutomacao" s ON c."idServico" = s."idServico"
-            ) t
-            WHERE rn = 1
-            ORDER BY "dataAtualizacao" DESC;
+SELECT 
+    "idServico", 
+    "dataAtualizacao", 
+    "descricaoServico",
+    "proximaAtualizacao"
+FROM (
+    SELECT
+        c."idServico",
+        c."dataAtualizacao",
+        s."descricaoServico",
+        -- 1. Convertemos a dataAtualizacao de VARCHAR para TIMESTAMP antes de somar
+        CAST(c."dataAtualizacao" AS timestamp) + (CAST(s."intervaloAtualizacao(min)" AS integer) * INTERVAL '1 minute') AS "proximaAtualizacao",
+        ROW_NUMBER() OVER (
+            PARTITION BY c."idServico" 
+            ORDER BY c."dataAtualizacao" DESC
+        ) as rn
+    FROM
+        pcp."ControleAutomacao" c
+    INNER JOIN 
+        pcp."ServicoAutomacao" s ON c."idServico" = s."idServico"
+) t
+WHERE rn = 1
+ORDER BY "dataAtualizacao" DESC;
         """
-
 
         conn = ConexaoPostgre.conexaoEngine()
 
