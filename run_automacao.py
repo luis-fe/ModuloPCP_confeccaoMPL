@@ -24,7 +24,7 @@ def main():
         tempo_realizado_fases = 600
 
     #Automacao das tags apontadas como qualidade 2
-    Tags_apontadas_defeito_Csw.Tags_apontadas_defeito_Csw().inserindo_informacoes_tag_postgre()
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos().inserindo_informacoes_tag_postgre()
 
     
     # Automacao no dashboard TV
