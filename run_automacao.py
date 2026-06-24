@@ -23,7 +23,7 @@ def main():
         print("Aviso: 'freq_seg_realizado_fase' não é um número válido. Usaremos padrão 600.")
         tempo_realizado_fases = 600
 
-
+    #Automacao das tags apontadas como qualidade 2
     Tags_apontadas_defeito_Csw.Tags_apontadas_defeito_Csw().inserindo_informacoes_tag_postgre()
 
     
