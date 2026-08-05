@@ -23,9 +23,10 @@ class ApontamentoDefeito():
 
     CHAVE DO REGISTRO:
         A tabela nao possui chave primaria (o layout definido tem apenas as colunas
-        acima). O "caminhoImg" funciona como chave natural: o nome do arquivo é
-        deterministico (<codTag>_<motivoDefeito>.jpeg ou <op>_<motivoDefeito>.jpeg),
-        portanto atualizacao e exclusao sao feitas por ele.
+        acima). O "caminhoImg" funciona como chave natural: cada apontamento grava
+        um arquivo proprio (<codTag>_<motivoDefeito>.jpeg, com sufixo _2, _3...
+        quando a mesma chave + motivo se repete), portanto atualizacao e exclusao
+        sao feitas por ele.
 
     OBS: "dataApontamento" é varchar para tolerar o default '-' usado pelas APIs do
     projeto. O service normaliza a data para 'YYYY-MM-DD', formato em que a
@@ -39,13 +40,12 @@ class ApontamentoDefeito():
     ]
 
     # Colunas que a API deixa o usuario alterar em um apontamento ja gravado
+    # ("caminhoImg" fica fora porque identifica a linha; "dataHora" é o momento
+    # da gravacao e nao se altera)
     COLUNAS_EDITAVEIS = [
         'dataApontamento', 'referencia', 'cor', 'tam',
         'op', 'codTag', 'usuario', 'motivoDefeito', 'detalhamento'
     ]
-
-    # Colunas aceitas no update - "caminhoImg" fica fora porque identifica a linha
-    COLUNAS_ATUALIZAVEIS = ['dataHora'] + COLUNAS_EDITAVEIS
 
     def __init__(self, dataHora=None, dataApontamento='-', referencia='-', cor='-', tam='-',
                  op='-', codTag='-', usuario='-', motivoDefeito='-', detalhamento='-',
@@ -259,14 +259,14 @@ class ApontamentoDefeito():
         Metodo publico que atualiza as colunas informadas do apontamento
         identificado por "caminhoImg".
 
-        :param alteracoes: dict { coluna: valor } restrito a COLUNAS_ATUALIZAVEIS
+        :param alteracoes: dict { coluna: valor } restrito a COLUNAS_EDITAVEIS
         :return:
             quantidade de linhas atualizadas
         '''
         alteracoes = {
             coluna: valor
             for coluna, valor in (alteracoes or {}).items()
-            if coluna in self.COLUNAS_ATUALIZAVEIS
+            if coluna in self.COLUNAS_EDITAVEIS
         }
 
         if not alteracoes:

@@ -69,7 +69,9 @@ def post_ApontamentoDefeito():
         detalhamento   -> opcionais, default '-'
 
     Imagem: arquivo no campo "imagem" (multipart) ou string base64 em "imagemBase64".
-    Nome gravado: <codTag>_<motivoDefeito>.jpeg ou <op>_<motivoDefeito>.jpeg
+    Nome gravado: <codTag>_<motivoDefeito>.jpeg ou <op>_<motivoDefeito>.jpeg -
+    quando a mesma chave + motivo ja tem foto, o nome ganha sufixo (_2, _3...)
+    e cada apontamento vira um registro proprio.
 
     Retorno: { "status": bool, "message": str, "dados": { ...registro gravado } }
     '''
@@ -145,7 +147,7 @@ def get_ApontamentoDefeitoImagem():
 def put_ApontamentoDefeito():
     '''
     Atualiza os campos de um apontamento ja gravado, identificado pelo "caminhoImg".
-    Para trocar a foto, reenvie o POST com a mesma chave e o mesmo motivo.
+    A imagem nao muda aqui - para trocar a foto, exclua o apontamento e grave outro.
     '''
     dados = parametros_recebidos()
 

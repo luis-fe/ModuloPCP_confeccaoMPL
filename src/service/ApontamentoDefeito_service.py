@@ -27,10 +27,11 @@ class ApontamentoDefeito_Service():
         porTag -> <codTag>_<motivoDefeito>.jpeg
         porOP  -> <op>_<motivoDefeito>.jpeg
 
-    O arquivo é sempre gravado como JPEG em PASTA_IMAGENS. Como o nome é
-    deterministico, um novo apontamento da mesma chave + mesmo motivo SOBRESCREVE
-    a imagem anterior e o registro correspondente no banco é atualizado (nao
-    duplica linha) - o "caminhoImg" é a chave natural da tabela.
+    O arquivo é sempre gravado como JPEG em PASTA_IMAGENS. Quando ja existe foto
+    da mesma chave + mesmo motivo, o nome recebe um sufixo sequencial
+    (<op>_<motivo>_2.jpeg, _3...) - cada apontamento vira um arquivo e uma linha
+    proprios, preservando o historico. O "caminhoImg" (unico por arquivo) segue
+    sendo a chave natural da tabela.
 
     "dataHora" é o momento da gravacao (fuso America/Sao_Paulo); "dataApontamento"
     vem da API. Todos os demais campos sao opcionais e ficam com '-' por default.
@@ -100,7 +101,9 @@ class ApontamentoDefeito_Service():
         if not conteudo:
             return {'status': False, 'message': 'Nenhuma imagem recebida.'}
 
-        nome_arquivo = self.__nome_arquivo(chave, campos['motivoDefeito'])
+        # Nome livre: mesma chave + mesmo motivo ganha sufixo _2, _3... para
+        # cada foto virar um arquivo e um registro proprios
+        nome_arquivo = self.__nome_arquivo_disponivel(chave, campos['motivoDefeito'])
         caminho = os.path.join(self.PASTA_IMAGENS, nome_arquivo)
 
         try:
@@ -116,23 +119,11 @@ class ApontamentoDefeito_Service():
 
         self.__garantir_tabela()
 
-        modelo = ApontamentoDefeito(**campos)
-
-        # Mesma chave + mesmo motivo reutiliza o arquivo, logo atualiza o registro
-        existente = modelo.atualizar_apontamento({
-            coluna: campos[coluna]
-            for coluna in ApontamentoDefeito.COLUNAS_ATUALIZAVEIS
-        })
-
-        if existente:
-            operacao = 'atualizado'
-        else:
-            modelo.inserir_apontamento()
-            operacao = 'inserido'
+        ApontamentoDefeito(**campos).inserir_apontamento()
 
         return {
             'status': True,
-            'message': f'Apontamento de defeito {operacao}.',
+            'message': 'Apontamento de defeito inserido.',
             'dados': self.__para_dict(campos, nome_arquivo)
         }
 
@@ -184,7 +175,9 @@ class ApontamentoDefeito_Service():
         usado pelo endpoint que devolve a foto.
 
         Aceita o "caminhoImg" gravado no banco ou a combinacao
-        tipoInformacao + codTag/op + motivoDefeito.
+        tipoInformacao + codTag/op + motivoDefeito - nesse segundo caso resolve o
+        nome base (sem sufixo); fotos repetidas do mesmo motivo (_2, _3...) sao
+        acessadas pelo "caminhoImg" devolvido na consulta.
 
         :return:
             dict { 'status', 'message', 'caminho' }
@@ -224,7 +217,7 @@ class ApontamentoDefeito_Service():
         '''
         Metodo publico que atualiza os campos de um apontamento ja gravado
         (identificado pelo "caminhoImg"). A imagem nao é alterada aqui - para
-        trocar a foto basta reenviar o POST com a mesma chave e motivo.
+        trocar a foto, exclua o apontamento e grave um novo.
 
         :return:
             dict { 'status', 'message', 'dados' }
@@ -329,6 +322,23 @@ class ApontamentoDefeito_Service():
     def __nome_arquivo(self, chave, motivoDefeito):
         '''Metodo privado que monta <chave>_<motivoDefeito>.jpeg ja saneado'''
         return f'{self.__sanitizar(chave)}_{self.__sanitizar(motivoDefeito)}{self.EXTENSAO}'
+
+    def __nome_arquivo_disponivel(self, chave, motivoDefeito):
+        '''
+        Metodo privado que devolve o primeiro nome livre em PASTA_IMAGENS:
+        <chave>_<motivo>.jpeg e, se ja existir, <chave>_<motivo>_2.jpeg, _3...
+        '''
+        os.makedirs(self.PASTA_IMAGENS, exist_ok=True)
+
+        base = f'{self.__sanitizar(chave)}_{self.__sanitizar(motivoDefeito)}'
+        nome = f'{base}{self.EXTENSAO}'
+        sequencia = 1
+
+        while os.path.exists(os.path.join(self.PASTA_IMAGENS, nome)):
+            sequencia += 1
+            nome = f'{base}_{sequencia}{self.EXTENSAO}'
+
+        return nome
 
     def __gravar_imagem(self, conteudo, caminho):
         '''
