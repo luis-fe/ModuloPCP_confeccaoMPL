@@ -221,6 +221,39 @@ class ApontamentoDefeito():
 
         return pd.read_sql(consulta, conn, params=tuple(parametros))
 
+    def consultar_imagens_por_op(self):
+        '''
+        Metodo publico que lista as imagens apontadas por OP, usado pelo left
+        join do detalhamento da Gestao da Qualidade.
+
+        :return:
+            DataFrame (pandas) com op, motivoDefeito e caminhoImg dos
+            apontamentos que informaram a OP, na ordem de gravacao. Enquanto a
+            tabela nao existe (nenhum apontamento gravado) volta vazio.
+        '''
+        consulta = '''
+            select
+                "op",
+                "motivoDefeito",
+                "caminhoImg"
+            from
+                pcp."ApntamentoDefeito"
+            where
+                "op" <> '-'
+                and "caminhoImg" <> '-'
+            order by
+                "dataHora"
+        '''
+
+        conn = ConexaoPostgre.conexaoEngine()
+
+        try:
+            return pd.read_sql(consulta, conn)
+        except Exception:
+            # Tabela ainda nao criada (o create roda no primeiro POST de
+            # apontamento) - o detalhamento segue sem imagens
+            return pd.DataFrame(columns=['op', 'motivoDefeito', 'caminhoImg'])
+
     def consultar_por_caminho(self):
         '''
         Metodo publico que consulta o apontamento pelo caminho da imagem

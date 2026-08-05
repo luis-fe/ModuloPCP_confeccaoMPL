@@ -1,6 +1,6 @@
 import pandas as pd
 from src.connection import ConexaoPostgre
-from src.models import OrdemProd
+from src.models import OrdemProd, ApontamentoDefeito
 import numpy as np
 
 
@@ -134,6 +134,47 @@ class Analise_2_qualidade():
         data['fornencedorPreferencial'] = data['fornencedorPreferencial'].str.replace('LTDA', '', regex=False)
         data['nome'] = data['nome'].str.replace('FORA DE ESPECIFICACAO', 'FORA/ESPEC.', regex=False)
         data['nomeFaccicionista'] = data['nomeFaccicionista'].str.replace('LTDA', '', regex=False)
+
+        data = self.__juntar_imagens_apontadas(data)
+
+        return data
+
+    @staticmethod
+    def __juntar_imagens_apontadas(data):
+        '''
+        Metodo privado que faz o left join das fotos de defeito apontadas
+        (pcp."ApntamentoDefeito") com o detalhamento: cada linha ganha a coluna
+        "imagens" - lista de { caminho, motivo } da OP, vazia quando a OP ainda
+        nao tem foto. O apontamento pode registrar a OP completa (numeroOP) ou
+        so a OP pai, por isso o casamento tenta as duas chaves.
+        '''
+        data['imagens'] = [[] for _ in range(len(data))]
+
+        imagens = ApontamentoDefeito.ApontamentoDefeito().consultar_imagens_por_op()
+
+        if imagens.empty or data.empty:
+            return data
+
+        imagens['op'] = imagens['op'].astype(str).str.strip()
+
+        mapa = {}
+        for _, linha in imagens.iterrows():
+            mapa.setdefault(linha['op'], []).append({
+                'caminho': linha['caminhoImg'],
+                'motivo': linha['motivoDefeito']
+            })
+
+        def imagens_da_op(linha):
+            numeroOP = str(linha.get('numeroOP', '')).strip()
+            opPai = str(linha.get('OPpai', '')).strip()
+
+            fotos = list(mapa.get(numeroOP, []))
+            if opPai and opPai != numeroOP:
+                fotos += mapa.get(opPai, [])
+
+            return fotos
+
+        data['imagens'] = data.apply(imagens_da_op, axis=1)
 
         return data
 
