@@ -28,6 +28,7 @@ from src.routes.ServicoAutomacao import ServicoAutomacao_routes
 from src.routes.Enderecamento_aviamentos import Enderecamento_routes
 from src.routes.SeparacaoAviamentos import Separacao_aviamentos_routes
 from src.routes.Meta_Qualidade import metaQualidade_routes
+from src.routes.ApontamentoDefeito import ApontamentoDefeito_routes
 
 
 # Importacao das rotas para o blueprint:
@@ -52,3 +53,4 @@ routes_blueprint.register_blueprint(ServicoAutomacao_routes)
 routes_blueprint.register_blueprint(Enderecamento_routes)
 routes_blueprint.register_blueprint(Separacao_aviamentos_routes)
 routes_blueprint.register_blueprint(metaQualidade_routes)
+routes_blueprint.register_blueprint(ApontamentoDefeito_routes)
