@@ -148,12 +148,10 @@ class Tags_apontada_defeitos():
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
                 historico = self.__renovando_historico_Tags()
-                historico['excluir'] = 'ok'
 
-                dados_tags_defeito = pd.merge(dados_tags_defeito,historico,on='numeroOP',how='left')
+                # Mantem apenas as OPs que ainda nao estao no historico do Postgres
+                dados_tags_defeito = dados_tags_defeito[~dados_tags_defeito['numeroOP'].isin(historico['numeroOP'])]
                 dados_tags_defeito.fillna('-',inplace=True)
-                dados_tags_defeito = dados_tags_defeito[dados_tags_defeito['excluir'] =='-']
-                dados_tags_defeito.drop('excluir', axis=1, inplace=True)
 
                 motivos = self.motivos_csw()
 
