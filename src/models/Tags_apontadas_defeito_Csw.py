@@ -171,13 +171,37 @@ class Tags_apontada_defeitos():
 
 
     def __renovando_historico_Tags(self):
-        '''Metodo privado que exclui as tags para realizar a RENOVACAO'''
+        '''Metodo privado que exclui as OPs das ultimas 1000 tags inseridas (para serem
+        reinseridas atualizadas) e retorna o historico de OPs que permanecem na tabela'''
+
+        # Margem de seguranca: so renova OPs inseridas dentro da janela de busca do CSW
+        # (com folga de 5 dias), para nao apagar OP que a consulta nao traria de volta
+        dias_renovacao = max(self.n_dias_historico - 5, 1)
+
+        sqlDelete = f"""
+        delete from "PCP".pcp.tags_defeitos_csw
+        where "numeroOP" in (
+            select distinct "numeroOP"
+            from (
+                select "numeroOP", data_hora
+                from "PCP".pcp.tags_defeitos_csw
+                order by data_hora desc
+                limit 1000
+            ) as ultimasTags
+            where ultimasTags.data_hora::timestamp >= now() - interval '{dias_renovacao} days'
+        )
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn2:
+            with conn2.cursor() as curr:
+                curr.execute(sqlDelete)
+                conn2.commit()
 
         sql = """
         select
             distinct "numeroOP"
         from
-            "PCP".pcp.tags_defeitos_csw o 
+            "PCP".pcp.tags_defeitos_csw o
         """
 
         conn = ConexaoPostgre.conexaoEngine()
