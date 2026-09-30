@@ -484,7 +484,14 @@ class Endereco_aviamento():
         '''Metodo que obtem todas as Ops conferidas'''
 
         get = """
-        select distinct "numeroOP", 'conferida' as status from pcp."AviamentosConfFinalizacao"
+        select 
+            distinct 
+                "numeroOP", 
+                'conferida' as status, 
+                matricula,
+                "dataHora" 
+          from 
+            pcp."AviamentosConfFinalizacao"
         """
 
         conn = ConexaoPostgre.conexaoEngine()
