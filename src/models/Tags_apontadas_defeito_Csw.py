@@ -148,12 +148,10 @@ class Tags_apontada_defeitos():
                 dataHora = self.servicoAutomacao.obterHoraAtual()
                 self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
                 historico = self.__renovando_historico_Tags()
-                historico['excluir'] = 'ok'
 
-                dados_tags_defeito = pd.merge(dados_tags_defeito,historico,on='numeroOP',how='left')
+                # Mantem apenas as OPs que ainda nao estao no historico do Postgres
+                dados_tags_defeito = dados_tags_defeito[~dados_tags_defeito['numeroOP'].isin(historico['numeroOP'])]
                 dados_tags_defeito.fillna('-',inplace=True)
-                dados_tags_defeito = dados_tags_defeito[dados_tags_defeito['excluir'] =='-']
-                dados_tags_defeito.drop('excluir', axis=1, inplace=True)
 
                 motivos = self.motivos_csw()
 
@@ -171,13 +169,37 @@ class Tags_apontada_defeitos():
 
 
     def __renovando_historico_Tags(self):
-        '''Metodo privado que exclui as tags para realizar a RENOVACAO'''
+        '''Metodo privado que exclui as OPs das ultimas 1000 tags inseridas (para serem
+        reinseridas atualizadas) e retorna o historico de OPs que permanecem na tabela'''
+
+        # Margem de seguranca: so renova OPs inseridas dentro da janela de busca do CSW
+        # (com folga de 5 dias), para nao apagar OP que a consulta nao traria de volta
+        dias_renovacao = max(self.n_dias_historico - 5, 1)
+
+        sqlDelete = f"""
+        delete from "PCP".pcp.tags_defeitos_csw
+        where "numeroOP" in (
+            select distinct "numeroOP"
+            from (
+                select "numeroOP", data_hora
+                from "PCP".pcp.tags_defeitos_csw
+                order by data_hora desc
+                limit 1000
+            ) as ultimasTags
+            where ultimasTags.data_hora::timestamp >= now() - interval '{dias_renovacao} days'
+        )
+        """
+
+        with ConexaoPostgre.conexaoInsercao() as conn2:
+            with conn2.cursor() as curr:
+                curr.execute(sqlDelete)
+                conn2.commit()
 
         sql = """
         select
             distinct "numeroOP"
         from
-            "PCP".pcp.tags_defeitos_csw o 
+            "PCP".pcp.tags_defeitos_csw o
         """
 
         conn = ConexaoPostgre.conexaoEngine()
