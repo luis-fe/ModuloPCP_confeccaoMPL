@@ -171,6 +171,14 @@ class Enderecamento_aviamento():
         return consulta
 
 
+    def get_ordemProd_conferencia(self):
+
+        consulta = Endereco_aviamento.Endereco_aviamento('', '', '', '','','','','').get_ops_conferidas()
+        consulta.fillna('0',inplace=True)
+
+        return consulta
+
+
 
     def update_endereco_item_unitario(self, enderecoCorrigido, sequencia, usuario, matricula):
 

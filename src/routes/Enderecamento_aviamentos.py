@@ -626,3 +626,24 @@ def POST_inserir_endereco_aviamento_em_massa():
     return jsonify(OP_data)
 
 
+@Enderecamento_routes.route('/pcp/api/consulta_op_conferida', methods=['GET'])
+@token_required
+def get_consulta_op_conferida():
+
+    dados = Enderecamento_aviamentos_service.Enderecamento_aviamento().get_ordemProd_conferencia()
+    #controle.salvarStatus(rotina, ip, datainicio)
+
+    # Obtém os nomes das colunas
+    column_names = dados.columns
+    # Monta o dicionário com os cabeçalhos das colunas e os valores correspondentes
+    OP_data = []
+    for index, row in dados.iterrows():
+        op_dict = {}
+        for column_name in column_names:
+            op_dict[column_name] = row[column_name]
+        OP_data.append(op_dict)
+    del dados
+    return jsonify(OP_data)
+
+
+
