@@ -6,7 +6,7 @@ set -e
 
 NOME_IMAGEM="app_principal"
 NOME_CONTAINER="app_principal"
-CAMINHO_DADOS="/home/grupompl/Modulo_PCP"
+CAMINHO_DADOS="/home/grupompl/Modulo_PCP/dados"
 ARQUIVO_ENV="_ambiente.env"
 
 # Garante que o script rode a partir da raiz do projeto (onde ele esta salvo)
