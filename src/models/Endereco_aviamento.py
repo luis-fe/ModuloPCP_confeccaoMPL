@@ -308,27 +308,78 @@ class Endereco_aviamento():
         return consulta
 
     def delete_ops_processadas_AviamentosDisponives(self, clausula):
-            '''Metodo que busca a lista de AviamentosDisponiveis '''
+            '''Metodo que faz o backup dos itens em pcp."BackupItensConferidos" e depois
+            exclui as OPs processadas de pcp."AviamentosDisponiveis" (mesma transacao) '''
+
+            criar_tabela = """
+            create table if not exists pcp."BackupItensConferidos" (
+                "numeroOP" varchar,
+                "codProduto" varchar,
+                "descricao" varchar,
+                "codMaterialEdt" varchar,
+                "nomeMaterial" varchar,
+                "qtdeRequisitada" varchar,
+                "statusConferido" varchar,
+                "desconsideraConf" varchar,
+                "dataBackup" timestamp
+            )
+            """
+
+            backup = f"""
+            insert into pcp."BackupItensConferidos" (
+                "numeroOP", "codProduto", "descricao", "codMaterialEdt", "nomeMaterial",
+                "qtdeRequisitada", "statusConferido", "desconsideraConf", "dataBackup"
+            )
+            select
+                "numeroOP"::varchar, "codProduto"::varchar, "descricao"::varchar, "codMaterialEdt"::varchar,
+                "nomeMaterial"::varchar, "qtdeRequisitada"::varchar, "statusConferido"::varchar,
+                "desconsideraConf"::varchar, (now() at time zone 'America/Sao_Paulo')
+            from
+                pcp."AviamentosDisponiveis"
+            where
+                "numeroOP" {clausula}
+            """
 
             consulta = f"""
-            delete from  
-            pcp."AviamentosDisponiveis" 
+            delete from
+            pcp."AviamentosDisponiveis"
             where
             	"numeroOP" {clausula}
             """
 
             #print(consulta)
 
-
-
-
             with ConexaoPostgre.conexaoInsercao() as conn:
                 with conn.cursor() as curr:
 
+                    curr.execute(criar_tabela)
+                    curr.execute(backup)
                     curr.execute(consulta,())
                     conn.commit()
 
             return consulta
+
+
+    def get_backup_itens_conferidos_op(self):
+        '''Metodo que busca na tabela de backup os itens de uma OP, com a situacao de conferencia '''
+
+        consulta = """
+        select
+            "numeroOP", "codProduto", "descricao", "codMaterialEdt", "nomeMaterial", "qtdeRequisitada",
+            case when "statusConferido" = 'Conferido' then 'Conferido' else 'Nao Conferido' end as "statusConferido",
+            "desconsideraConf", "dataBackup"
+        from
+            pcp."BackupItensConferidos"
+        where
+            "numeroOP" = %s
+        order by
+            "statusConferido", "codMaterialEdt"
+        """
+
+        conn = ConexaoPostgre.conexaoEngine()
+        consulta = pd.read_sql(consulta, conn, params=(self.numeroOP,))
+
+        return consulta
 
 
     def update_desconsidera_item_aviamento(self):

@@ -179,6 +179,16 @@ class Enderecamento_aviamento():
         return consulta
 
 
+    def get_backup_itens_conferidos_op(self, numeroOP):
+        '''Metodo que busca, via OP, os itens do backup trazendo o que foi e o que nao foi conferido '''
+
+        consulta = Endereco_aviamento.Endereco_aviamento(numeroOP=numeroOP).get_backup_itens_conferidos_op()
+        consulta['dataBackup'] = consulta['dataBackup'].astype(str)
+        consulta.fillna('-', inplace=True)
+
+        return consulta
+
+
 
     def update_endereco_item_unitario(self, enderecoCorrigido, sequencia, usuario, matricula):
 

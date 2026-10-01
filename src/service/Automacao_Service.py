@@ -82,7 +82,9 @@ class Automacao:
             # Formatação segura da cláusula IN
             clausula_in_ops_processadas = "IN ('" + "','".join(f"{val}" for val in ops_processadas) + "')"
 
-            endereco_aviamento.delete_ops_processadas_AviamentosDisponives(clausula_in_ops_processadas)
+            # Faz o backup em pcp."BackupItensConferidos" antes de excluir
+            if len(ops_processadas) > 0:
+                endereco_aviamento.delete_ops_processadas_AviamentosDisponives(clausula_in_ops_processadas)
 
 
 
