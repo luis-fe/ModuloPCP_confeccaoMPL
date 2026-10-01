@@ -1,4 +1,5 @@
 import os
+import traceback
 from datetime import datetime
 import pytz
 
@@ -12,6 +13,14 @@ def obter_hora_atual() -> str:
     agora = datetime.now(fuso_horario)
     return agora.strftime('%Y-%m-%d %H:%M:%S')
 
+def executar_rotina(descricao: str, rotina):
+    """Executa uma rotina isolada: se ela falhar, registra o erro e segue para a próxima."""
+    try:
+        rotina()
+    except Exception:
+        print(f'ERRO na rotina "{descricao}" - {obter_hora_atual()}')
+        traceback.print_exc()
+
 def main():
     data = obter_hora_atual()
     print(f'Inicio servico automacao versao 04.05  - {data}')
@@ -24,28 +33,26 @@ def main():
         tempo_realizado_fases = 600
 
     #Automacao das tags apontadas como qualidade 2
-    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos().inserindo_informacoes_tag_postgre()
+    executar_rotina('Tags apontadas com defeito',
+                    lambda: Tags_apontadas_defeito_Csw.Tags_apontada_defeitos().inserindo_informacoes_tag_postgre())
 
-    
     # Automacao no dashboard TV
-    pedidos_csw = Pedidos_CSW.Pedidos_CSW('1')
-    pedidos_csw.put_automacao()
+    executar_rotina('Dashboard TV', lambda: Pedidos_CSW.Pedidos_CSW('1').put_automacao())
 
     # Automacao na fila de recebimento de aviamentos
-    Automacao_Service.Automacao().recebimento_aviamentos_CSW()
+    executar_rotina('Fila de recebimento de aviamentos',
+                    lambda: Automacao_Service.Automacao().recebimento_aviamentos_CSW())
 
     # Automacao do realizado fases
-    ordem_prod_csw = OrdemProd.OrdemProd(
-        '1', '', '', '', 100, tempo_realizado_fases
-    )
-    ordem_prod_csw.realizado_fases_csw()
+    executar_rotina('Realizado fases',
+                    lambda: OrdemProd.OrdemProd('1', '', '', '', 100, tempo_realizado_fases).realizado_fases_csw())
 
     # Automacao dos aviamentos disponiveis do csw
-    Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW()
+    executar_rotina('Aviamentos disponiveis',
+                    lambda: Automacao_Service.Automacao().buscar_informacao_aviamentos_disponiveis_CSW())
 
     # Automacao dos pedidos utilizando o arquivo .parquet
-
-    pedido_venda = PedidosVenda.Pedido_venda().incrementarPedidos()
+    executar_rotina('Pedidos (parquet)', lambda: PedidosVenda.Pedido_venda().incrementarPedidos())
 
 
 if __name__ == '__main__':

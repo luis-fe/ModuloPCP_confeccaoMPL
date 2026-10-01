@@ -520,7 +520,7 @@ class Produtos_CSW():
             q.qtdMinCom as LoteMin,
             q.qtdMultCom as loteMut,
             q.fatorConversao
-            ,(SELECT i2.codeditado from cgi.Item2 i2 WHERE i2.Empresa = 2 and i2.codcor> 0 and i2.coditem = q.codigo) as codEditado
+            ,(SELECT i2.codeditado from cgi.Item2 i2 WHERE i2.Empresa = 1 and i2.codcor> 0 and i2.coditem = q.codigo) as codEditado
         FROM
             Cgi.FornecHomologados f
         right join 
