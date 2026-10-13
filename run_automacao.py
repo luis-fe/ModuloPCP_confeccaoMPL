@@ -39,8 +39,8 @@ def main():
         tempo_realizado_fases = 600
 
     #Automacao das tags apontadas como qualidade 2
-    executar_rotina('Tags apontadas com defeito',
-                    lambda: Tags_apontadas_defeito_Csw.Tags_apontada_defeitos().inserindo_informacoes_tag_postgre())
+    # Temporariamente fora do executar_rotina para o erro estourar direto (diagnostico)
+    Tags_apontadas_defeito_Csw.Tags_apontada_defeitos().inserindo_informacoes_tag_postgre()
 
     # Automacao no dashboard TV
     executar_rotina('Dashboard TV', lambda: Pedidos_CSW.Pedidos_CSW('1').put_automacao())
