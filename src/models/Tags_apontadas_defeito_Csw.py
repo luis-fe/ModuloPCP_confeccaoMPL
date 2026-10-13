@@ -200,7 +200,7 @@ class Tags_apontada_defeitos():
                 select "numeroOP", data_hora
                 from "PCP".pcp.tags_defeitos_csw
                 order by data_hora desc
-                limit 1000
+                limit 2000
             ) as ultimasTags
             where ultimasTags.data_hora::timestamp >= now() - interval '{dias_renovacao} days'
         )
