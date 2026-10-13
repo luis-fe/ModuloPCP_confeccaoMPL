@@ -98,7 +98,7 @@ class Tags_apontada_defeitos():
                 from 
                     tco.MovimentacaoOPFase op 
                 WHERE 
-                    op.codempresa = {self.codEmpresa} and op.codfase in (429, 441, 449)
+                    op.codempresa = {self.codEmpresa} and op.codfase in (449)
                     and op.datamov >= (NOW()-'{str(self.n_dias_historico)} days') 
                 ) 
         and motivo2Qualidade > 0 and situacao not in (1 , 11, 0, 9)
