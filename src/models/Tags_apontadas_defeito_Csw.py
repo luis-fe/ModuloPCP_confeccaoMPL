@@ -126,46 +126,62 @@ class Tags_apontada_defeitos():
             print(f'ultima atualizacao {self.ultima_atualizacao}')
 
             if self.ultima_atualizacao > self.intervalo_automacao:
-
-                dataHora = self.servicoAutomacao.obterHoraAtual()
-                self.servicoAutomacao.inserindo_automacao(dataHora)
-
-
-                controleRecebimento = self.controle_recebimento_csw()
-                controleRecebimento['numeroOP'] = controleRecebimento['numeroOP'].astype(str)
-                dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
-                dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='numeroOP',how='left')
-
-                conultaOpFinalizada = self.consulta_ops_finalizada_csw()
-                dados_tags_defeito = pd.merge(dados_tags_defeito, conultaOpFinalizada, on='numeroOP',how='left')
-
-                dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
-                dadosFornecedor = dadosFornecedor.drop_duplicates()
-
-                dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
-
-
-                dataHora = self.servicoAutomacao.obterHoraAtual()
-                self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
-                historico = self.__renovando_historico_Tags()
-
-                # Mantem apenas as OPs que ainda nao estao no historico do Postgres
-                dados_tags_defeito = dados_tags_defeito[~dados_tags_defeito['numeroOP'].isin(historico['numeroOP'])]
-                dados_tags_defeito.fillna('-',inplace=True)
-
-                motivos = self.motivos_csw()
-
-                dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
-
-                if dados_tags_defeito['numeroOP'].size > 0:
-                    dados_tags_defeito['data_hora'] = self.obterHoraAtual()
+                try:
+                    self.__executar_insercao_tags()
+                except Exception as erro:
+                    # Registra o erro no ControleAutomacao e devolve o erro.
+                    # Prefixo "Finalizado" para o registro nao ser sobrescrito pelo proximo ciclo (update filtra not like 'Finalizado%')
                     dataHora = self.servicoAutomacao.obterHoraAtual()
-                    self.servicoAutomacao.update_controle_automacao(f'Finalizado tags inseridas {dados_tags_defeito["numeroOP"].size }', dataHora)
-                    self.servicoAutomacao.exluir_historico_antes_quarentena()
-                    ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
-                else:
-                    self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
-                    self.servicoAutomacao.exluir_historico_antes_quarentena()
+                    self.servicoAutomacao.update_controle_automacao(f'Finalizado com erro: {type(erro).__name__}: {erro}'[:250], dataHora)
+                    raise
+            else:
+                print(f'Tags nao executada: intervalo {self.ultima_atualizacao}s <= {self.intervalo_automacao}s')
+
+
+    def __executar_insercao_tags(self):
+            '''Metodo privado com as etapas de busca no csw e insercao das tags no postgre'''
+
+
+            dataHora = self.servicoAutomacao.obterHoraAtual()
+            self.servicoAutomacao.inserindo_automacao(dataHora)
+
+
+            controleRecebimento = self.controle_recebimento_csw()
+            controleRecebimento['numeroOP'] = controleRecebimento['numeroOP'].astype(str)
+            dados_tags_defeito =self.tags_defeitos_n_dias_anteriores()
+            dados_tags_defeito = pd.merge(dados_tags_defeito, controleRecebimento, on='numeroOP',how='left')
+
+            conultaOpFinalizada = self.consulta_ops_finalizada_csw()
+            dados_tags_defeito = pd.merge(dados_tags_defeito, conultaOpFinalizada, on='numeroOP',how='left')
+
+            dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
+            dadosFornecedor = dadosFornecedor.drop_duplicates()
+
+            dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
+
+
+            dataHora = self.servicoAutomacao.obterHoraAtual()
+            self.servicoAutomacao.update_controle_automacao('etapa 1 - Busca sql',dataHora)
+            historico = self.__renovando_historico_Tags()
+
+            # Mantem apenas as OPs que ainda nao estao no historico do Postgres
+            dados_tags_defeito = dados_tags_defeito[~dados_tags_defeito['numeroOP'].isin(historico['numeroOP'])]
+            dados_tags_defeito.fillna('-',inplace=True)
+
+            motivos = self.motivos_csw()
+
+            dados_tags_defeito = pd.merge(dados_tags_defeito,motivos,on='motivo2Qualidade',how='left')
+
+            if dados_tags_defeito['numeroOP'].size > 0:
+                dados_tags_defeito['data_hora'] = self.obterHoraAtual()
+                # Insere antes de marcar "Finalizado", para que um erro na insercao fique registrado no controle
+                ConexaoPostgre.Funcao_InserirPCPMatriz(dados_tags_defeito, dados_tags_defeito['numeroOP'].size, 'tags_defeitos_csw', 'append')
+                dataHora = self.servicoAutomacao.obterHoraAtual()
+                self.servicoAutomacao.update_controle_automacao(f'Finalizado tags inseridas {dados_tags_defeito["numeroOP"].size }', dataHora)
+                self.servicoAutomacao.exluir_historico_antes_quarentena()
+            else:
+                self.servicoAutomacao.update_controle_automacao('Finalizado sem Tags', dataHora)
+                self.servicoAutomacao.exluir_historico_antes_quarentena()
 
 
     def __renovando_historico_Tags(self):

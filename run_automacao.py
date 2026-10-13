@@ -1,4 +1,5 @@
 import os
+import sys
 import traceback
 from datetime import datetime
 import pytz
@@ -13,13 +14,18 @@ def obter_hora_atual() -> str:
     agora = datetime.now(fuso_horario)
     return agora.strftime('%Y-%m-%d %H:%M:%S')
 
+# Rotinas que falharam no ciclo atual: (descricao, mensagem do erro)
+rotinas_com_erro = []
+
 def executar_rotina(descricao: str, rotina):
     """Executa uma rotina isolada: se ela falhar, registra o erro e segue para a próxima."""
     try:
         rotina()
-    except Exception:
-        print(f'ERRO na rotina "{descricao}" - {obter_hora_atual()}')
-        traceback.print_exc()
+    except Exception as erro:
+        print(f'ERRO na rotina "{descricao}" - {obter_hora_atual()}: {type(erro).__name__}: {erro}', flush=True)
+        traceback.print_exc(file=sys.stdout)
+        sys.stdout.flush()
+        rotinas_com_erro.append((descricao, f'{type(erro).__name__}: {erro}'))
 
 def main():
     data = obter_hora_atual()
@@ -53,6 +59,15 @@ def main():
 
     # Automacao dos pedidos utilizando o arquivo .parquet
     executar_rotina('Pedidos (parquet)', lambda: PedidosVenda.Pedido_venda().incrementarPedidos())
+
+    # Resumo do ciclo: devolve os erros e encerra com codigo 1 se alguma rotina falhou
+    if rotinas_com_erro:
+        print(f'Fim do ciclo com {len(rotinas_com_erro)} rotina(s) com erro - {obter_hora_atual()}:')
+        for descricao, mensagem in rotinas_com_erro:
+            print(f'  - {descricao}: {mensagem}')
+        sys.exit(1)
+
+    print(f'Fim do ciclo sem erros - {obter_hora_atual()}')
 
 
 if __name__ == '__main__':
