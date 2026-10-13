@@ -94,12 +94,13 @@ class Tags_apontada_defeitos():
             and t.numeroOP in
                 (
                 SELECT 
+                distinct
                     op.numeroop 
                 from 
-                    tco.MovimentacaoOPFase op 
+                    tco.OrdemProd op 
                 WHERE 
-                    op.codempresa = {self.codEmpresa} and op.codfase in (449)
-                    and op.datamov >= (NOW()-'{str(self.n_dias_historico)} days') 
+                    op.codempresa = {self.codEmpresa}
+                    and op.datafim >= (NOW()-'{str(self.n_dias_historico)} days') 
                 ) 
         and motivo2Qualidade > 0 and situacao not in (1 , 11, 0, 9)
         group by 
