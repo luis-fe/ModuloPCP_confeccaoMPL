@@ -22,8 +22,8 @@ class Analise_2_qualidade():
         FROM
             "PCP".pcp.tags_defeitos_csw tdc 
         WHERE 
-            data_receb >= %s
-            AND data_receb <= %s
+            data_fim_op >= %s
+            AND data_fim_op <= %s
         """
 
         conn = ConexaoPostgre.conexaoEngine()
