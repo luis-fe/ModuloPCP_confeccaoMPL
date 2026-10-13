@@ -11,7 +11,7 @@ class Tags_apontada_defeitos():
     '''Classe que gerencia a compilacao das tags apontadas pelo motivo de segunda no csw '''
 
 
-    def __init__(self, codEmpresa = '1', intervalo_automacao = 100, n_dias_historico = 50, nomeAtualizacao = 'Busca de tags dos ultimos '):
+    def __init__(self, codEmpresa = '1', intervalo_automacao = 100, n_dias_historico = 60, nomeAtualizacao = 'Busca de tags dos ultimos '):
 
         self.codEmpresa = codEmpresa
         self.intervalo_automacao = intervalo_automacao # Atrubuto para Controlar o intervalo de automacao em Segundos
