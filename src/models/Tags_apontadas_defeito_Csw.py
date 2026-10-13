@@ -86,7 +86,8 @@ class Tags_apontada_defeitos():
             WHERE e.codempresa = 1 
             and e.codengenharia = t.codEngenharia) as descProd,
             CONVERT(VARCHAR(6), numeroOP) as OPpai,
-            motivo2Qualidade  
+            motivo2Qualidade ,
+            codNaturezaAtual 
         FROM 
             tcr.TagBarrasProduto t
         WHERE 
