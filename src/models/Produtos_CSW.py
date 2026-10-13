@@ -514,7 +514,7 @@ class Produtos_CSW():
 
         sql = f"""
         SELECT
-            q.codigo as CodComponente ,
+            q.codItem as CodComponente ,
             f.nomeFornecedor as fornencedorPreferencial,
             q.diasEntrega as LeadTime,
             q.qtdMinCom as LoteMin,
@@ -525,13 +525,13 @@ class Produtos_CSW():
         right join 
             Cgi.DadosQualidadeFornecedor q on
             q.codEmpresa = f.codEmpresa
-            and f.codItem = q.codigo
+            and f.codItem = q.codItem
             and f.codFornecedor = q.codFornecedor
         WHERE
             f.codEmpresa = {self.codEmpresa}
             and f.fornecedorPreferencial = 1
             and q.referenciaPrincipal = 1
-            and q.codigo > 18
+            and q.codItem > 18
                 """
 
         sql2 = f"""
