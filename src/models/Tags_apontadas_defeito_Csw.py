@@ -109,7 +109,8 @@ class Tags_apontada_defeitos():
             codReduzido , 
             numeroOP , 
             CONVERT(VARCHAR(6), numeroOP),
-            motivo2Qualidade  
+            motivo2Qualidade  ,
+            codNaturezaAtual
             """
 
         with ConexaoERP.ConexaoInternoMPL() as conn:
