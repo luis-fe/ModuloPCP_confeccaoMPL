@@ -159,6 +159,9 @@ class Tags_apontada_defeitos():
 
             dadosFornecedor = Produtos_CSW.Produtos_CSW(self.codEmpresa).materiais_requisicao_OP_csw('160')
             dadosFornecedor = dadosFornecedor.drop_duplicates()
+            # Se a linha so difere pelo fornencedorPreferencial, considera o primeiro fornecedor encontrado
+            colunasSemFornecedor = [c for c in dadosFornecedor.columns if c != 'fornencedorPreferencial']
+            dadosFornecedor = dadosFornecedor.drop_duplicates(subset=colunasSemFornecedor, keep='first')
 
             dados_tags_defeito = pd.merge(dados_tags_defeito, dadosFornecedor, on='OPpai',how='left')
 
