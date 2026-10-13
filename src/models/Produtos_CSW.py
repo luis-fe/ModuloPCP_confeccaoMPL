@@ -520,7 +520,6 @@ class Produtos_CSW():
             q.qtdMinCom as LoteMin,
             q.qtdMultCom as loteMut,
             q.fatorConversao
-            ,(SELECT i2.codeditado from cgi.Item2 i2 WHERE i2.Empresa = 1 and i2.codcor> 0 and i2.coditem = q.codigo) as codEditado
         FROM
             Cgi.FornecHomologados f
         right join 
@@ -548,6 +547,18 @@ class Produtos_CSW():
             f.Empresa = {self.codEmpresa}
         """
 
+        # codEditado buscado a parte: o Cache nao resolve q.codigo em subquery correlacionada com o right join
+        sql3 = """
+        SELECT
+            i2.coditem as CodComponente,
+            i2.codeditado as codEditado
+        FROM
+            cgi.Item2 i2
+        WHERE
+            i2.Empresa = 1
+            and i2.codcor > 0
+        """
+
         with ConexaoERP.ConexaoInternoMPL() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
@@ -561,9 +572,18 @@ class Produtos_CSW():
                 rows = cursor.fetchall()
                 consumo2 = pd.DataFrame(rows, columns=colunas)
 
+                cursor.execute(sql3)
+                colunas = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                codEditados = pd.DataFrame(rows, columns=colunas)
+
 
         consumo['CodComponente'] = consumo['CodComponente'].astype(str)
         consumo2['CodComponente'] = consumo2['CodComponente'].astype(str)
+        codEditados['CodComponente'] = codEditados['CodComponente'].astype(str)
+        codEditados = codEditados.drop_duplicates(subset='CodComponente', keep='first')
+
+        consumo = pd.merge(consumo, codEditados, on='CodComponente', how='left')
 
         consumo = pd.merge(consumo, consumo2 , on='CodComponente', how='left')
         consumo['novoNome'].fillna('-',inplace=True)
